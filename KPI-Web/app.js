@@ -1,127 +1,175 @@
 const state = {
-  league: "1군",
-  data: null,
-  selectedTeam: null,
-  chart: null,
+  data: null
 };
 
 const $ = (selector) => document.querySelector(selector);
 
-function formatScore(value) {
-  return Number.isFinite(Number(value)) ? Number(value).toFixed(2) : "—";
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function formatDelta(value) {
-  if (!Number.isFinite(Number(value))) return "—";
+function toNumber(value) {
   const number = Number(value);
-  return `${number >= 0 ? "+" : ""}${number.toFixed(2)}`;
+  return Number.isFinite(number) ? number : null;
 }
 
-function currentTeams() {
-  return state.data?.leagues?.[state.league] ?? [];
+function formatRating(value) {
+  const number = toNumber(value);
+  return number === null ? "—" : number.toFixed(1);
 }
 
-function renderSummary(teams) {
-  $("#team-count").textContent = teams.length ? `${teams.length}개` : "—";
-  const scores = teams.map((team) => Number(team.rating)).filter(Number.isFinite);
-  const average = scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null;
-  $("#league-average").textContent = average == null ? "—" : formatScore(average);
-  $("#selected-team").textContent = state.selectedTeam?.team ?? "—";
-  $("#selected-team-rating").textContent = state.selectedTeam
-    ? `KPI ${formatScore(state.selectedTeam.rating)}`
-    : "행을 선택하면 추이를 봅니다";
+function ratingBand(value) {
+  const number = toNumber(value);
+  if (number === null) return "band-empty";
+  if (number >= 80) return "band-high";
+  if (number >= 65) return "band-good";
+  if (number >= 50) return "band-mid";
+  return "band-low";
 }
 
-function renderTable(teams) {
-  const body = $("#team-table-body");
-  if (!teams.length) {
-    body.innerHTML = '<tr class="empty-row"><td colspan="4">표시할 구단 데이터가 없습니다.</td></tr>';
-    return;
-  }
+function averageBand(value, values) {
+  const number = toNumber(value);
+  if (number === null) return "average-empty";
 
-  body.innerHTML = teams.map((team, index) => {
-    const selected = state.selectedTeam?.team === team.team ? " is-selected" : "";
-    const delta = Number(team.delta);
-    const deltaClass = Number.isFinite(delta) ? (delta >= 0 ? "delta-positive" : "delta-negative") : "";
-    return `
-      <tr data-team="${team.team}" class="${selected}">
-        <td class="col-rank">${team.rank ?? index + 1}</td>
-        <td>${team.team}</td>
-        <td class="numeric score">${formatScore(team.rating)}</td>
-        <td class="numeric ${deltaClass}">${formatDelta(team.delta)}</td>
-      </tr>`;
+  const rankedValues = values
+    .map(toNumber)
+    .filter((candidate) => candidate !== null)
+    .sort((a, b) => b - a);
+  const rank = rankedValues.findIndex((candidate) => candidate === number) + 1;
+  const total = rankedValues.length;
+
+  if (!rank || !total) return "average-empty";
+  if (rank <= 2) return "average-top";
+  if (rank >= Math.max(total - 1, 3)) return "average-bottom";
+  return rank <= Math.ceil(total / 2) ? "average-upper" : "average-lower";
+}
+
+function renderPlayerName(player) {
+  if (!player) return '<td class="name-cell empty-cell" aria-label="선수 없음"></td>';
+  const grayClass = player.gray ? " is-gray" : "";
+  return '<td class="name-cell' + grayClass + '" title="' + escapeHtml(player.name) + '">' + escapeHtml(player.name) + "</td>";
+}
+
+function renderPlayerRating(player) {
+  if (!player) return '<td class="rating-cell empty-cell" aria-label="Rating 없음"></td>';
+  return '<td class="rating-cell ' + ratingBand(player.rating) + '">' + formatRating(player.rating) + "</td>";
+}
+
+function renderTeamHeader(teams, league) {
+  const teamCells = teams
+    .map((team) => '<th colspan="4" scope="colgroup">' + escapeHtml(team.team) + "</th>")
+    .join("");
+  const leagueCells = teams
+    .map(() => '<th colspan="4">' + escapeHtml(league) + "</th>")
+    .join("");
+  const roleCells = teams
+    .map(() => '<th colspan="2">타자</th><th colspan="2">투수</th>')
+    .join("");
+  const fieldCells = teams
+    .map(() => '<th>이름</th><th>Rating</th><th>이름</th><th>Rating</th>')
+    .join("");
+
+  return (
+    "<thead>" +
+    '<tr class="team-row">' + teamCells + "</tr>" +
+    '<tr class="league-row">' + leagueCells + "</tr>" +
+    '<tr class="role-row">' + roleCells + "</tr>" +
+    '<tr class="field-row">' + fieldCells + "</tr>" +
+    "</thead>"
+  );
+}
+
+function renderTeamColumns(teams) {
+  return teams
+    .map(() => '<col class="name-column"><col class="rating-column"><col class="name-column"><col class="rating-column">')
+    .join("");
+}
+
+function renderAverageRow(teams) {
+  if (!teams.length || teams[0].league !== "1군") return "";
+
+  const batterValues = teams.map((team) => team.averages?.batter);
+  const pitcherValues = teams.map((team) => team.averages?.pitcher);
+  const cells = teams.map((team) => {
+    const batter = team.averages?.batter;
+    const pitcher = team.averages?.pitcher;
+    const batterClass = averageBand(batter, batterValues);
+    const pitcherClass = averageBand(pitcher, pitcherValues);
+    return (
+      '<td class="average-label ' + batterClass + '">9명 평균</td>' +
+      '<td class="average-value ' + batterClass + '">' + formatRating(batter) + "</td>" +
+      '<td class="average-label ' + pitcherClass + '">9명 평균</td>' +
+      '<td class="average-value ' + pitcherClass + '">' + formatRating(pitcher) + "</td>"
+    );
   }).join("");
 
-  body.querySelectorAll("tr[data-team]").forEach((row) => {
-    row.addEventListener("click", () => {
-      state.selectedTeam = teams.find((team) => team.team === row.dataset.team) ?? null;
-      renderSummary(teams);
-      renderTable(teams);
-      renderChart();
-    });
-  });
+  return '<tr class="average-row">' + cells + "</tr>";
 }
 
-function renderChart() {
-  const chartElement = $("#rating-chart");
-  const empty = $("#chart-empty");
-  if (!window.echarts || !state.selectedTeam?.history?.length) {
-    empty.hidden = false;
-    if (state.chart) state.chart.clear();
-    return;
-  }
+function renderBody(teams) {
+  const rowCount = Math.max(
+    1,
+    ...teams.map((team) => Math.max(team.batters?.length || 0, team.pitchers?.length || 0))
+  );
 
-  empty.hidden = true;
-  state.chart ??= window.echarts.init(chartElement);
-  const history = state.selectedTeam.history;
-  state.chart.setOption({
-    animation: false,
-    grid: { left: 48, right: 24, top: 24, bottom: 36 },
-    tooltip: { trigger: "axis" },
-    xAxis: { type: "category", data: history.map((point) => point.date), axisLabel: { color: "#8fa3ab" }, axisLine: { lineStyle: { color: "#33434c" } } },
-    yAxis: { type: "value", scale: true, axisLabel: { color: "#8fa3ab" }, splitLine: { lineStyle: { color: "rgba(215,230,238,0.08)" } } },
-    series: [{ type: "line", smooth: true, symbol: "circle", symbolSize: 6, data: history.map((point) => point.rating), lineStyle: { width: 3, color: "#8ee6bd" }, itemStyle: { color: "#8ee6bd" }, areaStyle: { color: "rgba(142,230,189,0.10)" } }],
-  });
+  const rows = Array.from({ length: rowCount }, (_, rowIndex) => {
+    const cells = teams.map((team) => {
+      const batter = team.batters?.[rowIndex] ?? null;
+      const pitcher = team.pitchers?.[rowIndex] ?? null;
+      return renderPlayerName(batter) + renderPlayerRating(batter) + renderPlayerName(pitcher) + renderPlayerRating(pitcher);
+    }).join("");
+    return "<tr>" + cells + "</tr>";
+  }).join("");
+
+  return rows + renderAverageRow(teams);
+}
+
+function renderSection(section, index) {
+  const teams = section.teams ?? [];
+  if (!teams.length) return "";
+
+  return (
+    '<section class="rating-section' + (index ? " is-secondary" : "") + '" aria-labelledby="section-title-' + index + '">' +
+      '<div class="section-heading">' +
+        '<h3 id="section-title-' + index + '">' + escapeHtml(section.league) + "</h3>" +
+        "<span>" + teams.length + "개 구단</span>" +
+      "</div>" +
+      '<div class="matrix-scroller">' +
+        '<table class="rating-matrix" aria-describedby="section-title-' + index + '">' +
+          '<colgroup>' + renderTeamColumns(teams) + "</colgroup>" +
+          renderTeamHeader(teams, section.league) +
+          "<tbody>" + renderBody(teams) + "</tbody>" +
+        "</table>" +
+      "</div>" +
+    "</section>"
+  );
 }
 
 function render() {
-  const teams = currentTeams();
-  if (!state.selectedTeam || !teams.some((team) => team.team === state.selectedTeam.team)) {
-    state.selectedTeam = teams[0] ?? null;
-  }
-  $("#as-of-date").textContent = state.data?.asOf ?? "데이터 연결 준비 중";
-  $("#chart-title").textContent = state.selectedTeam ? `${state.selectedTeam.team} Rating 흐름` : "Rating 흐름";
-  renderSummary(teams);
-  renderTable(teams);
-  renderChart();
-}
-
-function bindControls() {
-  document.querySelectorAll(".segment").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.league = button.dataset.league;
-      document.querySelectorAll(".segment").forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-selected", String(active));
-      });
-      render();
-    });
-  });
-  window.addEventListener("resize", () => state.chart?.resize());
+  const sections = state.data?.sections ?? [];
+  $("#rating-sections").innerHTML = sections.map(renderSection).join("");
+  $("#last-updated").textContent = state.data?.meta?.asOf
+    ? state.data.meta.asOf + " 기준"
+    : "최신 데이터";
 }
 
 async function loadData() {
   try {
-    const response = await fetch("./data/team_ratings.json", { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const response = await fetch("./data/sheet_reference.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("HTTP " + response.status);
     state.data = await response.json();
+    render();
   } catch (error) {
-    console.warn("KPI data is not connected yet.", error);
-    state.data = { asOf: "데이터 연결 준비 중", leagues: { "1군": [], "2군": [] } };
+    console.error("KPI reference data load failed", error);
+    $("#last-updated").textContent = "데이터 연결 필요";
+    $("#rating-sections").innerHTML =
+      '<div class="error-state"><strong>표 데이터를 불러오지 못했습니다.</strong><span>data/sheet_reference.json 파일을 확인해 주세요.</span></div>';
   }
-  render();
 }
 
-bindControls();
 loadData();

@@ -1,0 +1,3532 @@
+{
+  "meta": {
+    "title": "2026 KBO 구단별 Rating (외부 공유용)",
+    "source": "Google Sheets RCv3_구단별Rating",
+    "sourceUrl": "https://docs.google.com/spreadsheets/d/1RFlizhPk7cyzsh2J2WIKFtAaoumYJ61yz95cXxUMacg/edit?gid=387297493#gid=387297493",
+    "asOf": "2026-09-13",
+    "ratingBands": {
+      "high": "80 이상",
+      "good": "65 이상 80 미만",
+      "mid": "50 이상 65 미만",
+      "low": "50 미만"
+    }
+  },
+  "sections": [
+    {
+      "league": "1군",
+      "teams": [
+        {
+          "team": "KIA",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "김도영",
+              "rating": 92.9,
+              "gray": false
+            },
+            {
+              "name": "나성범",
+              "rating": 72.9,
+              "gray": false
+            },
+            {
+              "name": "카스트로",
+              "rating": 71.1,
+              "gray": false
+            },
+            {
+              "name": "박정우",
+              "rating": 69.1,
+              "gray": true
+            },
+            {
+              "name": "박재현",
+              "rating": 67,
+              "gray": false
+            },
+            {
+              "name": "박상준",
+              "rating": 60.9,
+              "gray": false
+            },
+            {
+              "name": "김태군",
+              "rating": 60.1,
+              "gray": false
+            },
+            {
+              "name": "한준수",
+              "rating": 59.9,
+              "gray": false
+            },
+            {
+              "name": "김선빈",
+              "rating": 58.6,
+              "gray": false
+            },
+            {
+              "name": "이호연",
+              "rating": 58.5,
+              "gray": false
+            },
+            {
+              "name": "김민규",
+              "rating": 57.3,
+              "gray": false
+            },
+            {
+              "name": "하주석",
+              "rating": 55.8,
+              "gray": false
+            },
+            {
+              "name": "고종욱",
+              "rating": 51.5,
+              "gray": false
+            },
+            {
+              "name": "김호령",
+              "rating": 47.6,
+              "gray": false
+            },
+            {
+              "name": "주효상",
+              "rating": 44.8,
+              "gray": true
+            },
+            {
+              "name": "김규성",
+              "rating": 40.9,
+              "gray": true
+            },
+            {
+              "name": "정현창",
+              "rating": 37.3,
+              "gray": true
+            },
+            {
+              "name": "변우혁",
+              "rating": 35.8,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "올러",
+              "rating": 81.3,
+              "gray": false
+            },
+            {
+              "name": "전상현",
+              "rating": 73.8,
+              "gray": false
+            },
+            {
+              "name": "시라카와",
+              "rating": 69.6,
+              "gray": false
+            },
+            {
+              "name": "이태양",
+              "rating": 63.3,
+              "gray": false
+            },
+            {
+              "name": "성영탁",
+              "rating": 63,
+              "gray": false
+            },
+            {
+              "name": "곽도규",
+              "rating": 62.3,
+              "gray": false
+            },
+            {
+              "name": "네일",
+              "rating": 62,
+              "gray": false
+            },
+            {
+              "name": "양현종",
+              "rating": 61.4,
+              "gray": false
+            },
+            {
+              "name": "조상우",
+              "rating": 56.6,
+              "gray": false
+            },
+            {
+              "name": "홍건희",
+              "rating": 55.7,
+              "gray": true
+            },
+            {
+              "name": "한재승",
+              "rating": 55.7,
+              "gray": false
+            },
+            {
+              "name": "황동하",
+              "rating": 52.7,
+              "gray": true
+            },
+            {
+              "name": "김태형",
+              "rating": 50.4,
+              "gray": false
+            },
+            {
+              "name": "이의리",
+              "rating": 49.9,
+              "gray": false
+            },
+            {
+              "name": "정해영",
+              "rating": 49.4,
+              "gray": false
+            },
+            {
+              "name": "김범수",
+              "rating": 39.5,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 66.9,
+            "pitcher": 65.9
+          }
+        },
+        {
+          "team": "삼성",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "구자욱",
+              "rating": 87.7,
+              "gray": false
+            },
+            {
+              "name": "박승규",
+              "rating": 69.1,
+              "gray": false
+            },
+            {
+              "name": "디아즈",
+              "rating": 68.9,
+              "gray": false
+            },
+            {
+              "name": "강민호",
+              "rating": 67.5,
+              "gray": false
+            },
+            {
+              "name": "최형우",
+              "rating": 67.4,
+              "gray": false
+            },
+            {
+              "name": "이창용",
+              "rating": 66.1,
+              "gray": false
+            },
+            {
+              "name": "김지찬",
+              "rating": 66,
+              "gray": false
+            },
+            {
+              "name": "류지혁",
+              "rating": 60.1,
+              "gray": false
+            },
+            {
+              "name": "김성윤",
+              "rating": 60.1,
+              "gray": false
+            },
+            {
+              "name": "김태훈",
+              "rating": 60,
+              "gray": false
+            },
+            {
+              "name": "전병우",
+              "rating": 58.2,
+              "gray": false
+            },
+            {
+              "name": "김현준",
+              "rating": 58.1,
+              "gray": false
+            },
+            {
+              "name": "양우현",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "김재성",
+              "rating": 55.2,
+              "gray": true
+            },
+            {
+              "name": "이진용",
+              "rating": 45.7,
+              "gray": true
+            },
+            {
+              "name": "박계범",
+              "rating": 34.5,
+              "gray": true
+            },
+            {
+              "name": "김영웅",
+              "rating": 31.7,
+              "gray": false
+            },
+            {
+              "name": "박세혁",
+              "rating": 27.1,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "페덱",
+              "rating": 76.4,
+              "gray": false
+            },
+            {
+              "name": "김재윤",
+              "rating": 73.4,
+              "gray": false
+            },
+            {
+              "name": "김태훈",
+              "rating": 68.9,
+              "gray": false
+            },
+            {
+              "name": "이승민",
+              "rating": 65.5,
+              "gray": false
+            },
+            {
+              "name": "최원태",
+              "rating": 64.7,
+              "gray": false
+            },
+            {
+              "name": "원태인",
+              "rating": 61.7,
+              "gray": false
+            },
+            {
+              "name": "후라도",
+              "rating": 61.2,
+              "gray": false
+            },
+            {
+              "name": "장찬희",
+              "rating": 59.4,
+              "gray": false
+            },
+            {
+              "name": "배찬승",
+              "rating": 54.7,
+              "gray": false
+            },
+            {
+              "name": "보스",
+              "rating": 54.5,
+              "gray": false
+            },
+            {
+              "name": "임기영",
+              "rating": 54.2,
+              "gray": false
+            },
+            {
+              "name": "이승현",
+              "rating": 49.7,
+              "gray": true
+            },
+            {
+              "name": "양창섭",
+              "rating": 46.9,
+              "gray": false
+            },
+            {
+              "name": "사토시",
+              "rating": 43.6,
+              "gray": true
+            }
+          ],
+          "averages": {
+            "batter": 68.1,
+            "pitcher": 65.1
+          }
+        },
+        {
+          "team": "LG",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "오스틴",
+              "rating": 96,
+              "gray": false
+            },
+            {
+              "name": "송찬의",
+              "rating": 71,
+              "gray": false
+            },
+            {
+              "name": "문정빈",
+              "rating": 60.2,
+              "gray": false
+            },
+            {
+              "name": "천성호",
+              "rating": 59.2,
+              "gray": false
+            },
+            {
+              "name": "손용준",
+              "rating": 58.7,
+              "gray": false
+            },
+            {
+              "name": "이재원",
+              "rating": 58.5,
+              "gray": false
+            },
+            {
+              "name": "박해민",
+              "rating": 57.5,
+              "gray": false
+            },
+            {
+              "name": "홍창기",
+              "rating": 54.4,
+              "gray": false
+            },
+            {
+              "name": "구본혁",
+              "rating": 53.2,
+              "gray": false
+            },
+            {
+              "name": "문보경",
+              "rating": 52.6,
+              "gray": false
+            },
+            {
+              "name": "신민재",
+              "rating": 52.4,
+              "gray": false
+            },
+            {
+              "name": "박동원",
+              "rating": 51.1,
+              "gray": false
+            },
+            {
+              "name": "오지환",
+              "rating": 48.5,
+              "gray": false
+            },
+            {
+              "name": "강민균",
+              "rating": 48.1,
+              "gray": false
+            },
+            {
+              "name": "이영빈",
+              "rating": 41.1,
+              "gray": false
+            },
+            {
+              "name": "이주헌",
+              "rating": 40.5,
+              "gray": false
+            },
+            {
+              "name": "김현종",
+              "rating": 30.1,
+              "gray": false
+            },
+            {
+              "name": "최원영",
+              "rating": 18.1,
+              "gray": true
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "카라스코",
+              "rating": 74.8,
+              "gray": false
+            },
+            {
+              "name": "톨허스트",
+              "rating": 68.4,
+              "gray": false
+            },
+            {
+              "name": "박시원",
+              "rating": 64.9,
+              "gray": false
+            },
+            {
+              "name": "케네디",
+              "rating": 64.9,
+              "gray": true
+            },
+            {
+              "name": "임찬규",
+              "rating": 64.8,
+              "gray": false
+            },
+            {
+              "name": "손주영",
+              "rating": 62.5,
+              "gray": false
+            },
+            {
+              "name": "김진수",
+              "rating": 59.4,
+              "gray": false
+            },
+            {
+              "name": "이우찬",
+              "rating": 57.5,
+              "gray": false
+            },
+            {
+              "name": "우강훈",
+              "rating": 54.9,
+              "gray": false
+            },
+            {
+              "name": "김영우",
+              "rating": 52,
+              "gray": false
+            },
+            {
+              "name": "이상영",
+              "rating": 50.2,
+              "gray": false
+            },
+            {
+              "name": "고우석",
+              "rating": 48.2,
+              "gray": true
+            },
+            {
+              "name": "김진성",
+              "rating": 45.3,
+              "gray": false
+            },
+            {
+              "name": "이정용",
+              "rating": 43.3,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 63.2,
+            "pitcher": 62.1
+          }
+        },
+        {
+          "team": "두산",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "김민석",
+              "rating": 68.6,
+              "gray": false
+            },
+            {
+              "name": "양의지",
+              "rating": 65.1,
+              "gray": false
+            },
+            {
+              "name": "세베리노",
+              "rating": 64.1,
+              "gray": false
+            },
+            {
+              "name": "조수행",
+              "rating": 63.9,
+              "gray": false
+            },
+            {
+              "name": "박준순",
+              "rating": 61,
+              "gray": false
+            },
+            {
+              "name": "류승민",
+              "rating": 57.2,
+              "gray": false
+            },
+            {
+              "name": "박찬호",
+              "rating": 56.5,
+              "gray": false
+            },
+            {
+              "name": "강승호",
+              "rating": 56.1,
+              "gray": false
+            },
+            {
+              "name": "임종성",
+              "rating": 55.9,
+              "gray": false
+            },
+            {
+              "name": "안재석",
+              "rating": 55.4,
+              "gray": false
+            },
+            {
+              "name": "박지훈",
+              "rating": 51.3,
+              "gray": false
+            },
+            {
+              "name": "오명진",
+              "rating": 50.5,
+              "gray": false
+            },
+            {
+              "name": "김기연",
+              "rating": 50.3,
+              "gray": true
+            },
+            {
+              "name": "정수빈",
+              "rating": 49,
+              "gray": false
+            },
+            {
+              "name": "류현준",
+              "rating": 48.3,
+              "gray": false
+            },
+            {
+              "name": "김대한",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "손아섭",
+              "rating": 45.5,
+              "gray": false
+            },
+            {
+              "name": "이유찬",
+              "rating": 41.2,
+              "gray": false
+            },
+            {
+              "name": "양석환",
+              "rating": 41.2,
+              "gray": false
+            },
+            {
+              "name": "윤준호",
+              "rating": 39.6,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "곽빈",
+              "rating": 84.4,
+              "gray": false
+            },
+            {
+              "name": "벤자민",
+              "rating": 75.9,
+              "gray": false
+            },
+            {
+              "name": "김정우",
+              "rating": 73,
+              "gray": false
+            },
+            {
+              "name": "이영하",
+              "rating": 72,
+              "gray": false
+            },
+            {
+              "name": "윤태호",
+              "rating": 71.1,
+              "gray": false
+            },
+            {
+              "name": "김택연",
+              "rating": 70.3,
+              "gray": false
+            },
+            {
+              "name": "김영현",
+              "rating": 66.8,
+              "gray": false
+            },
+            {
+              "name": "최민석",
+              "rating": 63.5,
+              "gray": false
+            },
+            {
+              "name": "잭로그",
+              "rating": 62.1,
+              "gray": false
+            },
+            {
+              "name": "박신지",
+              "rating": 61.4,
+              "gray": false
+            },
+            {
+              "name": "타카다",
+              "rating": 60.3,
+              "gray": false
+            },
+            {
+              "name": "이용찬",
+              "rating": 53.9,
+              "gray": false
+            },
+            {
+              "name": "최승용",
+              "rating": 53.4,
+              "gray": false
+            },
+            {
+              "name": "박치국",
+              "rating": 53,
+              "gray": false
+            },
+            {
+              "name": "김한중",
+              "rating": 50,
+              "gray": false
+            },
+            {
+              "name": "서준오",
+              "rating": 47.9,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 61,
+            "pitcher": 71
+          }
+        },
+        {
+          "team": "KT",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "안현민",
+              "rating": 81,
+              "gray": false
+            },
+            {
+              "name": "힐리어드",
+              "rating": 75.3,
+              "gray": false
+            },
+            {
+              "name": "유준규",
+              "rating": 70.7,
+              "gray": false
+            },
+            {
+              "name": "최원준",
+              "rating": 70.7,
+              "gray": false
+            },
+            {
+              "name": "장진혁",
+              "rating": 67.2,
+              "gray": false
+            },
+            {
+              "name": "허경민",
+              "rating": 61.4,
+              "gray": false
+            },
+            {
+              "name": "류현인",
+              "rating": 58.8,
+              "gray": false
+            },
+            {
+              "name": "이정훈",
+              "rating": 58.3,
+              "gray": false
+            },
+            {
+              "name": "김민혁",
+              "rating": 56.2,
+              "gray": false
+            },
+            {
+              "name": "오윤석",
+              "rating": 56.1,
+              "gray": false
+            },
+            {
+              "name": "김현수",
+              "rating": 56.1,
+              "gray": false
+            },
+            {
+              "name": "손민석",
+              "rating": 54.1,
+              "gray": false
+            },
+            {
+              "name": "김상수",
+              "rating": 52.5,
+              "gray": false
+            },
+            {
+              "name": "권동진",
+              "rating": 51.9,
+              "gray": false
+            },
+            {
+              "name": "조대현",
+              "rating": 48.7,
+              "gray": true
+            },
+            {
+              "name": "장준원",
+              "rating": 47.1,
+              "gray": false
+            },
+            {
+              "name": "강현우",
+              "rating": 45.6,
+              "gray": true
+            },
+            {
+              "name": "배정대",
+              "rating": 38.9,
+              "gray": false
+            },
+            {
+              "name": "한승택",
+              "rating": 36.2,
+              "gray": false
+            },
+            {
+              "name": "문상철",
+              "rating": 34.1,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "김정운",
+              "rating": 75.6,
+              "gray": false
+            },
+            {
+              "name": "대니엘",
+              "rating": 72.3,
+              "gray": false
+            },
+            {
+              "name": "고영표",
+              "rating": 72,
+              "gray": false
+            },
+            {
+              "name": "소형준",
+              "rating": 67.9,
+              "gray": false
+            },
+            {
+              "name": "손동현",
+              "rating": 67.6,
+              "gray": false
+            },
+            {
+              "name": "박영현",
+              "rating": 62.8,
+              "gray": false
+            },
+            {
+              "name": "우규민",
+              "rating": 62.3,
+              "gray": false
+            },
+            {
+              "name": "로건",
+              "rating": 61.2,
+              "gray": false
+            },
+            {
+              "name": "배제성",
+              "rating": 60.5,
+              "gray": false
+            },
+            {
+              "name": "전용주",
+              "rating": 59.7,
+              "gray": false
+            },
+            {
+              "name": "주권",
+              "rating": 57.8,
+              "gray": false
+            },
+            {
+              "name": "이정현",
+              "rating": 54,
+              "gray": false
+            },
+            {
+              "name": "스기모토",
+              "rating": 53.5,
+              "gray": false
+            },
+            {
+              "name": "문용익",
+              "rating": 52.9,
+              "gray": false
+            },
+            {
+              "name": "오원석",
+              "rating": 51.9,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 66.6,
+            "pitcher": 66.9
+          }
+        },
+        {
+          "team": "SSG",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "에레디아",
+              "rating": 68.9,
+              "gray": false
+            },
+            {
+              "name": "박성한",
+              "rating": 68.5,
+              "gray": false
+            },
+            {
+              "name": "고명준",
+              "rating": 62.6,
+              "gray": true
+            },
+            {
+              "name": "홍대인",
+              "rating": 60.3,
+              "gray": true
+            },
+            {
+              "name": "전의산",
+              "rating": 59.9,
+              "gray": false
+            },
+            {
+              "name": "김재환",
+              "rating": 59,
+              "gray": false
+            },
+            {
+              "name": "오시후",
+              "rating": 59,
+              "gray": true
+            },
+            {
+              "name": "조형우",
+              "rating": 56.6,
+              "gray": false
+            },
+            {
+              "name": "정준재",
+              "rating": 51.1,
+              "gray": false
+            },
+            {
+              "name": "안재연",
+              "rating": 48.7,
+              "gray": false
+            },
+            {
+              "name": "마드리스",
+              "rating": 48.5,
+              "gray": true
+            },
+            {
+              "name": "오태곤",
+              "rating": 48.4,
+              "gray": false
+            },
+            {
+              "name": "한유섬",
+              "rating": 48.2,
+              "gray": false
+            },
+            {
+              "name": "김성현",
+              "rating": 47.6,
+              "gray": true
+            },
+            {
+              "name": "임근우",
+              "rating": 47.3,
+              "gray": false
+            },
+            {
+              "name": "최지훈",
+              "rating": 47.2,
+              "gray": false
+            },
+            {
+              "name": "김정민",
+              "rating": 44.1,
+              "gray": false
+            },
+            {
+              "name": "안상현",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "이지영",
+              "rating": 41.6,
+              "gray": false
+            },
+            {
+              "name": "채현우",
+              "rating": 37.4,
+              "gray": true
+            },
+            {
+              "name": "김요셉",
+              "rating": 34.1,
+              "gray": true
+            },
+            {
+              "name": "신범수",
+              "rating": 26.6,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "아빌라",
+              "rating": 86,
+              "gray": false
+            },
+            {
+              "name": "김민준",
+              "rating": 70.8,
+              "gray": false
+            },
+            {
+              "name": "조병현",
+              "rating": 70.6,
+              "gray": false
+            },
+            {
+              "name": "김민",
+              "rating": 66,
+              "gray": false
+            },
+            {
+              "name": "이건욱",
+              "rating": 64.8,
+              "gray": false
+            },
+            {
+              "name": "이로운",
+              "rating": 62.3,
+              "gray": false
+            },
+            {
+              "name": "한두솔",
+              "rating": 58.4,
+              "gray": false
+            },
+            {
+              "name": "문승원",
+              "rating": 56.8,
+              "gray": false
+            },
+            {
+              "name": "최민준",
+              "rating": 56.5,
+              "gray": false
+            },
+            {
+              "name": "전영준",
+              "rating": 54,
+              "gray": false
+            },
+            {
+              "name": "김건우",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "박시후",
+              "rating": 43.5,
+              "gray": false
+            },
+            {
+              "name": "김도현",
+              "rating": 42.7,
+              "gray": false
+            },
+            {
+              "name": "타케다",
+              "rating": 41,
+              "gray": false
+            },
+            {
+              "name": "윤태현",
+              "rating": 36.6,
+              "gray": true
+            }
+          ],
+          "averages": {
+            "batter": 56.6,
+            "pitcher": 65.8
+          }
+        },
+        {
+          "team": "롯데",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "한동희",
+              "rating": 73.7,
+              "gray": false
+            },
+            {
+              "name": "김동현",
+              "rating": 72.4,
+              "gray": false
+            },
+            {
+              "name": "레이예스",
+              "rating": 71.7,
+              "gray": false
+            },
+            {
+              "name": "고승민",
+              "rating": 63.4,
+              "gray": false
+            },
+            {
+              "name": "나승엽",
+              "rating": 62,
+              "gray": false
+            },
+            {
+              "name": "황성빈",
+              "rating": 59.2,
+              "gray": false
+            },
+            {
+              "name": "정대선",
+              "rating": 57.2,
+              "gray": false
+            },
+            {
+              "name": "김동혁",
+              "rating": 56,
+              "gray": true
+            },
+            {
+              "name": "전민재",
+              "rating": 55.7,
+              "gray": false
+            },
+            {
+              "name": "손성빈",
+              "rating": 55,
+              "gray": false
+            },
+            {
+              "name": "박건우",
+              "rating": 52.7,
+              "gray": false
+            },
+            {
+              "name": "김세민",
+              "rating": 47.9,
+              "gray": true
+            },
+            {
+              "name": "전준우",
+              "rating": 47.1,
+              "gray": false
+            },
+            {
+              "name": "유강남",
+              "rating": 46.9,
+              "gray": false
+            },
+            {
+              "name": "이호준",
+              "rating": 44.9,
+              "gray": false
+            },
+            {
+              "name": "박재엽",
+              "rating": 43.5,
+              "gray": true
+            },
+            {
+              "name": "장두성",
+              "rating": 43.3,
+              "gray": false
+            },
+            {
+              "name": "손호영",
+              "rating": 43.1,
+              "gray": false
+            },
+            {
+              "name": "박승욱",
+              "rating": 40.3,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "박정민",
+              "rating": 61.2,
+              "gray": false
+            },
+            {
+              "name": "현도훈",
+              "rating": 61,
+              "gray": false
+            },
+            {
+              "name": "이준서",
+              "rating": 58.8,
+              "gray": true
+            },
+            {
+              "name": "비슬리",
+              "rating": 56.9,
+              "gray": false
+            },
+            {
+              "name": "김원중",
+              "rating": 56.8,
+              "gray": false
+            },
+            {
+              "name": "최준용",
+              "rating": 55.3,
+              "gray": false
+            },
+            {
+              "name": "로드리게스",
+              "rating": 55,
+              "gray": false
+            },
+            {
+              "name": "이진하",
+              "rating": 54.8,
+              "gray": false
+            },
+            {
+              "name": "나균안",
+              "rating": 53.6,
+              "gray": false
+            },
+            {
+              "name": "박세웅",
+              "rating": 52.9,
+              "gray": false
+            },
+            {
+              "name": "이이무라",
+              "rating": 52.9,
+              "gray": false
+            },
+            {
+              "name": "김기준",
+              "rating": 51.4,
+              "gray": false
+            },
+            {
+              "name": "이승헌",
+              "rating": 49,
+              "gray": false
+            },
+            {
+              "name": "구승민",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "이영재",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "김태균",
+              "rating": 46.1,
+              "gray": false
+            },
+            {
+              "name": "김강현",
+              "rating": 43.4,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 63.4,
+            "pitcher": 56.4
+          }
+        },
+        {
+          "team": "한화",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "페라자",
+              "rating": 75.5,
+              "gray": false
+            },
+            {
+              "name": "노시환",
+              "rating": 73.5,
+              "gray": false
+            },
+            {
+              "name": "문현빈",
+              "rating": 71.4,
+              "gray": false
+            },
+            {
+              "name": "장규현",
+              "rating": 70.9,
+              "gray": false
+            },
+            {
+              "name": "허인서",
+              "rating": 68.4,
+              "gray": false
+            },
+            {
+              "name": "유민",
+              "rating": 66.5,
+              "gray": false
+            },
+            {
+              "name": "강백호",
+              "rating": 64.5,
+              "gray": false
+            },
+            {
+              "name": "배승수",
+              "rating": 62.8,
+              "gray": false
+            },
+            {
+              "name": "최인호",
+              "rating": 62,
+              "gray": false
+            },
+            {
+              "name": "박정현",
+              "rating": 61,
+              "gray": false
+            },
+            {
+              "name": "김태연",
+              "rating": 57.7,
+              "gray": false
+            },
+            {
+              "name": "심우준",
+              "rating": 57.1,
+              "gray": false
+            },
+            {
+              "name": "최유빈",
+              "rating": 51.7,
+              "gray": false
+            },
+            {
+              "name": "황영묵",
+              "rating": 46.3,
+              "gray": false
+            },
+            {
+              "name": "이도윤",
+              "rating": 45.4,
+              "gray": false
+            },
+            {
+              "name": "한지윤",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "최재훈",
+              "rating": 36.2,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "화이트",
+              "rating": 66.6,
+              "gray": false
+            },
+            {
+              "name": "류현진",
+              "rating": 66.6,
+              "gray": false
+            },
+            {
+              "name": "강재민",
+              "rating": 60,
+              "gray": false
+            },
+            {
+              "name": "권민규",
+              "rating": 58.5,
+              "gray": false
+            },
+            {
+              "name": "왕옌청",
+              "rating": 54.5,
+              "gray": false
+            },
+            {
+              "name": "이상규",
+              "rating": 53.5,
+              "gray": false
+            },
+            {
+              "name": "장유호",
+              "rating": 53.1,
+              "gray": false
+            },
+            {
+              "name": "황준서",
+              "rating": 52.2,
+              "gray": false
+            },
+            {
+              "name": "조동욱",
+              "rating": 51.9,
+              "gray": false
+            },
+            {
+              "name": "박준영",
+              "rating": 49.5,
+              "gray": true
+            },
+            {
+              "name": "이민우",
+              "rating": 46.8,
+              "gray": false
+            },
+            {
+              "name": "주현상",
+              "rating": 45.3,
+              "gray": false
+            },
+            {
+              "name": "강건우",
+              "rating": 45.1,
+              "gray": false
+            },
+            {
+              "name": "김서현",
+              "rating": 44.1,
+              "gray": false
+            },
+            {
+              "name": "짐머맨",
+              "rating": 39.5,
+              "gray": false
+            },
+            {
+              "name": "정우주",
+              "rating": 37.2,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 68.4,
+            "pitcher": 57.4
+          }
+        },
+        {
+          "team": "NC",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "한재환",
+              "rating": 74.5,
+              "gray": false
+            },
+            {
+              "name": "김휘집",
+              "rating": 69.2,
+              "gray": false
+            },
+            {
+              "name": "박민우",
+              "rating": 68.5,
+              "gray": false
+            },
+            {
+              "name": "안중열",
+              "rating": 66.3,
+              "gray": false
+            },
+            {
+              "name": "박건우",
+              "rating": 64,
+              "gray": false
+            },
+            {
+              "name": "김주원",
+              "rating": 61.3,
+              "gray": false
+            },
+            {
+              "name": "천재환",
+              "rating": 60.9,
+              "gray": false
+            },
+            {
+              "name": "김형준",
+              "rating": 59.7,
+              "gray": false
+            },
+            {
+              "name": "권희동",
+              "rating": 58.3,
+              "gray": false
+            },
+            {
+              "name": "블레인",
+              "rating": 58.1,
+              "gray": false
+            },
+            {
+              "name": "오태양",
+              "rating": 53.4,
+              "gray": false
+            },
+            {
+              "name": "서호철",
+              "rating": 53.3,
+              "gray": false
+            },
+            {
+              "name": "최정원",
+              "rating": 51.4,
+              "gray": false
+            },
+            {
+              "name": "홍종표",
+              "rating": 51,
+              "gray": false
+            },
+            {
+              "name": "이우성",
+              "rating": 50,
+              "gray": false
+            },
+            {
+              "name": "박시원",
+              "rating": 47.4,
+              "gray": false
+            },
+            {
+              "name": "김한별",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "이희성",
+              "rating": 31.3,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "라일리",
+              "rating": 82.4,
+              "gray": false
+            },
+            {
+              "name": "신영우",
+              "rating": 72.6,
+              "gray": false
+            },
+            {
+              "name": "이용준",
+              "rating": 68.1,
+              "gray": false
+            },
+            {
+              "name": "테일러",
+              "rating": 61.6,
+              "gray": false
+            },
+            {
+              "name": "전사민",
+              "rating": 60.2,
+              "gray": false
+            },
+            {
+              "name": "이준혁",
+              "rating": 59.3,
+              "gray": false
+            },
+            {
+              "name": "김태훈",
+              "rating": 58.3,
+              "gray": true
+            },
+            {
+              "name": "송명기",
+              "rating": 57.4,
+              "gray": false
+            },
+            {
+              "name": "김태경",
+              "rating": 53.9,
+              "gray": false
+            },
+            {
+              "name": "구창모",
+              "rating": 53.5,
+              "gray": false
+            },
+            {
+              "name": "배재환",
+              "rating": 52.5,
+              "gray": false
+            },
+            {
+              "name": "손주환",
+              "rating": 49.8,
+              "gray": false
+            },
+            {
+              "name": "임지민",
+              "rating": 49.7,
+              "gray": false
+            },
+            {
+              "name": "토다",
+              "rating": 44.7,
+              "gray": false
+            },
+            {
+              "name": "김진호",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "이재학",
+              "rating": 43.2,
+              "gray": true
+            },
+            {
+              "name": "류진욱",
+              "rating": 38.2,
+              "gray": false
+            }
+          ],
+          "averages": {
+            "batter": 64.7,
+            "pitcher": 63.2
+          }
+        },
+        {
+          "team": "키움",
+          "league": "1군",
+          "batters": [
+            {
+              "name": "서건창",
+              "rating": 66.8,
+              "gray": false
+            },
+            {
+              "name": "데이비슨",
+              "rating": 65.6,
+              "gray": false
+            },
+            {
+              "name": "추재현",
+              "rating": 63.5,
+              "gray": false
+            },
+            {
+              "name": "히우라",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "김건희",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "전태현",
+              "rating": 55.2,
+              "gray": false
+            },
+            {
+              "name": "안치홍",
+              "rating": 55.1,
+              "gray": false
+            },
+            {
+              "name": "김웅빈",
+              "rating": 53.1,
+              "gray": false
+            },
+            {
+              "name": "이형종",
+              "rating": 52.7,
+              "gray": false
+            },
+            {
+              "name": "박찬혁",
+              "rating": 52.5,
+              "gray": false
+            },
+            {
+              "name": "최재영",
+              "rating": 51.4,
+              "gray": false
+            },
+            {
+              "name": "임병욱",
+              "rating": 49.9,
+              "gray": false
+            },
+            {
+              "name": "김동헌",
+              "rating": 49.8,
+              "gray": false
+            },
+            {
+              "name": "염승원",
+              "rating": 48.7,
+              "gray": false
+            },
+            {
+              "name": "여동욱",
+              "rating": 48.2,
+              "gray": false
+            },
+            {
+              "name": "권혁빈",
+              "rating": 45.1,
+              "gray": false
+            },
+            {
+              "name": "박채울",
+              "rating": 43.5,
+              "gray": false
+            },
+            {
+              "name": "박주홍",
+              "rating": 42.8,
+              "gray": false
+            },
+            {
+              "name": "김재현",
+              "rating": 42.2,
+              "gray": true
+            },
+            {
+              "name": "어준서",
+              "rating": 42.1,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "알칸타라",
+              "rating": 70.8,
+              "gray": false
+            },
+            {
+              "name": "안우진",
+              "rating": 64.9,
+              "gray": false
+            },
+            {
+              "name": "하영민",
+              "rating": 63.3,
+              "gray": false
+            },
+            {
+              "name": "전준표",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "이강준",
+              "rating": 54.7,
+              "gray": true
+            },
+            {
+              "name": "박준현",
+              "rating": 53.9,
+              "gray": false
+            },
+            {
+              "name": "윤석원",
+              "rating": 51.6,
+              "gray": true
+            },
+            {
+              "name": "박진형",
+              "rating": 50.3,
+              "gray": false
+            },
+            {
+              "name": "박지성",
+              "rating": 50.1,
+              "gray": false
+            },
+            {
+              "name": "김선기",
+              "rating": 49.2,
+              "gray": false
+            },
+            {
+              "name": "조영건",
+              "rating": 49.2,
+              "gray": false
+            },
+            {
+              "name": "원종현",
+              "rating": 48,
+              "gray": false
+            },
+            {
+              "name": "정다훈",
+              "rating": 43.5,
+              "gray": false
+            },
+            {
+              "name": "김연주",
+              "rating": 43.5,
+              "gray": false
+            },
+            {
+              "name": "임진묵",
+              "rating": 34.8,
+              "gray": true
+            }
+          ],
+          "averages": {
+            "batter": 58.1,
+            "pitcher": 56.4
+          }
+        }
+      ]
+    },
+    {
+      "league": "2군",
+      "teams": [
+        {
+          "team": "KIA",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "황대인",
+              "rating": 57.7,
+              "gray": false
+            },
+            {
+              "name": "신명승",
+              "rating": 54.8,
+              "gray": false
+            },
+            {
+              "name": "송호정",
+              "rating": 54.2,
+              "gray": true
+            },
+            {
+              "name": "한승연",
+              "rating": 51.9,
+              "gray": false
+            },
+            {
+              "name": "오선우",
+              "rating": 50.2,
+              "gray": false
+            },
+            {
+              "name": "곽동효",
+              "rating": 47.7,
+              "gray": false
+            },
+            {
+              "name": "이영재",
+              "rating": 47.1,
+              "gray": false
+            },
+            {
+              "name": "한준희",
+              "rating": 42.3,
+              "gray": false
+            },
+            {
+              "name": "박헌",
+              "rating": 42,
+              "gray": false
+            },
+            {
+              "name": "황석민",
+              "rating": 42,
+              "gray": true
+            },
+            {
+              "name": "윤도현",
+              "rating": 39.5,
+              "gray": false
+            },
+            {
+              "name": "박종혁",
+              "rating": 39.4,
+              "gray": false
+            },
+            {
+              "name": "최정용",
+              "rating": 39.1,
+              "gray": false
+            },
+            {
+              "name": "권다결",
+              "rating": 35.4,
+              "gray": true
+            },
+            {
+              "name": "김민수",
+              "rating": 28.7,
+              "gray": true
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "김현수",
+              "rating": 73.1,
+              "gray": true
+            },
+            {
+              "name": "김건국",
+              "rating": 54,
+              "gray": false
+            },
+            {
+              "name": "김정엽",
+              "rating": 50.7,
+              "gray": true
+            },
+            {
+              "name": "이호진",
+              "rating": 46.2,
+              "gray": false
+            },
+            {
+              "name": "최유찬",
+              "rating": 45.2,
+              "gray": false
+            },
+            {
+              "name": "강이준",
+              "rating": 44.5,
+              "gray": true
+            },
+            {
+              "name": "윤중현",
+              "rating": 43.1,
+              "gray": false
+            },
+            {
+              "name": "조건호",
+              "rating": 42.2,
+              "gray": false
+            },
+            {
+              "name": "김시훈",
+              "rating": 40.9,
+              "gray": false
+            },
+            {
+              "name": "최지민",
+              "rating": 38.6,
+              "gray": false
+            },
+            {
+              "name": "이성원",
+              "rating": 35.5,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "삼성",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "이한민",
+              "rating": 60.8,
+              "gray": false
+            },
+            {
+              "name": "심재훈",
+              "rating": 53.2,
+              "gray": false
+            },
+            {
+              "name": "이서준",
+              "rating": 47.7,
+              "gray": false
+            },
+            {
+              "name": "김헌곤",
+              "rating": 47.4,
+              "gray": false
+            },
+            {
+              "name": "김재혁",
+              "rating": 47.3,
+              "gray": false
+            },
+            {
+              "name": "강민성",
+              "rating": 45.5,
+              "gray": true
+            },
+            {
+              "name": "강준서",
+              "rating": 44,
+              "gray": false
+            },
+            {
+              "name": "안민성",
+              "rating": 44,
+              "gray": true
+            },
+            {
+              "name": "김재상",
+              "rating": 43.7,
+              "gray": false
+            },
+            {
+              "name": "차승준",
+              "rating": 42.5,
+              "gray": false
+            },
+            {
+              "name": "박장민",
+              "rating": 42.1,
+              "gray": true
+            },
+            {
+              "name": "조세익",
+              "rating": 41.2,
+              "gray": true
+            },
+            {
+              "name": "김상준",
+              "rating": 39.9,
+              "gray": false
+            },
+            {
+              "name": "이해승",
+              "rating": 36.9,
+              "gray": false
+            },
+            {
+              "name": "장승현",
+              "rating": 34.2,
+              "gray": true
+            },
+            {
+              "name": "이성규",
+              "rating": 33.5,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "홍승원",
+              "rating": 60.8,
+              "gray": false
+            },
+            {
+              "name": "김백산",
+              "rating": 60,
+              "gray": false
+            },
+            {
+              "name": "신정환",
+              "rating": 53.6,
+              "gray": true
+            },
+            {
+              "name": "홍무원",
+              "rating": 52.9,
+              "gray": true
+            },
+            {
+              "name": "최하늘",
+              "rating": 51.9,
+              "gray": false
+            },
+            {
+              "name": "진희성",
+              "rating": 47,
+              "gray": false
+            },
+            {
+              "name": "우승완",
+              "rating": 43,
+              "gray": false
+            },
+            {
+              "name": "박주혁",
+              "rating": 42,
+              "gray": false
+            },
+            {
+              "name": "박용재",
+              "rating": 39,
+              "gray": true
+            },
+            {
+              "name": "홍원표",
+              "rating": 37.8,
+              "gray": false
+            },
+            {
+              "name": "이서준",
+              "rating": 35.4,
+              "gray": true
+            },
+            {
+              "name": "김성경",
+              "rating": 22.5,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "LG",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "김성진",
+              "rating": 55.8,
+              "gray": false
+            },
+            {
+              "name": "배강",
+              "rating": 54,
+              "gray": true
+            },
+            {
+              "name": "강민기",
+              "rating": 53.2,
+              "gray": true
+            },
+            {
+              "name": "전경원",
+              "rating": 52.5,
+              "gray": false
+            },
+            {
+              "name": "김주성",
+              "rating": 50.3,
+              "gray": false
+            },
+            {
+              "name": "김정율",
+              "rating": 50.2,
+              "gray": true
+            },
+            {
+              "name": "함창건",
+              "rating": 49.5,
+              "gray": false
+            },
+            {
+              "name": "곽민호",
+              "rating": 49.1,
+              "gray": false
+            },
+            {
+              "name": "김민수",
+              "rating": 48.9,
+              "gray": true
+            },
+            {
+              "name": "최명경",
+              "rating": 48.4,
+              "gray": true
+            },
+            {
+              "name": "이지백",
+              "rating": 44.6,
+              "gray": true
+            },
+            {
+              "name": "이준서",
+              "rating": 43.8,
+              "gray": true
+            },
+            {
+              "name": "박현우",
+              "rating": 40.3,
+              "gray": true
+            },
+            {
+              "name": "추세현",
+              "rating": 39.5,
+              "gray": false
+            },
+            {
+              "name": "송대현",
+              "rating": 25.5,
+              "gray": true
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "장현식",
+              "rating": 59.3,
+              "gray": false
+            },
+            {
+              "name": "양우진",
+              "rating": 57.4,
+              "gray": true
+            },
+            {
+              "name": "김강률",
+              "rating": 55.8,
+              "gray": true
+            },
+            {
+              "name": "함덕주",
+              "rating": 54.6,
+              "gray": false
+            },
+            {
+              "name": "박준성",
+              "rating": 49.4,
+              "gray": false
+            },
+            {
+              "name": "진우영",
+              "rating": 49,
+              "gray": false
+            },
+            {
+              "name": "이종준",
+              "rating": 48.8,
+              "gray": false
+            },
+            {
+              "name": "김동현",
+              "rating": 48.2,
+              "gray": true
+            },
+            {
+              "name": "허준혁",
+              "rating": 44.7,
+              "gray": false
+            },
+            {
+              "name": "조건희",
+              "rating": 44.2,
+              "gray": false
+            },
+            {
+              "name": "권우준",
+              "rating": 40.2,
+              "gray": false
+            },
+            {
+              "name": "오승윤",
+              "rating": 38.2,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "두산",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "천현재",
+              "rating": 67.5,
+              "gray": true
+            },
+            {
+              "name": "임서준",
+              "rating": 63,
+              "gray": true
+            },
+            {
+              "name": "박성재",
+              "rating": 59.9,
+              "gray": false
+            },
+            {
+              "name": "이희성",
+              "rating": 56.6,
+              "gray": true
+            },
+            {
+              "name": "전다민",
+              "rating": 56,
+              "gray": false
+            },
+            {
+              "name": "신민철",
+              "rating": 55.9,
+              "gray": false
+            },
+            {
+              "name": "심건보",
+              "rating": 55.1,
+              "gray": false
+            },
+            {
+              "name": "김인태",
+              "rating": 52.8,
+              "gray": true
+            },
+            {
+              "name": "엄지민",
+              "rating": 49.1,
+              "gray": true
+            },
+            {
+              "name": "장규빈",
+              "rating": 44.2,
+              "gray": false
+            },
+            {
+              "name": "김준상",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "김민혁",
+              "rating": 43.4,
+              "gray": false
+            },
+            {
+              "name": "강태완",
+              "rating": 42.5,
+              "gray": true
+            },
+            {
+              "name": "김문수",
+              "rating": 42.4,
+              "gray": false
+            },
+            {
+              "name": "남태웅",
+              "rating": 36.7,
+              "gray": true
+            },
+            {
+              "name": "김동준",
+              "rating": 33.2,
+              "gray": true
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "정성헌",
+              "rating": 56.2,
+              "gray": true
+            },
+            {
+              "name": "이병헌",
+              "rating": 48.8,
+              "gray": false
+            },
+            {
+              "name": "김호준",
+              "rating": 43.5,
+              "gray": false
+            },
+            {
+              "name": "최우인",
+              "rating": 43,
+              "gray": false
+            },
+            {
+              "name": "최주형",
+              "rating": 40.6,
+              "gray": false
+            },
+            {
+              "name": "박강민",
+              "rating": 40.1,
+              "gray": false
+            },
+            {
+              "name": "임종훈",
+              "rating": 30.1,
+              "gray": true
+            },
+            {
+              "name": "안민겸",
+              "rating": 22.9,
+              "gray": false
+            }
+          ]
+        },
+        {
+          "team": "KT",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "이재원",
+              "rating": 62.3,
+              "gray": false
+            },
+            {
+              "name": "안치영",
+              "rating": 61.7,
+              "gray": true
+            },
+            {
+              "name": "강민성",
+              "rating": 59.6,
+              "gray": false
+            },
+            {
+              "name": "김민석",
+              "rating": 56.2,
+              "gray": false
+            },
+            {
+              "name": "정영웅",
+              "rating": 56.1,
+              "gray": true
+            },
+            {
+              "name": "박성준",
+              "rating": 52.9,
+              "gray": true
+            },
+            {
+              "name": "이정범",
+              "rating": 51.6,
+              "gray": false
+            },
+            {
+              "name": "정준영",
+              "rating": 50.7,
+              "gray": false
+            },
+            {
+              "name": "김건휘",
+              "rating": 45,
+              "gray": false
+            },
+            {
+              "name": "김경환",
+              "rating": 41.9,
+              "gray": false
+            },
+            {
+              "name": "이용현",
+              "rating": 39.4,
+              "gray": false
+            },
+            {
+              "name": "이정환",
+              "rating": 35.7,
+              "gray": true
+            },
+            {
+              "name": "이강민",
+              "rating": 22.1,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "한차현",
+              "rating": 65.6,
+              "gray": false
+            },
+            {
+              "name": "김민수",
+              "rating": 62.9,
+              "gray": false
+            },
+            {
+              "name": "장민호",
+              "rating": 57.7,
+              "gray": false
+            },
+            {
+              "name": "김태오",
+              "rating": 53.6,
+              "gray": true
+            },
+            {
+              "name": "정정우",
+              "rating": 48.2,
+              "gray": true
+            },
+            {
+              "name": "이상동",
+              "rating": 48.1,
+              "gray": false
+            },
+            {
+              "name": "이준명",
+              "rating": 44.5,
+              "gray": true
+            },
+            {
+              "name": "이채호",
+              "rating": 40.5,
+              "gray": false
+            },
+            {
+              "name": "김규한",
+              "rating": 38.4,
+              "gray": true
+            },
+            {
+              "name": "권효준",
+              "rating": 35.8,
+              "gray": true
+            },
+            {
+              "name": "김휘연",
+              "rating": 23.9,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "SSG",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "최윤석",
+              "rating": 55.9,
+              "gray": false
+            },
+            {
+              "name": "이원준",
+              "rating": 53.2,
+              "gray": false
+            },
+            {
+              "name": "최준우",
+              "rating": 51.3,
+              "gray": false
+            },
+            {
+              "name": "문상준",
+              "rating": 50.7,
+              "gray": false
+            },
+            {
+              "name": "김민준",
+              "rating": 48.5,
+              "gray": false
+            },
+            {
+              "name": "김민범",
+              "rating": 45.6,
+              "gray": true
+            },
+            {
+              "name": "장재율",
+              "rating": 45.2,
+              "gray": true
+            },
+            {
+              "name": "김창평",
+              "rating": 40.8,
+              "gray": false
+            },
+            {
+              "name": "전준호",
+              "rating": 40,
+              "gray": true
+            },
+            {
+              "name": "박명현",
+              "rating": 35,
+              "gray": false
+            },
+            {
+              "name": "김예준",
+              "rating": 33.6,
+              "gray": true
+            },
+            {
+              "name": "이승민",
+              "rating": 24.6,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "이준기",
+              "rating": 66.7,
+              "gray": false
+            },
+            {
+              "name": "백승건",
+              "rating": 59.1,
+              "gray": false
+            },
+            {
+              "name": "김준모",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "박종훈",
+              "rating": 54.6,
+              "gray": false
+            },
+            {
+              "name": "변건우",
+              "rating": 53.5,
+              "gray": true
+            },
+            {
+              "name": "장지훈",
+              "rating": 50.7,
+              "gray": false
+            },
+            {
+              "name": "신지환",
+              "rating": 49.9,
+              "gray": false
+            },
+            {
+              "name": "조재우",
+              "rating": 48.5,
+              "gray": true
+            },
+            {
+              "name": "이도우",
+              "rating": 48,
+              "gray": false
+            },
+            {
+              "name": "신상연",
+              "rating": 41.2,
+              "gray": true
+            },
+            {
+              "name": "김현재",
+              "rating": 38,
+              "gray": false
+            },
+            {
+              "name": "이주형",
+              "rating": 35.8,
+              "gray": true
+            },
+            {
+              "name": "류현곤",
+              "rating": 31.3,
+              "gray": true
+            },
+            {
+              "name": "김택형",
+              "rating": 29.7,
+              "gray": false
+            }
+          ]
+        },
+        {
+          "team": "롯데",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "하준서",
+              "rating": 66.3,
+              "gray": true
+            },
+            {
+              "name": "이선우",
+              "rating": 64.8,
+              "gray": true
+            },
+            {
+              "name": "정문혁",
+              "rating": 62.8,
+              "gray": true
+            },
+            {
+              "name": "조민영",
+              "rating": 62.1,
+              "gray": false
+            },
+            {
+              "name": "한태양",
+              "rating": 57.7,
+              "gray": false
+            },
+            {
+              "name": "이서준",
+              "rating": 56.9,
+              "gray": true
+            },
+            {
+              "name": "이정민",
+              "rating": 56.5,
+              "gray": true
+            },
+            {
+              "name": "홍서연",
+              "rating": 52.7,
+              "gray": false
+            },
+            {
+              "name": "유제모",
+              "rating": 51.6,
+              "gray": true
+            },
+            {
+              "name": "안우진",
+              "rating": 48.6,
+              "gray": true
+            },
+            {
+              "name": "이지훈",
+              "rating": 43.3,
+              "gray": false
+            },
+            {
+              "name": "박지훈",
+              "rating": 42.7,
+              "gray": true
+            },
+            {
+              "name": "강승구",
+              "rating": 42.6,
+              "gray": true
+            },
+            {
+              "name": "박하늘",
+              "rating": 41.4,
+              "gray": true
+            },
+            {
+              "name": "배인혁",
+              "rating": 36.1,
+              "gray": true
+            },
+            {
+              "name": "소한빈",
+              "rating": 35.4,
+              "gray": true
+            },
+            {
+              "name": "김한홀",
+              "rating": 34.4,
+              "gray": false
+            },
+            {
+              "name": "김호범",
+              "rating": 29.5,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "송재영",
+              "rating": 72.8,
+              "gray": true
+            },
+            {
+              "name": "정현수",
+              "rating": 64.3,
+              "gray": false
+            },
+            {
+              "name": "김현수",
+              "rating": 58.2,
+              "gray": true
+            },
+            {
+              "name": "윤성빈",
+              "rating": 53.8,
+              "gray": true
+            },
+            {
+              "name": "김창훈",
+              "rating": 50.9,
+              "gray": false
+            },
+            {
+              "name": "정우준",
+              "rating": 49.1,
+              "gray": true
+            },
+            {
+              "name": "장세진",
+              "rating": 45.3,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "한화",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "이진영",
+              "rating": 68.5,
+              "gray": false
+            },
+            {
+              "name": "권광민",
+              "rating": 59.9,
+              "gray": false
+            },
+            {
+              "name": "최윤호",
+              "rating": 59.3,
+              "gray": false
+            },
+            {
+              "name": "정민규",
+              "rating": 56.2,
+              "gray": false
+            },
+            {
+              "name": "이원석",
+              "rating": 54.4,
+              "gray": false
+            },
+            {
+              "name": "한경빈",
+              "rating": 53.7,
+              "gray": false
+            },
+            {
+              "name": "이민준",
+              "rating": 53.2,
+              "gray": true
+            },
+            {
+              "name": "이도훈",
+              "rating": 52.8,
+              "gray": false
+            },
+            {
+              "name": "박상언",
+              "rating": 51.6,
+              "gray": false
+            },
+            {
+              "name": "유로결",
+              "rating": 51.1,
+              "gray": false
+            },
+            {
+              "name": "정은원",
+              "rating": 49.4,
+              "gray": false
+            },
+            {
+              "name": "박상목",
+              "rating": 48.3,
+              "gray": true
+            },
+            {
+              "name": "이승현",
+              "rating": 46.3,
+              "gray": true
+            },
+            {
+              "name": "최원준",
+              "rating": 46,
+              "gray": false
+            },
+            {
+              "name": "이지성",
+              "rating": 44.5,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "이기창",
+              "rating": 63,
+              "gray": true
+            },
+            {
+              "name": "승지환",
+              "rating": 57.8,
+              "gray": true
+            },
+            {
+              "name": "김관우",
+              "rating": 52,
+              "gray": false
+            },
+            {
+              "name": "원종혁",
+              "rating": 51.3,
+              "gray": true
+            },
+            {
+              "name": "양수호",
+              "rating": 49,
+              "gray": true
+            },
+            {
+              "name": "김범준",
+              "rating": 48.3,
+              "gray": false
+            },
+            {
+              "name": "엄요셉",
+              "rating": 48.3,
+              "gray": false
+            },
+            {
+              "name": "김종수",
+              "rating": 42.8,
+              "gray": false
+            },
+            {
+              "name": "이교훈",
+              "rating": 42.1,
+              "gray": false
+            },
+            {
+              "name": "박재규",
+              "rating": 41.6,
+              "gray": false
+            },
+            {
+              "name": "정이황",
+              "rating": 38.6,
+              "gray": true
+            },
+            {
+              "name": "하동준",
+              "rating": 37.5,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "NC",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "김범준",
+              "rating": 65.5,
+              "gray": false
+            },
+            {
+              "name": "신재인",
+              "rating": 57.9,
+              "gray": false
+            },
+            {
+              "name": "윤준혁",
+              "rating": 55.7,
+              "gray": false
+            },
+            {
+              "name": "오장한",
+              "rating": 54.9,
+              "gray": false
+            },
+            {
+              "name": "장창훈",
+              "rating": 53.2,
+              "gray": true
+            },
+            {
+              "name": "조효원",
+              "rating": 52.7,
+              "gray": true
+            },
+            {
+              "name": "한석현",
+              "rating": 52.7,
+              "gray": false
+            },
+            {
+              "name": "고준휘",
+              "rating": 52.4,
+              "gray": false
+            },
+            {
+              "name": "이한",
+              "rating": 51.4,
+              "gray": false
+            },
+            {
+              "name": "김건",
+              "rating": 50.6,
+              "gray": false
+            },
+            {
+              "name": "김재민",
+              "rating": 44.3,
+              "gray": true
+            },
+            {
+              "name": "허윤",
+              "rating": 42.8,
+              "gray": false
+            },
+            {
+              "name": "오영수",
+              "rating": 40.6,
+              "gray": false
+            },
+            {
+              "name": "김정호",
+              "rating": 38,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "박동수",
+              "rating": 65.4,
+              "gray": false
+            },
+            {
+              "name": "최요한",
+              "rating": 58.5,
+              "gray": false
+            },
+            {
+              "name": "김재열",
+              "rating": 56.8,
+              "gray": false
+            },
+            {
+              "name": "최우석",
+              "rating": 56.3,
+              "gray": false
+            },
+            {
+              "name": "김준원",
+              "rating": 55.5,
+              "gray": false
+            },
+            {
+              "name": "조민석",
+              "rating": 52.7,
+              "gray": false
+            },
+            {
+              "name": "하준영",
+              "rating": 52.5,
+              "gray": false
+            },
+            {
+              "name": "최성영",
+              "rating": 50.2,
+              "gray": false
+            },
+            {
+              "name": "박지한",
+              "rating": 49.5,
+              "gray": false
+            },
+            {
+              "name": "김요엘",
+              "rating": 49.5,
+              "gray": true
+            },
+            {
+              "name": "전루건",
+              "rating": 49.3,
+              "gray": true
+            },
+            {
+              "name": "이준호",
+              "rating": 43.3,
+              "gray": true
+            },
+            {
+              "name": "김태우",
+              "rating": 41.9,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "키움",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "서유신",
+              "rating": 55.2,
+              "gray": false
+            },
+            {
+              "name": "원성준",
+              "rating": 54.8,
+              "gray": false
+            },
+            {
+              "name": "주성원",
+              "rating": 54.5,
+              "gray": false
+            },
+            {
+              "name": "최주환",
+              "rating": 54.5,
+              "gray": false
+            },
+            {
+              "name": "김병휘",
+              "rating": 53.3,
+              "gray": true
+            },
+            {
+              "name": "이주형",
+              "rating": 51.3,
+              "gray": true
+            },
+            {
+              "name": "심휘윤",
+              "rating": 47.2,
+              "gray": true
+            },
+            {
+              "name": "김지성",
+              "rating": 44.1,
+              "gray": true
+            },
+            {
+              "name": "김태진",
+              "rating": 39.5,
+              "gray": false
+            },
+            {
+              "name": "김시앙",
+              "rating": 39.2,
+              "gray": true
+            },
+            {
+              "name": "유정택",
+              "rating": 36.9,
+              "gray": false
+            },
+            {
+              "name": "양현종",
+              "rating": 31.6,
+              "gray": false
+            },
+            {
+              "name": "오선진",
+              "rating": 30.1,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "김성진",
+              "rating": 64.2,
+              "gray": false
+            },
+            {
+              "name": "최현우",
+              "rating": 55.4,
+              "gray": true
+            },
+            {
+              "name": "김성민",
+              "rating": 54.9,
+              "gray": false
+            },
+            {
+              "name": "손힘찬",
+              "rating": 49.5,
+              "gray": false
+            },
+            {
+              "name": "오석주",
+              "rating": 48.9,
+              "gray": false
+            },
+            {
+              "name": "이준우",
+              "rating": 47,
+              "gray": false
+            },
+            {
+              "name": "정동준",
+              "rating": 45.7,
+              "gray": true
+            },
+            {
+              "name": "이태양",
+              "rating": 44.2,
+              "gray": true
+            },
+            {
+              "name": "이태준",
+              "rating": 43.2,
+              "gray": false
+            },
+            {
+              "name": "정세영",
+              "rating": 35.5,
+              "gray": false
+            },
+            {
+              "name": "김태언",
+              "rating": 30.5,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "상무",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "장재영",
+              "rating": 71.9,
+              "gray": false
+            },
+            {
+              "name": "박한결",
+              "rating": 59.7,
+              "gray": false
+            },
+            {
+              "name": "김성우",
+              "rating": 59.6,
+              "gray": false
+            },
+            {
+              "name": "여동건",
+              "rating": 56.2,
+              "gray": true
+            },
+            {
+              "name": "정현승",
+              "rating": 55.7,
+              "gray": false
+            },
+            {
+              "name": "박지환",
+              "rating": 53.5,
+              "gray": true
+            },
+            {
+              "name": "이율예",
+              "rating": 52.9,
+              "gray": false
+            },
+            {
+              "name": "이승원",
+              "rating": 52,
+              "gray": false
+            },
+            {
+              "name": "고영우",
+              "rating": 51.5,
+              "gray": false
+            },
+            {
+              "name": "박관우",
+              "rating": 50.2,
+              "gray": false
+            },
+            {
+              "name": "신용석",
+              "rating": 49.3,
+              "gray": true
+            },
+            {
+              "name": "이승현",
+              "rating": 46.3,
+              "gray": true
+            },
+            {
+              "name": "강성우",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "김병준",
+              "rating": 43.4,
+              "gray": true
+            },
+            {
+              "name": "이태경",
+              "rating": 39,
+              "gray": false
+            },
+            {
+              "name": "이민재",
+              "rating": 38.3,
+              "gray": true
+            },
+            {
+              "name": "전미르",
+              "rating": 37.3,
+              "gray": true
+            },
+            {
+              "name": "김세훈",
+              "rating": 36.7,
+              "gray": true
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "진승현",
+              "rating": 62.1,
+              "gray": true
+            },
+            {
+              "name": "신용석",
+              "rating": 59,
+              "gray": true
+            },
+            {
+              "name": "정지헌",
+              "rating": 51.9,
+              "gray": false
+            },
+            {
+              "name": "전미르",
+              "rating": 50.8,
+              "gray": true
+            },
+            {
+              "name": "황동재",
+              "rating": 49.4,
+              "gray": false
+            },
+            {
+              "name": "김기중",
+              "rating": 45.4,
+              "gray": false
+            },
+            {
+              "name": "이종민",
+              "rating": 45.2,
+              "gray": false
+            },
+            {
+              "name": "신헌민",
+              "rating": 43.9,
+              "gray": false
+            },
+            {
+              "name": "박성빈",
+              "rating": 38.3,
+              "gray": true
+            },
+            {
+              "name": "여동건",
+              "rating": 34.8,
+              "gray": true
+            }
+          ]
+        },
+        {
+          "team": "울산",
+          "league": "2군",
+          "batters": [
+            {
+              "name": "박제범",
+              "rating": 56.1,
+              "gray": true
+            },
+            {
+              "name": "김서원",
+              "rating": 50.5,
+              "gray": false
+            },
+            {
+              "name": "홀",
+              "rating": 49.3,
+              "gray": false
+            },
+            {
+              "name": "박문순",
+              "rating": 47.9,
+              "gray": false
+            },
+            {
+              "name": "민성우",
+              "rating": 47.6,
+              "gray": true
+            },
+            {
+              "name": "예진원",
+              "rating": 47,
+              "gray": false
+            },
+            {
+              "name": "송현준",
+              "rating": 47,
+              "gray": true
+            },
+            {
+              "name": "노강민",
+              "rating": 45.2,
+              "gray": false
+            },
+            {
+              "name": "하재훈",
+              "rating": 44.5,
+              "gray": false
+            },
+            {
+              "name": "김시완",
+              "rating": 43.7,
+              "gray": false
+            },
+            {
+              "name": "배영빈",
+              "rating": 42.7,
+              "gray": false
+            },
+            {
+              "name": "박재형",
+              "rating": 38.6,
+              "gray": true
+            },
+            {
+              "name": "이민석",
+              "rating": 36.7,
+              "gray": false
+            },
+            {
+              "name": "박민석",
+              "rating": 36.4,
+              "gray": false
+            },
+            {
+              "name": "김성균",
+              "rating": 34.8,
+              "gray": true
+            },
+            {
+              "name": "김수인",
+              "rating": 30.5,
+              "gray": false
+            },
+            {
+              "name": "신준우",
+              "rating": 28.6,
+              "gray": false
+            }
+          ],
+          "pitchers": [
+            {
+              "name": "고바야시",
+              "rating": 65.6,
+              "gray": false
+            },
+            {
+              "name": "조준혁",
+              "rating": 65.5,
+              "gray": true
+            },
+            {
+              "name": "오카다",
+              "rating": 64.5,
+              "gray": false
+            },
+            {
+              "name": "김도규",
+              "rating": 58.2,
+              "gray": false
+            },
+            {
+              "name": "유토",
+              "rating": 55.9,
+              "gray": false
+            },
+            {
+              "name": "하재훈",
+              "rating": 52,
+              "gray": true
+            },
+            {
+              "name": "진현우",
+              "rating": 51.7,
+              "gray": false
+            },
+            {
+              "name": "이승근",
+              "rating": 43.1,
+              "gray": false
+            },
+            {
+              "name": "서영준",
+              "rating": 40.6,
+              "gray": false
+            },
+            {
+              "name": "최시혁",
+              "rating": 40.5,
+              "gray": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
