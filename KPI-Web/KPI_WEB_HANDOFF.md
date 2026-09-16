@@ -87,18 +87,31 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 
 ## 6. 웹페이지 제작 방향
 
-현재는 복잡한 프레임워크를 미리 도입할 필요가 없다고 생각한다.
+현재 웹페이지는 React + Vite 기반이다. GitHub Pages에 올릴 수 있는 정적 빌드 구조를 유지하면서, 로컬 개발에서는 API 서버가 제공하는 JSON 응답으로 SQLite를 읽도록 구성했다. API가 없는 정적 환경에서는 기존 임시 JSON으로 자동 fallback한다.
 
-우선 검토할 기본 구성은 다음과 같다.
+현재 역할은 다음과 같다.
 
-- HTML: 화면 구조
-- CSS: 표와 화면 스타일
-- JavaScript 또는 TypeScript: 데이터 표시와 상호작용
-- 그래프 라이브러리: 시간축 그래프
+- React: 화면 컴포넌트와 UI 상태 관리
+- Vite: 개발 서버와 정적 배포용 빌드
+- CSS: 표·선수 페이지의 시각 디자인
+- `src/data.js`: 임시 JSON과 로컬 API 사이의 데이터 접근 경계
+- `KPI-Backend/api/`: private backend의 `database/kpi.db`에서 선수 프로필·Rating 스냅샷·타석 기록을 읽는 로컬 API
+- `KPI-Backend/database/images/`: KBO ID 파일명으로 저장된 선수 프로필 이미지
+- SVG/React 이벤트: 날짜별 Rating 그래프와 점 hover·focus·click 상호작용
+- `data/sheet_reference.json`: 구단별 표의 선수 항목에 실제 DB `playerId`를 기록해 정적 배포에서도 선수별 링크를 유지
 
-React를 처음부터 붙이는 것은 필수가 아니다. 첫 화면이 구단별 표와 그래프 중심으로 작게 시작한다면, 단일 HTML 기반으로 먼저 결과를 확인해도 된다.
+현재는 `index.html`과 `player.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, `http://127.0.0.1:5050`의 로컬 API를 통해 읽는다. `start-dev.cmd`를 실행하면 Vite와 API를 함께 시작한다.
 
-다만 별도 CSV를 자동으로 읽거나 데이터 파일이 많아지고, 화면이 여러 개로 늘어나면 Vite·TypeScript 같은 개발 환경을 도입하는 방안을 검토한다. 이것은 아직 확정된 기술 선택이 아니다.
+현재 연결 범위:
+
+- `player_rating_snapshots`: 선수별 날짜 Rating 그래프와 표
+- `pa_rating_effects`: 선수별 타석 기록의 Rating before/after/delta
+- `people`, `players`, `external_player_ids`, 로스터 스냅샷: 선수 기본 정보
+- `batting_stat_snapshots`: 데이터가 있는 선수만 타격 통계를 표시
+- `KPI-Backend/database/images`: KBO ID와 파일명을 매칭해 선수 프로필 사진을 표시
+- `team_rating_snapshots`: 아직 데이터가 없어 메인 구단 표는 기존 `sheet_reference.json`을 사용
+
+선수 링크는 이름만으로 연결하지 않는다. 로컬 API의 `/api/players/link-map`에서 역할·구단·리그·Rating을 함께 확인해 `playerId`를 정하고, `npm run enrich:links`로 정적 표 데이터에 반영한다. DB에서 확인되지 않는 선수는 다른 선수 페이지로 잘못 연결하지 않는다.
 
 ## 7. 예상되는 첫 화면 흐름
 
@@ -118,9 +131,8 @@ React를 처음부터 붙이는 것은 필수가 아니다. 첫 화면이 구단
 
 - 구단 표의 정확한 열 구성
 - 구단 Rating의 시간 그래프를 어떤 기준으로 집계할지
-- 선수를 클릭할 수 있게 할지
 - 1군·2군을 한 화면에 함께 보여줄지, 탭으로 나눌지
-- 단일 HTML로 계속 갈지, Vite·TypeScript로 옮길지
+- React 컴포넌트의 세부 화면 구성과 그래프 기능 확장
 - GitHub 저장소와 배포 방식을 언제 도입할지
 - 기존 Google Sheet의 스타일을 어느 정도까지 반영할지
 

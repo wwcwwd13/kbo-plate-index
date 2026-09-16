@@ -22,149 +22,178 @@
             {
               "name": "김도영",
               "rating": 92.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52605:batter"
             },
             {
               "name": "나성범",
               "rating": 72.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62947:batter"
             },
             {
               "name": "카스트로",
               "rating": 71.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56626:batter"
             },
             {
               "name": "박정우",
               "rating": 69.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67609:batter"
             },
             {
               "name": "박재현",
               "rating": 67,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55636:batter"
             },
             {
               "name": "박상준",
               "rating": 60.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52634:batter"
             },
             {
               "name": "김태군",
               "rating": 60.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78122:batter"
             },
             {
               "name": "한준수",
               "rating": 59.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68646:batter"
             },
             {
               "name": "김선빈",
               "rating": 58.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78603:batter"
             },
             {
               "name": "이호연",
               "rating": 58.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68504:batter"
             },
             {
               "name": "김민규",
               "rating": 57.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56637:batter"
             },
             {
               "name": "하주석",
               "rating": 55.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62700:batter"
             },
             {
               "name": "고종욱",
               "rating": 51.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:61353:batter"
             },
             {
               "name": "김호령",
               "rating": 47.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65653:batter"
             },
             {
               "name": "주효상",
               "rating": 44.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:66354:batter"
             },
             {
               "name": "김규성",
               "rating": 40.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:66614:batter"
             },
             {
               "name": "정현창",
               "rating": 37.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55926:batter"
             },
             {
               "name": "변우혁",
               "rating": 35.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69727:batter"
             }
           ],
           "pitchers": [
             {
               "name": "올러",
               "rating": 81.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55633:pitcher"
             },
             {
               "name": "전상현",
               "rating": 73.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66609:pitcher"
             },
             {
               "name": "시라카와",
               "rating": 69.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54843:pitcher"
             },
             {
               "name": "이태양",
               "rating": 63.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:60768:pitcher"
             },
             {
               "name": "성영탁",
               "rating": 63,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54610:pitcher"
             },
             {
               "name": "곽도규",
               "rating": 62.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53609:pitcher"
             },
             {
               "name": "네일",
               "rating": 62,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54640:pitcher"
             },
             {
               "name": "양현종",
               "rating": 61.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:77637:pitcher"
             },
             {
               "name": "조상우",
               "rating": 56.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63342:pitcher"
             },
             {
               "name": "홍건희",
               "rating": 55.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:61643:pitcher"
             },
             {
               "name": "한재승",
               "rating": 55.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51994:pitcher"
             },
             {
               "name": "황동하",
@@ -174,22 +203,26 @@
             {
               "name": "김태형",
               "rating": 50.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55610:pitcher"
             },
             {
               "name": "이의리",
               "rating": 49.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51648:pitcher"
             },
             {
               "name": "정해영",
               "rating": 49.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50662:pitcher"
             },
             {
               "name": "김범수",
               "rating": 39.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65769:pitcher"
             }
           ],
           "averages": {
@@ -204,164 +237,196 @@
             {
               "name": "구자욱",
               "rating": 87.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62404:batter"
             },
             {
               "name": "박승규",
               "rating": 69.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69418:batter"
             },
             {
               "name": "디아즈",
               "rating": 68.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54400:batter"
             },
             {
               "name": "강민호",
               "rating": 67.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:74540:batter"
             },
             {
               "name": "최형우",
               "rating": 67.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:72443:batter"
             },
             {
               "name": "이창용",
               "rating": 66.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51407:batter"
             },
             {
               "name": "김지찬",
               "rating": 66,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50458:batter"
             },
             {
               "name": "류지혁",
               "rating": 60.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62234:batter"
             },
             {
               "name": "김성윤",
               "rating": 60.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67449:batter"
             },
             {
               "name": "김태훈",
               "rating": 60,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65040:batter"
             },
             {
               "name": "전병우",
               "rating": 58.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65586:batter"
             },
             {
               "name": "김현준",
               "rating": 58.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51417:batter"
             },
             {
               "name": "양우현",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69403:batter"
             },
             {
               "name": "김재성",
               "rating": 55.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:65132:batter"
             },
             {
               "name": "이진용",
               "rating": 45.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55417:batter"
             },
             {
               "name": "박계범",
               "rating": 34.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:64468:batter"
             },
             {
               "name": "김영웅",
               "rating": 31.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52430:batter"
             },
             {
               "name": "박세혁",
               "rating": 27.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62244:batter"
             }
           ],
           "pitchers": [
             {
               "name": "페덱",
               "rating": 76.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56459:pitcher"
             },
             {
               "name": "김재윤",
               "rating": 73.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65062:pitcher"
             },
             {
               "name": "김태훈",
               "rating": 68.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62360:pitcher"
             },
             {
               "name": "이승민",
               "rating": 65.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50464:pitcher"
             },
             {
               "name": "최원태",
               "rating": 64.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65320:pitcher"
             },
             {
               "name": "원태인",
               "rating": 61.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69446:pitcher"
             },
             {
               "name": "후라도",
               "rating": 61.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53375:pitcher"
             },
             {
               "name": "장찬희",
               "rating": 59.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56460:pitcher"
             },
             {
               "name": "배찬승",
               "rating": 54.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55455:pitcher"
             },
             {
               "name": "보스",
               "rating": 54.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56402:pitcher"
             },
             {
               "name": "임기영",
               "rating": 54.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62754:pitcher"
             },
             {
               "name": "이승현",
               "rating": 49.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:60146:pitcher"
             },
             {
               "name": "양창섭",
               "rating": 46.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68415:pitcher"
             },
             {
               "name": "사토시",
               "rating": 43.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56474:pitcher"
             }
           ],
           "averages": {
@@ -376,37 +441,44 @@
             {
               "name": "오스틴",
               "rating": 96,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53123:batter"
             },
             {
               "name": "송찬의",
               "rating": 71,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68110:batter"
             },
             {
               "name": "문정빈",
               "rating": 60.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52121:batter"
             },
             {
               "name": "천성호",
               "rating": 59.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50054:batter"
             },
             {
               "name": "손용준",
               "rating": 58.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54156:batter"
             },
             {
               "name": "이재원",
               "rating": 58.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68106:batter"
             },
             {
               "name": "박해민",
               "rating": 57.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62415:batter"
             },
             {
               "name": "홍창기",
@@ -416,124 +488,148 @@
             {
               "name": "구본혁",
               "rating": 53.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69100:batter"
             },
             {
               "name": "문보경",
               "rating": 52.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69102:batter"
             },
             {
               "name": "신민재",
               "rating": 52.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65207:batter"
             },
             {
               "name": "박동원",
               "rating": 51.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79365:batter"
             },
             {
               "name": "오지환",
               "rating": 48.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79109:batter"
             },
             {
               "name": "강민균",
               "rating": 48.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53103:batter"
             },
             {
               "name": "이영빈",
               "rating": 41.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51100:batter"
             },
             {
               "name": "이주헌",
               "rating": 40.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52154:batter"
             },
             {
               "name": "김현종",
               "rating": 30.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54166:batter"
             },
             {
               "name": "최원영",
               "rating": 18.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52103:batter"
             }
           ],
           "pitchers": [
             {
               "name": "카라스코",
               "rating": 74.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56103:pitcher"
             },
             {
               "name": "톨허스트",
               "rating": 68.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55130:pitcher"
             },
             {
               "name": "박시원",
               "rating": 64.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55121:pitcher"
             },
             {
               "name": "케네디",
               "rating": 64.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56168:pitcher"
             },
             {
               "name": "임찬규",
               "rating": 64.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:61101:pitcher"
             },
             {
               "name": "손주영",
               "rating": 62.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67143:pitcher"
             },
             {
               "name": "김진수",
               "rating": 59.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51154:pitcher"
             },
             {
               "name": "이우찬",
               "rating": 57.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:61145:pitcher"
             },
             {
               "name": "우강훈",
               "rating": 54.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51526:pitcher"
             },
             {
               "name": "김영우",
               "rating": 52,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55167:pitcher"
             },
             {
               "name": "이상영",
               "rating": 50.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69168:pitcher"
             },
             {
               "name": "고우석",
               "rating": 48.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67119:pitcher"
             },
             {
               "name": "김진성",
               "rating": 45.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:75867:pitcher"
             },
             {
               "name": "이정용",
               "rating": 43.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69134:pitcher"
             }
           ],
           "averages": {
@@ -548,184 +644,220 @@
             {
               "name": "김민석",
               "rating": 68.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53554:batter"
             },
             {
               "name": "양의지",
               "rating": 65.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76232:batter"
             },
             {
               "name": "세베리노",
               "rating": 64.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56236:batter"
             },
             {
               "name": "조수행",
               "rating": 63.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66209:batter"
             },
             {
               "name": "박준순",
               "rating": 61,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55252:batter"
             },
             {
               "name": "류승민",
               "rating": 57.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53404:batter"
             },
             {
               "name": "박찬호",
               "rating": 56.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64646:batter"
             },
             {
               "name": "강승호",
               "rating": 56.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63123:batter"
             },
             {
               "name": "임종성",
               "rating": 55.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54236:batter"
             },
             {
               "name": "안재석",
               "rating": 55.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51203:batter"
             },
             {
               "name": "박지훈",
               "rating": 51.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50204:batter"
             },
             {
               "name": "오명진",
               "rating": 50.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50208:batter"
             },
             {
               "name": "김기연",
               "rating": 50.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:66112:batter"
             },
             {
               "name": "정수빈",
               "rating": 49,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79231:batter"
             },
             {
               "name": "류현준",
               "rating": 48.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54219:batter"
             },
             {
               "name": "김대한",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69238:batter"
             },
             {
               "name": "손아섭",
               "rating": 45.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:77532:batter"
             },
             {
               "name": "이유찬",
               "rating": 41.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67207:batter"
             },
             {
               "name": "양석환",
               "rating": 41.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64153:batter"
             },
             {
               "name": "윤준호",
               "rating": 39.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53296:batter"
             }
           ],
           "pitchers": [
             {
               "name": "곽빈",
               "rating": 84.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68220:pitcher"
             },
             {
               "name": "벤자민",
               "rating": 75.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52043:pitcher"
             },
             {
               "name": "김정우",
               "rating": 73,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68830:pitcher"
             },
             {
               "name": "이영하",
               "rating": 72,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66291:pitcher"
             },
             {
               "name": "윤태호",
               "rating": 71.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52202:pitcher"
             },
             {
               "name": "김택연",
               "rating": 70.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54263:pitcher"
             },
             {
               "name": "김영현",
               "rating": 66.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51097:pitcher"
             },
             {
               "name": "최민석",
               "rating": 63.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55268:pitcher"
             },
             {
               "name": "잭로그",
               "rating": 62.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55239:pitcher"
             },
             {
               "name": "박신지",
               "rating": 61.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68249:pitcher"
             },
             {
               "name": "타카다",
               "rating": 60.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56212:pitcher"
             },
             {
               "name": "이용찬",
               "rating": 53.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:77211:pitcher"
             },
             {
               "name": "최승용",
               "rating": 53.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51264:pitcher"
             },
             {
               "name": "박치국",
               "rating": 53,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67266:pitcher"
             },
             {
               "name": "김한중",
               "rating": 50,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55221:pitcher"
             },
             {
               "name": "서준오",
               "rating": 47.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56241:pitcher"
             }
           ],
           "averages": {
@@ -740,179 +872,214 @@
             {
               "name": "안현민",
               "rating": 81,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52001:batter"
             },
             {
               "name": "힐리어드",
               "rating": 75.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56034:batter"
             },
             {
               "name": "유준규",
               "rating": 70.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51013:batter"
             },
             {
               "name": "최원준",
               "rating": 70.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66606:batter"
             },
             {
               "name": "장진혁",
               "rating": 67.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66706:batter"
             },
             {
               "name": "허경민",
               "rating": 61.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79240:batter"
             },
             {
               "name": "류현인",
               "rating": 58.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53036:batter"
             },
             {
               "name": "이정훈",
               "rating": 58.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67644:batter"
             },
             {
               "name": "김민혁",
               "rating": 56.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64004:batter"
             },
             {
               "name": "오윤석",
               "rating": 56.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64504:batter"
             },
             {
               "name": "김현수",
               "rating": 56.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76290:batter"
             },
             {
               "name": "손민석",
               "rating": 54.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53057:batter"
             },
             {
               "name": "김상수",
               "rating": 52.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79402:batter"
             },
             {
               "name": "권동진",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51003:batter"
             },
             {
               "name": "조대현",
               "rating": 48.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:68089:batter"
             },
             {
               "name": "장준원",
               "rating": 47.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64115:batter"
             },
             {
               "name": "강현우",
               "rating": 45.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:50066:batter"
             },
             {
               "name": "배정대",
               "rating": 38.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64166:batter"
             },
             {
               "name": "한승택",
               "rating": 36.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63722:batter"
             },
             {
               "name": "문상철",
               "rating": 34.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64007:batter"
             }
           ],
           "pitchers": [
             {
               "name": "김정운",
               "rating": 75.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53029:pitcher"
             },
             {
               "name": "대니엘",
               "rating": 72.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56002:pitcher"
             },
             {
               "name": "고영표",
               "rating": 72,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64001:pitcher"
             },
             {
               "name": "소형준",
               "rating": 67.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50030:pitcher"
             },
             {
               "name": "손동현",
               "rating": 67.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69041:pitcher"
             },
             {
               "name": "박영현",
               "rating": 62.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52060:pitcher"
             },
             {
               "name": "우규민",
               "rating": 62.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:73117:pitcher"
             },
             {
               "name": "로건",
               "rating": 61.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55912:pitcher"
             },
             {
               "name": "배제성",
               "rating": 60.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65516:pitcher"
             },
             {
               "name": "전용주",
               "rating": 59.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69047:pitcher"
             },
             {
               "name": "주권",
               "rating": 57.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65060:pitcher"
             },
             {
               "name": "이정현",
               "rating": 54,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67048:pitcher"
             },
             {
               "name": "스기모토",
               "rating": 53.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56011:pitcher"
             },
             {
               "name": "문용익",
               "rating": 52.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67419:pitcher"
             },
             {
               "name": "오원석",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50859:pitcher"
             }
           ],
           "averages": {
@@ -927,67 +1094,80 @@
             {
               "name": "에레디아",
               "rating": 68.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53827:batter"
             },
             {
               "name": "박성한",
               "rating": 68.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67893:batter"
             },
             {
               "name": "고명준",
               "rating": 62.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51868:batter"
             },
             {
               "name": "홍대인",
               "rating": 60.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55897:batter"
             },
             {
               "name": "전의산",
               "rating": 59.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50820:batter"
             },
             {
               "name": "김재환",
               "rating": 59,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78224:batter"
             },
             {
               "name": "오시후",
               "rating": 59,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56807:batter"
             },
             {
               "name": "조형우",
               "rating": 56.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51865:batter"
             },
             {
               "name": "정준재",
               "rating": 51.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54812:batter"
             },
             {
               "name": "안재연",
               "rating": 48.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56811:batter"
             },
             {
               "name": "마드리스",
               "rating": 48.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56813:batter"
             },
             {
               "name": "오태곤",
               "rating": 48.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:60558:batter"
             },
             {
               "name": "한유섬",
               "rating": 48.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62895:batter"
             },
             {
               "name": "김성현",
@@ -997,119 +1177,142 @@
             {
               "name": "임근우",
               "rating": 47.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52807:batter"
             },
             {
               "name": "최지훈",
               "rating": 47.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50854:batter"
             },
             {
               "name": "김정민",
               "rating": 44.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53865:batter"
             },
             {
               "name": "안상현",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66864:batter"
             },
             {
               "name": "이지영",
               "rating": 41.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79456:batter"
             },
             {
               "name": "채현우",
               "rating": 37.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:69804:batter"
             },
             {
               "name": "김요셉",
               "rating": 34.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56846:batter"
             },
             {
               "name": "신범수",
               "rating": 26.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66662:batter"
             }
           ],
           "pitchers": [
             {
               "name": "아빌라",
               "rating": 86,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56801:pitcher"
             },
             {
               "name": "김민준",
               "rating": 70.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56840:pitcher"
             },
             {
               "name": "조병현",
               "rating": 70.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51897:pitcher"
             },
             {
               "name": "김민",
               "rating": 66,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68043:pitcher"
             },
             {
               "name": "이건욱",
               "rating": 64.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64861:pitcher"
             },
             {
               "name": "이로운",
               "rating": 62.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53892:pitcher"
             },
             {
               "name": "한두솔",
               "rating": 58.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68092:pitcher"
             },
             {
               "name": "문승원",
               "rating": 56.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62869:pitcher"
             },
             {
               "name": "최민준",
               "rating": 56.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68856:pitcher"
             },
             {
               "name": "전영준",
               "rating": 54,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52809:pitcher"
             },
             {
               "name": "김건우",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51867:pitcher"
             },
             {
               "name": "박시후",
               "rating": 43.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50812:pitcher"
             },
             {
               "name": "김도현",
               "rating": 42.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52844:pitcher"
             },
             {
               "name": "타케다",
               "rating": 41,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56823:pitcher"
             },
             {
               "name": "윤태현",
               "rating": 36.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52867:pitcher"
             }
           ],
           "averages": {
@@ -1124,184 +1327,220 @@
             {
               "name": "한동희",
               "rating": 73.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68525:batter"
             },
             {
               "name": "김동현",
               "rating": 72.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55502:batter"
             },
             {
               "name": "레이예스",
               "rating": 71.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54529:batter"
             },
             {
               "name": "고승민",
               "rating": 63.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69517:batter"
             },
             {
               "name": "나승엽",
               "rating": 62,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51551:batter"
             },
             {
               "name": "황성빈",
               "rating": 59.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50500:batter"
             },
             {
               "name": "정대선",
               "rating": 57.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53568:batter"
             },
             {
               "name": "김동혁",
               "rating": 56,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52504:batter"
             },
             {
               "name": "전민재",
               "rating": 55.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68205:batter"
             },
             {
               "name": "손성빈",
               "rating": 55,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51528:batter"
             },
             {
               "name": "박건우",
               "rating": 52.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55509:batter"
             },
             {
               "name": "김세민",
               "rating": 47.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52514:batter"
             },
             {
               "name": "전준우",
               "rating": 47.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78513:batter"
             },
             {
               "name": "유강남",
               "rating": 46.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:61102:batter"
             },
             {
               "name": "이호준",
               "rating": 44.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54598:batter"
             },
             {
               "name": "박재엽",
               "rating": 43.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55563:batter"
             },
             {
               "name": "장두성",
               "rating": 43.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68507:batter"
             },
             {
               "name": "손호영",
               "rating": 43.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50150:batter"
             },
             {
               "name": "박승욱",
               "rating": 40.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62802:batter"
             }
           ],
           "pitchers": [
             {
               "name": "박정민",
               "rating": 61.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56536:pitcher"
             },
             {
               "name": "현도훈",
               "rating": 61,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68260:pitcher"
             },
             {
               "name": "이준서",
               "rating": 58.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56554:pitcher"
             },
             {
               "name": "비슬리",
               "rating": 56.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56523:pitcher"
             },
             {
               "name": "김원중",
               "rating": 56.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62528:pitcher"
             },
             {
               "name": "최준용",
               "rating": 55.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50556:pitcher"
             },
             {
               "name": "로드리게스",
               "rating": 55,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56531:pitcher"
             },
             {
               "name": "이진하",
               "rating": 54.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53562:pitcher"
             },
             {
               "name": "나균안",
               "rating": 53.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67539:pitcher"
             },
             {
               "name": "박세웅",
               "rating": 52.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64021:pitcher"
             },
             {
               "name": "이이무라",
               "rating": 52.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56503:pitcher"
             },
             {
               "name": "김기준",
               "rating": 51.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53540:pitcher"
             },
             {
               "name": "이승헌",
               "rating": 49,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68529:pitcher"
             },
             {
               "name": "구승민",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63543:pitcher"
             },
             {
               "name": "이영재",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55503:pitcher"
             },
             {
               "name": "김태균",
               "rating": 46.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55507:pitcher"
             },
             {
               "name": "김강현",
               "rating": 43.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65522:pitcher"
             }
           ],
           "averages": {
@@ -1316,169 +1555,202 @@
             {
               "name": "페라자",
               "rating": 75.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54730:batter"
             },
             {
               "name": "노시환",
               "rating": 73.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69737:batter"
             },
             {
               "name": "문현빈",
               "rating": 71.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53764:batter"
             },
             {
               "name": "장규현",
               "rating": 70.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51762:batter"
             },
             {
               "name": "허인서",
               "rating": 68.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52764:batter"
             },
             {
               "name": "유민",
               "rating": 66.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52765:batter"
             },
             {
               "name": "강백호",
               "rating": 64.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68050:batter"
             },
             {
               "name": "배승수",
               "rating": 62.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55798:batter"
             },
             {
               "name": "최인호",
               "rating": 62,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50707:batter"
             },
             {
               "name": "박정현",
               "rating": 61,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50709:batter"
             },
             {
               "name": "김태연",
               "rating": 57.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66704:batter"
             },
             {
               "name": "심우준",
               "rating": 57.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64006:batter"
             },
             {
               "name": "최유빈",
               "rating": 51.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56793:batter"
             },
             {
               "name": "황영묵",
               "rating": 46.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54795:batter"
             },
             {
               "name": "이도윤",
               "rating": 45.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65703:batter"
             },
             {
               "name": "한지윤",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55767:batter"
             },
             {
               "name": "최재훈",
               "rating": 36.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78288:batter"
             }
           ],
           "pitchers": [
             {
               "name": "화이트",
               "rating": 66.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56724:pitcher"
             },
             {
               "name": "류현진",
               "rating": 66.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76715:pitcher"
             },
             {
               "name": "강재민",
               "rating": 60,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50705:pitcher"
             },
             {
               "name": "권민규",
               "rating": 58.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55764:pitcher"
             },
             {
               "name": "왕옌청",
               "rating": 54.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56719:pitcher"
             },
             {
               "name": "이상규",
               "rating": 53.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65117:pitcher"
             },
             {
               "name": "장유호",
               "rating": 53.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69645:pitcher"
             },
             {
               "name": "황준서",
               "rating": 52.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54729:pitcher"
             },
             {
               "name": "조동욱",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54768:pitcher"
             },
             {
               "name": "박준영",
               "rating": 49.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52731:pitcher"
             },
             {
               "name": "이민우",
               "rating": 46.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65616:pitcher"
             },
             {
               "name": "주현상",
               "rating": 45.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65707:pitcher"
             },
             {
               "name": "강건우",
               "rating": 45.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56769:pitcher"
             },
             {
               "name": "김서현",
               "rating": 44.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53754:pitcher"
             },
             {
               "name": "짐머맨",
               "rating": 39.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56799:pitcher"
             },
             {
               "name": "정우주",
               "rating": 37.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55743:pitcher"
             }
           ],
           "averages": {
@@ -1493,179 +1765,214 @@
             {
               "name": "한재환",
               "rating": 74.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50903:batter"
             },
             {
               "name": "김휘집",
               "rating": 69.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51344:batter"
             },
             {
               "name": "박민우",
               "rating": 68.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:62907:batter"
             },
             {
               "name": "안중열",
               "rating": 66.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64022:batter"
             },
             {
               "name": "박건우",
               "rating": 64,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79215:batter"
             },
             {
               "name": "김주원",
               "rating": 61.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51907:batter"
             },
             {
               "name": "천재환",
               "rating": 60.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67905:batter"
             },
             {
               "name": "김형준",
               "rating": 59.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68912:batter"
             },
             {
               "name": "권희동",
               "rating": 58.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63963:batter"
             },
             {
               "name": "블레인",
               "rating": 58.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56950:batter"
             },
             {
               "name": "오태양",
               "rating": 53.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51996:batter"
             },
             {
               "name": "서호철",
               "rating": 53.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69995:batter"
             },
             {
               "name": "최정원",
               "rating": 51.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69992:batter"
             },
             {
               "name": "홍종표",
               "rating": 51,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50600:batter"
             },
             {
               "name": "이우성",
               "rating": 50,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63260:batter"
             },
             {
               "name": "박시원",
               "rating": 47.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50996:batter"
             },
             {
               "name": "김한별",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50902:batter"
             },
             {
               "name": "이희성",
               "rating": 31.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56932:batter"
             }
           ],
           "pitchers": [
             {
               "name": "라일리",
               "rating": 82.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55903:pitcher"
             },
             {
               "name": "신영우",
               "rating": 72.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53919:pitcher"
             },
             {
               "name": "이용준",
               "rating": 68.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51948:pitcher"
             },
             {
               "name": "테일러",
               "rating": 61.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56966:pitcher"
             },
             {
               "name": "전사민",
               "rating": 60.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69969:pitcher"
             },
             {
               "name": "이준혁",
               "rating": 59.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52992:pitcher"
             },
             {
               "name": "김태훈",
               "rating": 58.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55995:pitcher"
             },
             {
               "name": "송명기",
               "rating": 57.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69962:pitcher"
             },
             {
               "name": "김태경",
               "rating": 53.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50992:pitcher"
             },
             {
               "name": "구창모",
               "rating": 53.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65933:pitcher"
             },
             {
               "name": "배재환",
               "rating": 52.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64995:pitcher"
             },
             {
               "name": "손주환",
               "rating": 49.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54904:pitcher"
             },
             {
               "name": "임지민",
               "rating": 49.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52902:pitcher"
             },
             {
               "name": "토다",
               "rating": 44.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56911:pitcher"
             },
             {
               "name": "김진호",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67954:pitcher"
             },
             {
               "name": "이재학",
               "rating": 43.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:60263:pitcher"
             },
             {
               "name": "류진욱",
               "rating": 38.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65949:pitcher"
             }
           ],
           "averages": {
@@ -1680,179 +1987,214 @@
             {
               "name": "서건창",
               "rating": 66.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78168:batter"
             },
             {
               "name": "데이비슨",
               "rating": 65.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54944:batter"
             },
             {
               "name": "추재현",
               "rating": 63.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68362:batter"
             },
             {
               "name": "히우라",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56305:batter"
             },
             {
               "name": "김건희",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53312:batter"
             },
             {
               "name": "전태현",
               "rating": 55.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55397:batter"
             },
             {
               "name": "안치홍",
               "rating": 55.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:79608:batter"
             },
             {
               "name": "김웅빈",
               "rating": 53.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65898:batter"
             },
             {
               "name": "이형종",
               "rating": 52.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78135:batter"
             },
             {
               "name": "박찬혁",
               "rating": 52.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52348:batter"
             },
             {
               "name": "최재영",
               "rating": 51.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56338:batter"
             },
             {
               "name": "임병욱",
               "rating": 49.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64346:batter"
             },
             {
               "name": "김동헌",
               "rating": 49.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53344:batter"
             },
             {
               "name": "염승원",
               "rating": 48.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55339:batter"
             },
             {
               "name": "여동욱",
               "rating": 48.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55393:batter"
             },
             {
               "name": "권혁빈",
               "rating": 45.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55371:batter"
             },
             {
               "name": "박채울",
               "rating": 43.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54303:batter"
             },
             {
               "name": "박주홍",
               "rating": 42.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50357:batter"
             },
             {
               "name": "김재현",
               "rating": 42.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:62332:batter"
             },
             {
               "name": "어준서",
               "rating": 42.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55392:batter"
             }
           ],
           "pitchers": [
             {
               "name": "알칸타라",
               "rating": 70.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69045:pitcher"
             },
             {
               "name": "안우진",
               "rating": 64.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68341:pitcher"
             },
             {
               "name": "하영민",
               "rating": 63.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64350:pitcher"
             },
             {
               "name": "전준표",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54362:pitcher"
             },
             {
               "name": "이강준",
               "rating": 54.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:50036:pitcher"
             },
             {
               "name": "박준현",
               "rating": 53.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56318:pitcher"
             },
             {
               "name": "윤석원",
               "rating": 51.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52395:pitcher"
             },
             {
               "name": "박진형",
               "rating": 50.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63512:pitcher"
             },
             {
               "name": "박지성",
               "rating": 50.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56337:pitcher"
             },
             {
               "name": "김선기",
               "rating": 49.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66018:pitcher"
             },
             {
               "name": "조영건",
               "rating": 49.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69360:pitcher"
             },
             {
               "name": "원종현",
               "rating": 48,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76118:pitcher"
             },
             {
               "name": "정다훈",
               "rating": 43.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56345:pitcher"
             },
             {
               "name": "김연주",
               "rating": 43.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54368:pitcher"
             },
             {
               "name": "임진묵",
               "rating": 34.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55382:pitcher"
             }
           ],
           "averages": {
@@ -1872,134 +2214,160 @@
             {
               "name": "황대인",
               "rating": 57.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65610:batter"
             },
             {
               "name": "신명승",
               "rating": 54.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52642:batter"
             },
             {
               "name": "송호정",
               "rating": 54.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51767:batter"
             },
             {
               "name": "한승연",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52628:batter"
             },
             {
               "name": "오선우",
               "rating": 50.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69636:batter"
             },
             {
               "name": "곽동효",
               "rating": 47.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56638:batter"
             },
             {
               "name": "이영재",
               "rating": 47.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51605:batter"
             },
             {
               "name": "한준희",
               "rating": 42.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56619:batter"
             },
             {
               "name": "박헌",
               "rating": 42,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55637:batter"
             },
             {
               "name": "황석민",
               "rating": 42,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56628:batter"
             },
             {
               "name": "윤도현",
               "rating": 39.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52667:batter"
             },
             {
               "name": "박종혁",
               "rating": 39.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56634:batter"
             },
             {
               "name": "최정용",
               "rating": 39.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65464:batter"
             },
             {
               "name": "권다결",
               "rating": 35.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51640:batter"
             },
             {
               "name": "김민수",
               "rating": 28.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:69627:batter"
             }
           ],
           "pitchers": [
             {
               "name": "김현수",
               "rating": 73.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:69516:pitcher"
             },
             {
               "name": "김건국",
               "rating": 54,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76225:pitcher"
             },
             {
               "name": "김정엽",
               "rating": 50.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55646:pitcher"
             },
             {
               "name": "이호진",
               "rating": 46.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56624:pitcher"
             },
             {
               "name": "최유찬",
               "rating": 45.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56647:pitcher"
             },
             {
               "name": "강이준",
               "rating": 44.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67604:pitcher"
             },
             {
               "name": "윤중현",
               "rating": 43.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68619:pitcher"
             },
             {
               "name": "조건호",
               "rating": 42.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56612:pitcher"
             },
             {
               "name": "김시훈",
               "rating": 40.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68928:pitcher"
             },
             {
               "name": "최지민",
               "rating": 38.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52639:pitcher"
             },
             {
               "name": "이성원",
               "rating": 35.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55632:pitcher"
             }
           ]
         },
@@ -2010,144 +2378,172 @@
             {
               "name": "이한민",
               "rating": 60.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56443:batter"
             },
             {
               "name": "심재훈",
               "rating": 53.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55438:batter"
             },
             {
               "name": "이서준",
               "rating": 47.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56434:batter"
             },
             {
               "name": "김헌곤",
               "rating": 47.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:61404:batter"
             },
             {
               "name": "김재혁",
               "rating": 47.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52424:batter"
             },
             {
               "name": "강민성",
               "rating": 45.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55427:batter"
             },
             {
               "name": "강준서",
               "rating": 44,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53460:batter"
             },
             {
               "name": "안민성",
               "rating": 44,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56442:batter"
             },
             {
               "name": "김재상",
               "rating": 43.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53400:batter"
             },
             {
               "name": "차승준",
               "rating": 42.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55435:batter"
             },
             {
               "name": "박장민",
               "rating": 42.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53416:batter"
             },
             {
               "name": "조세익",
               "rating": 41.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56444:batter"
             },
             {
               "name": "김상준",
               "rating": 39.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55425:batter"
             },
             {
               "name": "이해승",
               "rating": 36.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69416:batter"
             },
             {
               "name": "장승현",
               "rating": 34.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:63202:batter"
             },
             {
               "name": "이성규",
               "rating": 33.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66409:batter"
             }
           ],
           "pitchers": [
             {
               "name": "홍승원",
               "rating": 60.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51408:pitcher"
             },
             {
               "name": "김백산",
               "rating": 60,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55420:pitcher"
             },
             {
               "name": "신정환",
               "rating": 53.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52440:pitcher"
             },
             {
               "name": "홍무원",
               "rating": 52.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51462:pitcher"
             },
             {
               "name": "최하늘",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68501:pitcher"
             },
             {
               "name": "진희성",
               "rating": 47,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55415:pitcher"
             },
             {
               "name": "우승완",
               "rating": 43,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55428:pitcher"
             },
             {
               "name": "박주혁",
               "rating": 42,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50411:pitcher"
             },
             {
               "name": "박용재",
               "rating": 39,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56468:pitcher"
             },
             {
               "name": "홍원표",
               "rating": 37.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50430:pitcher"
             },
             {
               "name": "이서준",
               "rating": 35.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56433:pitcher"
             },
             {
               "name": "김성경",
               "rating": 22.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54403:pitcher"
             }
           ]
         },
@@ -2158,139 +2554,166 @@
             {
               "name": "김성진",
               "rating": 55.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69105:batter"
             },
             {
               "name": "배강",
               "rating": 54,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54116:batter"
             },
             {
               "name": "강민기",
               "rating": 53.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56102:batter"
             },
             {
               "name": "전경원",
               "rating": 52.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68869:batter"
             },
             {
               "name": "김주성",
               "rating": 50.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66162:batter"
             },
             {
               "name": "김정율",
               "rating": 50.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67504:batter"
             },
             {
               "name": "함창건",
               "rating": 49.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50108:batter"
             },
             {
               "name": "곽민호",
               "rating": 49.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53104:batter"
             },
             {
               "name": "김민수",
               "rating": 48.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:64793:batter"
             },
             {
               "name": "최명경",
               "rating": 48.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54112:batter"
             },
             {
               "name": "이지백",
               "rating": 44.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56111:batter"
             },
             {
               "name": "이준서",
               "rating": 43.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53160:batter"
             },
             {
               "name": "박현우",
               "rating": 40.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56108:batter"
             },
             {
               "name": "추세현",
               "rating": 39.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55163:batter"
             },
             {
               "name": "송대현",
               "rating": 25.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53105:batter"
             }
           ],
           "pitchers": [
             {
               "name": "장현식",
               "rating": 59.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63950:pitcher"
             },
             {
               "name": "양우진",
               "rating": 57.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56165:pitcher"
             },
             {
               "name": "김강률",
               "rating": 55.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:77263:pitcher"
             },
             {
               "name": "함덕주",
               "rating": 54.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63248:pitcher"
             },
             {
               "name": "박준성",
               "rating": 49.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56159:pitcher"
             },
             {
               "name": "진우영",
               "rating": 49,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54148:pitcher"
             },
             {
               "name": "이종준",
               "rating": 48.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50904:pitcher"
             },
             {
               "name": "김동현",
               "rating": 48.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56143:pitcher"
             },
             {
               "name": "허준혁",
               "rating": 44.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52119:pitcher"
             },
             {
               "name": "조건희",
               "rating": 44.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51163:pitcher"
             },
             {
               "name": "권우준",
               "rating": 40.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56149:pitcher"
             },
             {
               "name": "오승윤",
               "rating": 38.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54105:pitcher"
             }
           ]
         },
@@ -2301,124 +2724,148 @@
             {
               "name": "천현재",
               "rating": 67.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52208:batter"
             },
             {
               "name": "임서준",
               "rating": 63,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53293:batter"
             },
             {
               "name": "박성재",
               "rating": 59.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51298:batter"
             },
             {
               "name": "이희성",
               "rating": 56.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56221:batter"
             },
             {
               "name": "전다민",
               "rating": 56,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54214:batter"
             },
             {
               "name": "신민철",
               "rating": 55.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52294:batter"
             },
             {
               "name": "심건보",
               "rating": 55.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56217:batter"
             },
             {
               "name": "김인태",
               "rating": 52.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:63257:batter"
             },
             {
               "name": "엄지민",
               "rating": 49.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56214:batter"
             },
             {
               "name": "장규빈",
               "rating": 44.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50244:batter"
             },
             {
               "name": "김준상",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55226:batter"
             },
             {
               "name": "김민혁",
               "rating": 43.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65269:batter"
             },
             {
               "name": "강태완",
               "rating": 42.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54268:batter"
             },
             {
               "name": "김문수",
               "rating": 42.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53205:batter"
             },
             {
               "name": "남태웅",
               "rating": 36.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56208:batter"
             },
             {
               "name": "김동준",
               "rating": 33.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52267:batter"
             }
           ],
           "pitchers": [
             {
               "name": "정성헌",
               "rating": 56.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56219:pitcher"
             },
             {
               "name": "이병헌",
               "rating": 48.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52204:pitcher"
             },
             {
               "name": "김호준",
               "rating": 43.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68269:pitcher"
             },
             {
               "name": "최우인",
               "rating": 43,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51564:pitcher"
             },
             {
               "name": "최주형",
               "rating": 40.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56215:pitcher"
             },
             {
               "name": "박강민",
               "rating": 40.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50205:pitcher"
             },
             {
               "name": "임종훈",
               "rating": 30.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56205:pitcher"
             },
             {
               "name": "안민겸",
               "rating": 22.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56222:pitcher"
             }
           ]
         },
@@ -2429,124 +2876,148 @@
             {
               "name": "이재원",
               "rating": 62.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56005:batter"
             },
             {
               "name": "안치영",
               "rating": 61.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67006:batter"
             },
             {
               "name": "강민성",
               "rating": 59.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69064:batter"
             },
             {
               "name": "김민석",
               "rating": 56.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54097:batter"
             },
             {
               "name": "정영웅",
               "rating": 56.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55008:batter"
             },
             {
               "name": "박성준",
               "rating": 52.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56020:batter"
             },
             {
               "name": "이정범",
               "rating": 51.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67807:batter"
             },
             {
               "name": "정준영",
               "rating": 50.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53058:batter"
             },
             {
               "name": "김건휘",
               "rating": 45,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56097:batter"
             },
             {
               "name": "김경환",
               "rating": 41.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56009:batter"
             },
             {
               "name": "이용현",
               "rating": 39.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55006:batter"
             },
             {
               "name": "이정환",
               "rating": 35.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55003:batter"
             },
             {
               "name": "이강민",
               "rating": 22.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56006:batter"
             }
           ],
           "pitchers": [
             {
               "name": "한차현",
               "rating": 65.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51058:pitcher"
             },
             {
               "name": "김민수",
               "rating": 62.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65048:pitcher"
             },
             {
               "name": "장민호",
               "rating": 57.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55010:pitcher"
             },
             {
               "name": "김태오",
               "rating": 53.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:66064:pitcher"
             },
             {
               "name": "정정우",
               "rating": 48.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52007:pitcher"
             },
             {
               "name": "이상동",
               "rating": 48.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69054:pitcher"
             },
             {
               "name": "이준명",
               "rating": 44.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53005:pitcher"
             },
             {
               "name": "이채호",
               "rating": 40.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68896:pitcher"
             },
             {
               "name": "김규한",
               "rating": 38.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56016:pitcher"
             },
             {
               "name": "권효준",
               "rating": 35.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56017:pitcher"
             },
             {
               "name": "김휘연",
               "rating": 23.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56013:pitcher"
             }
           ]
         },
@@ -2557,134 +3028,160 @@
             {
               "name": "최윤석",
               "rating": 55.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55894:batter"
             },
             {
               "name": "이원준",
               "rating": 53.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55893:batter"
             },
             {
               "name": "최준우",
               "rating": 51.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68868:batter"
             },
             {
               "name": "문상준",
               "rating": 50.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50007:batter"
             },
             {
               "name": "김민준",
               "rating": 48.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53893:batter"
             },
             {
               "name": "김민범",
               "rating": 45.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56815:batter"
             },
             {
               "name": "장재율",
               "rating": 45.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56849:batter"
             },
             {
               "name": "김창평",
               "rating": 40.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69825:batter"
             },
             {
               "name": "전준호",
               "rating": 40,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67123:batter"
             },
             {
               "name": "박명현",
               "rating": 35,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50592:batter"
             },
             {
               "name": "김예준",
               "rating": 33.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53708:batter"
             },
             {
               "name": "이승민",
               "rating": 24.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54806:batter"
             }
           ],
           "pitchers": [
             {
               "name": "이준기",
               "rating": 66.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51702:pitcher"
             },
             {
               "name": "백승건",
               "rating": 59.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69839:pitcher"
             },
             {
               "name": "김준모",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56814:pitcher"
             },
             {
               "name": "박종훈",
               "rating": 54.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:60841:pitcher"
             },
             {
               "name": "변건우",
               "rating": 53.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54808:pitcher"
             },
             {
               "name": "장지훈",
               "rating": 50.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51895:pitcher"
             },
             {
               "name": "신지환",
               "rating": 49.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55860:pitcher"
             },
             {
               "name": "조재우",
               "rating": 48.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56805:pitcher"
             },
             {
               "name": "이도우",
               "rating": 48,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55896:pitcher"
             },
             {
               "name": "신상연",
               "rating": 41.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56808:pitcher"
             },
             {
               "name": "김현재",
               "rating": 38,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55895:pitcher"
             },
             {
               "name": "이주형",
               "rating": 35.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52901:pitcher"
             },
             {
               "name": "류현곤",
               "rating": 31.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53806:pitcher"
             },
             {
               "name": "김택형",
               "rating": 29.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:65343:pitcher"
             }
           ]
         },
@@ -2695,129 +3192,154 @@
             {
               "name": "하준서",
               "rating": 66.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56522:batter"
             },
             {
               "name": "이선우",
               "rating": 64.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54595:batter"
             },
             {
               "name": "정문혁",
               "rating": 62.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56543:batter"
             },
             {
               "name": "조민영",
               "rating": 62.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55534:batter"
             },
             {
               "name": "한태양",
               "rating": 57.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52568:batter"
             },
             {
               "name": "이서준",
               "rating": 56.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56563:batter"
             },
             {
               "name": "이정민",
               "rating": 56.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56513:batter"
             },
             {
               "name": "홍서연",
               "rating": 52.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56519:batter"
             },
             {
               "name": "유제모",
               "rating": 51.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54513:batter"
             },
             {
               "name": "안우진",
               "rating": 48.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54509:batter"
             },
             {
               "name": "이지훈",
               "rating": 43.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56514:batter"
             },
             {
               "name": "박지훈",
               "rating": 42.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55508:batter"
             },
             {
               "name": "강승구",
               "rating": 42.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54506:batter"
             },
             {
               "name": "박하늘",
               "rating": 41.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53597:batter"
             },
             {
               "name": "배인혁",
               "rating": 36.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53598:batter"
             },
             {
               "name": "소한빈",
               "rating": 35.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54512:batter"
             },
             {
               "name": "김한홀",
               "rating": 34.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56595:batter"
             },
             {
               "name": "김호범",
               "rating": 29.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56512:batter"
             }
           ],
           "pitchers": [
             {
               "name": "송재영",
               "rating": 72.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51594:pitcher"
             },
             {
               "name": "정현수",
               "rating": 64.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54537:pitcher"
             },
             {
               "name": "김현수",
               "rating": 58.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56541:pitcher"
             },
             {
               "name": "윤성빈",
               "rating": 53.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:67588:pitcher"
             },
             {
               "name": "김창훈",
               "rating": 50.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51586:pitcher"
             },
             {
               "name": "정우준",
               "rating": 49.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51546:pitcher"
             },
             {
               "name": "장세진",
               "rating": 45.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53596:pitcher"
             }
           ]
         },
@@ -2828,139 +3350,166 @@
             {
               "name": "이진영",
               "rating": 68.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66657:batter"
             },
             {
               "name": "권광민",
               "rating": 59.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52769:batter"
             },
             {
               "name": "최윤호",
               "rating": 59.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56714:batter"
             },
             {
               "name": "정민규",
               "rating": 56.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51764:batter"
             },
             {
               "name": "이원석",
               "rating": 54.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68700:batter"
             },
             {
               "name": "한경빈",
               "rating": 53.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52710:batter"
             },
             {
               "name": "이민준",
               "rating": 53.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53795:batter"
             },
             {
               "name": "이도훈",
               "rating": 52.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56708:batter"
             },
             {
               "name": "박상언",
               "rating": 51.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66707:batter"
             },
             {
               "name": "유로결",
               "rating": 51.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69766:batter"
             },
             {
               "name": "정은원",
               "rating": 49.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68743:batter"
             },
             {
               "name": "박상목",
               "rating": 48.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56702:batter"
             },
             {
               "name": "이승현",
               "rating": 46.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54706:batter"
             },
             {
               "name": "최원준",
               "rating": 46,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53705:batter"
             },
             {
               "name": "이지성",
               "rating": 44.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55706:batter"
             }
           ],
           "pitchers": [
             {
               "name": "이기창",
               "rating": 63,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54703:pitcher"
             },
             {
               "name": "승지환",
               "rating": 57.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54701:pitcher"
             },
             {
               "name": "김관우",
               "rating": 52,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53701:pitcher"
             },
             {
               "name": "원종혁",
               "rating": 51.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54702:pitcher"
             },
             {
               "name": "양수호",
               "rating": 49,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55659:pitcher"
             },
             {
               "name": "김범준",
               "rating": 48.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50710:pitcher"
             },
             {
               "name": "엄요셉",
               "rating": 48.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55708:pitcher"
             },
             {
               "name": "김종수",
               "rating": 42.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:63765:pitcher"
             },
             {
               "name": "이교훈",
               "rating": 42.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69205:pitcher"
             },
             {
               "name": "박재규",
               "rating": 41.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53706:pitcher"
             },
             {
               "name": "정이황",
               "rating": 38.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:69767:pitcher"
             },
             {
               "name": "하동준",
               "rating": 37.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56797:pitcher"
             }
           ]
         },
@@ -2971,139 +3520,166 @@
             {
               "name": "김범준",
               "rating": 65.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69980:batter"
             },
             {
               "name": "신재인",
               "rating": 57.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56909:batter"
             },
             {
               "name": "윤준혁",
               "rating": 55.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50092:batter"
             },
             {
               "name": "오장한",
               "rating": 54.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51991:batter"
             },
             {
               "name": "장창훈",
               "rating": 53.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55993:batter"
             },
             {
               "name": "조효원",
               "rating": 52.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52908:batter"
             },
             {
               "name": "한석현",
               "rating": 52.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64101:batter"
             },
             {
               "name": "고준휘",
               "rating": 52.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56949:batter"
             },
             {
               "name": "이한",
               "rating": 51.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52907:batter"
             },
             {
               "name": "김건",
               "rating": 50.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56952:batter"
             },
             {
               "name": "김재민",
               "rating": 44.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54909:batter"
             },
             {
               "name": "허윤",
               "rating": 42.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56904:batter"
             },
             {
               "name": "오영수",
               "rating": 40.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68904:batter"
             },
             {
               "name": "김정호",
               "rating": 38,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51903:batter"
             }
           ],
           "pitchers": [
             {
               "name": "박동수",
               "rating": 65.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52994:pitcher"
             },
             {
               "name": "최요한",
               "rating": 58.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56967:pitcher"
             },
             {
               "name": "김재열",
               "rating": 56.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64580:pitcher"
             },
             {
               "name": "최우석",
               "rating": 56.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54903:pitcher"
             },
             {
               "name": "김준원",
               "rating": 55.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54910:pitcher"
             },
             {
               "name": "조민석",
               "rating": 52.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52903:pitcher"
             },
             {
               "name": "하준영",
               "rating": 52.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68639:pitcher"
             },
             {
               "name": "최성영",
               "rating": 50.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:66920:pitcher"
             },
             {
               "name": "박지한",
               "rating": 49.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69994:pitcher"
             },
             {
               "name": "김요엘",
               "rating": 49.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56936:pitcher"
             },
             {
               "name": "전루건",
               "rating": 49.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:69204:pitcher"
             },
             {
               "name": "이준호",
               "rating": 43.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53996:pitcher"
             },
             {
               "name": "김태우",
               "rating": 41.9,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:68454:pitcher"
             }
           ]
         },
@@ -3114,124 +3690,148 @@
             {
               "name": "서유신",
               "rating": 55.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53309:batter"
             },
             {
               "name": "원성준",
               "rating": 54.8,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54307:batter"
             },
             {
               "name": "주성원",
               "rating": 54.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69332:batter"
             },
             {
               "name": "최주환",
               "rating": 54.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:76267:batter"
             },
             {
               "name": "김병휘",
               "rating": 53.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:50304:batter"
             },
             {
               "name": "이주형",
               "rating": 51.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51302:batter"
             },
             {
               "name": "심휘윤",
               "rating": 47.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54306:batter"
             },
             {
               "name": "김지성",
               "rating": 44.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54397:batter"
             },
             {
               "name": "김태진",
               "rating": 39.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:64984:batter"
             },
             {
               "name": "김시앙",
               "rating": 39.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51303:batter"
             },
             {
               "name": "유정택",
               "rating": 36.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56315:batter"
             },
             {
               "name": "양현종",
               "rating": 31.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55370:batter"
             },
             {
               "name": "오선진",
               "rating": 30.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:78756:batter"
             }
           ],
           "pitchers": [
             {
               "name": "김성진",
               "rating": 64.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51301:pitcher"
             },
             {
               "name": "최현우",
               "rating": 55.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56312:pitcher"
             },
             {
               "name": "김성민",
               "rating": 54.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67828:pitcher"
             },
             {
               "name": "손힘찬",
               "rating": 49.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55300:pitcher"
             },
             {
               "name": "오석주",
               "rating": 48.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:67116:pitcher"
             },
             {
               "name": "이준우",
               "rating": 47,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55301:pitcher"
             },
             {
               "name": "정동준",
               "rating": 45.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:55385:pitcher"
             },
             {
               "name": "이태양",
               "rating": 44.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56366:pitcher"
             },
             {
               "name": "이태준",
               "rating": 43.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54301:pitcher"
             },
             {
               "name": "정세영",
               "rating": 35.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55377:pitcher"
             },
             {
               "name": "김태언",
               "rating": 30.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:56313:pitcher"
             }
           ]
         },
@@ -3242,57 +3842,68 @@
             {
               "name": "장재영",
               "rating": 71.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51359:batter"
             },
             {
               "name": "박한결",
               "rating": 59.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56304:batter"
             },
             {
               "name": "김성우",
               "rating": 59.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52105:batter"
             },
             {
               "name": "여동건",
               "rating": 56.2,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54205:batter"
             },
             {
               "name": "정현승",
               "rating": 55.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54815:batter"
             },
             {
               "name": "박지환",
               "rating": 53.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54805:batter"
             },
             {
               "name": "이율예",
               "rating": 52.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55832:batter"
             },
             {
               "name": "이승원",
               "rating": 52,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53302:batter"
             },
             {
               "name": "고영우",
               "rating": 51.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54344:batter"
             },
             {
               "name": "박관우",
               "rating": 50.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55164:batter"
             },
             {
               "name": "신용석",
               "rating": 49.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53991:batter"
             },
             {
               "name": "이승현",
@@ -3302,22 +3913,26 @@
             {
               "name": "강성우",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54567:batter"
             },
             {
               "name": "김병준",
               "rating": 43.4,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52002:batter"
             },
             {
               "name": "이태경",
               "rating": 39,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55511:batter"
             },
             {
               "name": "이민재",
               "rating": 38.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:61194:batter"
             },
             {
               "name": "전미르",
@@ -3327,14 +3942,16 @@
             {
               "name": "김세훈",
               "rating": 36.7,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54905:batter"
             }
           ],
           "pitchers": [
             {
               "name": "진승현",
               "rating": 62.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52558:pitcher"
             },
             {
               "name": "신용석",
@@ -3344,37 +3961,44 @@
             {
               "name": "정지헌",
               "rating": 51.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:54149:pitcher"
             },
             {
               "name": "전미르",
               "rating": 50.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54561:pitcher"
             },
             {
               "name": "황동재",
               "rating": 49.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50441:pitcher"
             },
             {
               "name": "김기중",
               "rating": 45.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:51715:pitcher"
             },
             {
               "name": "이종민",
               "rating": 45.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50354:pitcher"
             },
             {
               "name": "신헌민",
               "rating": 43.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52873:pitcher"
             },
             {
               "name": "박성빈",
               "rating": 38.3,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:54807:pitcher"
             },
             {
               "name": "여동건",
@@ -3390,114 +4014,136 @@
             {
               "name": "박제범",
               "rating": 56.1,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:51805:batter"
             },
             {
               "name": "김서원",
               "rating": 50.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31003:batter"
             },
             {
               "name": "홀",
               "rating": 49.3,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31012:batter"
             },
             {
               "name": "박문순",
               "rating": 47.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31053:batter"
             },
             {
               "name": "민성우",
               "rating": 47.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:52583:batter"
             },
             {
               "name": "예진원",
               "rating": 47,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68330:batter"
             },
             {
               "name": "송현준",
               "rating": 47,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:31032:batter"
             },
             {
               "name": "노강민",
               "rating": 45.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31006:batter"
             },
             {
               "name": "하재훈",
               "rating": 44.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69813:batter"
             },
             {
               "name": "김시완",
               "rating": 43.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52211:batter"
             },
             {
               "name": "배영빈",
               "rating": 42.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:53587:batter"
             },
             {
               "name": "박재형",
               "rating": 38.6,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:31099:batter"
             },
             {
               "name": "이민석",
               "rating": 36.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:52209:batter"
             },
             {
               "name": "박민석",
               "rating": 36.4,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55004:batter"
             },
             {
               "name": "김성균",
               "rating": 34.8,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:50093:batter"
             },
             {
               "name": "김수인",
               "rating": 30.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50115:batter"
             },
             {
               "name": "신준우",
               "rating": 28.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:50312:batter"
             }
           ],
           "pitchers": [
             {
               "name": "고바야시",
               "rating": 65.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31011:pitcher"
             },
             {
               "name": "조준혁",
               "rating": 65.5,
-              "gray": true
+              "gray": true,
+              "playerId": "player:kbo:53584:pitcher"
             },
             {
               "name": "오카다",
               "rating": 64.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31017:pitcher"
             },
             {
               "name": "김도규",
               "rating": 58.2,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:68585:pitcher"
             },
             {
               "name": "유토",
               "rating": 55.9,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:56348:pitcher"
             },
             {
               "name": "하재훈",
@@ -3507,22 +4153,26 @@
             {
               "name": "진현우",
               "rating": 51.7,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31031:pitcher"
             },
             {
               "name": "이승근",
               "rating": 43.1,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:31067:pitcher"
             },
             {
               "name": "서영준",
               "rating": 40.6,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:55012:pitcher"
             },
             {
               "name": "최시혁",
               "rating": 40.5,
-              "gray": false
+              "gray": false,
+              "playerId": "player:kbo:69984:pitcher"
             }
           ]
         }

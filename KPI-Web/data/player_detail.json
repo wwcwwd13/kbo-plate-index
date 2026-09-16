@@ -1,0 +1,216 @@
+{
+  "meta": {
+    "schemaVersion": "0.1",
+    "source": "temporary_fixture",
+    "note": "실제 SQLite/API 연동 전 화면 개발용 임시 선수 데이터"
+  },
+  "player": {
+    "playerId": "player-temp-rayes-batter",
+    "personId": "person-temp-rayes",
+    "role": "타자",
+    "displayName": "레이예스",
+    "imageUrl": null,
+    "profile": {
+      "englishName": "Victor Reyes",
+      "birthDate": "1994-10-05",
+      "position": "외야수",
+      "team": "삼성 라이온즈",
+      "league": "1군",
+      "throws": "우투",
+      "bats": "좌타",
+      "isCatcher": false,
+      "kboId": "임시 KBO ID",
+      "kboIdNote": "실제 데이터 연동 전 임시값"
+    },
+    "ratingSnapshots": [
+      {
+        "date": "2026-09-01",
+        "rating": 61.8,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 64.2,
+          "power": 58.1,
+          "discipline": 62.5,
+          "defense": 60.7
+        }
+      },
+      {
+        "date": "2026-09-03",
+        "rating": 63.1,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 65.6,
+          "power": 59.4,
+          "discipline": 63.2,
+          "defense": 61.1
+        }
+      },
+      {
+        "date": "2026-09-05",
+        "rating": 62.6,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 65.1,
+          "power": 58.9,
+          "discipline": 62.8,
+          "defense": 60.5
+        }
+      },
+      {
+        "date": "2026-09-07",
+        "rating": 64.7,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 67.2,
+          "power": 60.4,
+          "discipline": 64.1,
+          "defense": 62.3
+        }
+      },
+      {
+        "date": "2026-09-09",
+        "rating": 65.4,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 67.9,
+          "power": 61.5,
+          "discipline": 64.6,
+          "defense": 62.7
+        }
+      },
+      {
+        "date": "2026-09-11",
+        "rating": 66.2,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 68.3,
+          "power": 62.4,
+          "discipline": 65.1,
+          "defense": 63.2
+        }
+      },
+      {
+        "date": "2026-09-13",
+        "rating": 67.3,
+        "modelVersion": "RCv3",
+        "components": {
+          "contact": 69.4,
+          "power": 63.1,
+          "discipline": 66.0,
+          "defense": 64.0
+        }
+      }
+    ],
+    "battingStatSnapshots": [
+      {
+        "date": "2026-09-13",
+        "plateAppearances": 412,
+        "atBats": 376,
+        "hits": 127,
+        "singles": 77,
+        "doubles": 28,
+        "triples": 3,
+        "homeRuns": 19,
+        "runs": 68,
+        "rbi": 72,
+        "walks": 27,
+        "hitByPitch": 5,
+        "strikeouts": 64,
+        "stolenBases": 8,
+        "stolenBaseAttempts": 10,
+        "battingAverage": 0.338,
+        "onBasePercentage": 0.39,
+        "sluggingPercentage": 0.58,
+        "ops": 0.97
+      }
+    ],
+    "pitchingStatSnapshots": [],
+    "plateAppearances": [
+      {
+        "paId": "temp-pa-0913-01",
+        "date": "2026-09-13",
+        "gameId": "temp-game-0913",
+        "league": "1군",
+        "venue": "대구",
+        "opponent": "LG",
+        "battingOrder": 3,
+        "plateAppearanceNumber": 1,
+        "result": "중견수 뜬공",
+        "ratingBefore": 66.4,
+        "ratingAfter": 66.1,
+        "ratingEffect": {
+          "ratingDelta": -0.3,
+          "modelVersion": "RCv3"
+        }
+      },
+      {
+        "paId": "temp-pa-0913-02",
+        "date": "2026-09-13",
+        "gameId": "temp-game-0913",
+        "league": "1군",
+        "venue": "대구",
+        "opponent": "LG",
+        "battingOrder": 3,
+        "plateAppearanceNumber": 2,
+        "result": "우전 안타",
+        "ratingBefore": 66.1,
+        "ratingAfter": 66.8,
+        "ratingEffect": {
+          "ratingDelta": 0.7,
+          "modelVersion": "RCv3"
+        }
+      },
+      {
+        "paId": "temp-pa-0913-03",
+        "date": "2026-09-13",
+        "gameId": "temp-game-0913",
+        "league": "1군",
+        "venue": "대구",
+        "opponent": "LG",
+        "battingOrder": 3,
+        "plateAppearanceNumber": 3,
+        "result": "볼넷",
+        "ratingBefore": 66.8,
+        "ratingAfter": 67.0,
+        "ratingEffect": {
+          "ratingDelta": 0.2,
+          "modelVersion": "RCv3"
+        }
+      },
+      {
+        "paId": "temp-pa-0913-04",
+        "date": "2026-09-13",
+        "gameId": "temp-game-0913",
+        "league": "1군",
+        "venue": "대구",
+        "opponent": "LG",
+        "battingOrder": 3,
+        "plateAppearanceNumber": 4,
+        "result": "좌익수 2루타",
+        "ratingBefore": 67.0,
+        "ratingAfter": 67.3,
+        "ratingEffect": {
+          "ratingDelta": 0.3,
+          "modelVersion": "RCv3"
+        }
+      },
+      {
+        "paId": "temp-pa-0911-01",
+        "date": "2026-09-11",
+        "gameId": "temp-game-0911",
+        "league": "1군",
+        "venue": "대구",
+        "opponent": "두산",
+        "battingOrder": 3,
+        "plateAppearanceNumber": 1,
+        "result": "우익수 희생플라이",
+        "ratingBefore": 65.9,
+        "ratingAfter": 66.2,
+        "ratingEffect": {
+          "ratingDelta": 0.3,
+          "modelVersion": "RCv3"
+        }
+      }
+    ]
+  }
+}
