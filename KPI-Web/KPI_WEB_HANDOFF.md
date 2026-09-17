@@ -97,7 +97,7 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 - `src/data.js`: 임시 JSON과 로컬 API 사이의 데이터 접근 경계
 - `KPI-Backend/api/`: private backend의 `database/kpi.db`에서 선수 프로필·Rating 스냅샷·타석 기록을 읽는 로컬 API
 - `KPI-Backend/database/images/`: KBO ID 파일명으로 저장된 선수 프로필 이미지
-- SVG/React 이벤트: 날짜별 Rating 그래프와 점 hover·focus·click 상호작용
+- SVG/React 이벤트: 경기별·타석별 Rating 그래프, 경기별 가로 확대, 점 hover·focus·click 상세 tooltip
 - `data/sheet_reference.json`: 구단별 표의 선수 항목에 실제 DB `playerId`를 기록해 정적 배포에서도 선수별 링크를 유지
 
 현재는 `index.html`과 `player.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, `http://127.0.0.1:5050`의 로컬 API를 통해 읽는다. `start-dev.cmd`를 실행하면 Vite와 API를 함께 시작한다.
@@ -157,7 +157,7 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 
 - 메인 표의 선수명을 클릭하면 선수 개인 화면으로 이동한다.
 - 공개 가능한 선수 기본 정보(선수명, 소속 구단, 역할, 1군/2군 등)를 보여준다.
-- 날짜별 KPI Rating 변화 그래프를 제공한다.
+- 경기별 KPI Rating 변화 그래프를 제공한다.
 - 필요하면 경기·타석 기록과 Rating 변화가 연결되어 보이도록 확장한다.
 
 ### 날짜별 구단 Rating

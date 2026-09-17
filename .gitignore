@@ -5,6 +5,7 @@
 /KPI-Web/dist/
 /KPI-Web/.vite/
 /KPI-Web/.tools/
+/KPI-Web/LOCAL_USAGE.md
 
 # The crawler, API, SQLite database, raw files, and images live in the
 # sibling private KPI-Backend folder outside this public repository.
