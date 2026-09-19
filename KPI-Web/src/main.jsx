@@ -6,9 +6,29 @@ import "../styles.css";
 
 const DEFAULT_PLAYER_ID = "player:demo:noname:batter";
 
+function isPagePath(pageName) {
+  const pathname = window.location.pathname.replace(/\/+$/, "") || "/";
+  return pathname.endsWith(`/${pageName}`)
+    || pathname.endsWith(`/${pageName}.html`)
+    || pathname.endsWith(`/${pageName}/index.html`);
+}
+
+function siteRelativePrefix() {
+  return /\/(?:player|diff)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
+}
+
+function homeHref() {
+  return siteRelativePrefix();
+}
+
+function pageHref(pageName, query = "") {
+  const suffix = query ? (query.startsWith("?") ? query : `?${query}`) : "";
+  return `${siteRelativePrefix()}${pageName}/${suffix}`;
+}
+
 function playerPageHref(player) {
   if (!player?.playerId) return null;
-  return `./player.html?player_id=${encodeURIComponent(player.playerId)}`;
+  return pageHref("player", `player_id=${encodeURIComponent(player.playerId)}`);
 }
 
 function toNumber(value) {
@@ -185,12 +205,12 @@ function Delta({ value }) {
 }
 
 function PageHeader({ subtitle, action }) {
-  const isDiffPage = window.location.pathname.endsWith("/diff.html");
+  const isDiffPage = isPagePath("diff");
   return (
     <header className="page-header">
       <div className="header-main">
         <div className="title-lockup">
-          <a className="brand-link" href="./index.html" aria-label="KBO Plate Index 메인 페이지">
+          <a className="brand-link" href={homeHref()} aria-label="KBO Plate Index 메인 페이지">
             <span className="project-mark" aria-hidden="true">KPI</span>
             <div>
               <h1>KBO Plate Index</h1>
@@ -199,8 +219,8 @@ function PageHeader({ subtitle, action }) {
           </a>
         </div>
         <nav className="top-nav" aria-label="주요 메뉴">
-          <a className={!isDiffPage ? "is-active" : ""} href="./index.html">구단별 Rating</a>
-          <a className={isDiffPage ? "is-active" : ""} href="./diff.html">KPI 변동표</a>
+          <a className={!isDiffPage ? "is-active" : ""} href={homeHref()}>구단별 Rating</a>
+          <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>KPI 변동표</a>
         </nav>
       </div>
       <div className="source-meta">{action}</div>
@@ -253,7 +273,7 @@ function PlayerLink({ player }) {
         ) : (
           <span className="player-link player-link--unresolved">{player.name}</span>
         )}
-        {medicalText ? <span className="medical-status-mark" title={medicalText} aria-label={medicalText}>†</span> : null}
+        {medicalText ? <span className="medical-status-mark" title={medicalText} aria-label={medicalText}>+</span> : null}
       </span>
     </td>
   );
@@ -629,7 +649,7 @@ function DiffPage() {
           </div>
         </section>
       </main>
-      <PageFooter><a href="./index.html">구단별 Rating으로 돌아가기</a></PageFooter>
+      <PageFooter><a href={homeHref()}>구단별 Rating으로 돌아가기</a></PageFooter>
     </div>
   );
 }
@@ -647,20 +667,13 @@ function HomePage() {
   }, []);
 
   const sections = data?.sections ?? [];
-  const isDatabaseSource = data?.meta?.source === "sqlite_api";
   const isUnavailable = Boolean(error) || Boolean(data && !sections.length);
   return (
     <div className="page-shell">
       <PageHeader
         subtitle={`${data?.meta?.asOf ?? (isUnavailable ? "데이터 대기 중" : "기준일 확인 중")} KBO 구단별 Rating`}
         action={
-          isUnavailable ? <span>API 연결 필요</span> : (
-            <>
-              <span>{data?.meta?.asOf ? `${data.meta.asOf} 기준` : "기준일 확인 중"}</span>
-              <span className="source-divider" aria-hidden="true">·</span>
-              <span>{isDatabaseSource ? "SQLite 자동 구성" : "정적 참고 표"}</span>
-            </>
-          )
+          <span>{data?.meta?.asOf ? `${data.meta.asOf} 기준` : isUnavailable ? "API 연결 필요" : "기준일 확인 중"}</span>
         }
       />
       <main className="page-content">
@@ -669,13 +682,6 @@ function HomePage() {
             <div>
               <p className="kicker">TEAM RATING</p>
               <h2 id="sheet-title">구단별 Rating</h2>
-              <p className="sheet-description">
-                {isDatabaseSource
-                  ? "SQLite의 선수 Rating을 기준일에 맞춰 구단·리그별로 자동 구성합니다."
-                  : isUnavailable
-                    ? "백엔드 API 연결 후 최신 구단·선수 Rating을 표시합니다."
-                    : "백엔드 API가 연결되기 전에는 참고 시트의 구단·선수 배열을 표시합니다."}
-              </p>
             </div>
             {!isUnavailable ? (
               <div className="legend" aria-label="Rating 색상 기준">
@@ -683,7 +689,8 @@ function HomePage() {
                 <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
                 <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
                 <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
-                <span className="legend-item"><i className="legend-status-mark">†</i>부상·재활 명단</span>
+                <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
+                <span className="legend-item"><span className="legend-name-sample">선수명</span>최근 출전수 적음</span>
               </div>
             ) : null}
           </div>
@@ -692,9 +699,6 @@ function HomePage() {
           </div>
         </section>
       </main>
-      <PageFooter>
-        <a href="https://docs.google.com/spreadsheets/d/1RFlizhPk7cyzsh2J2WIKFtAaoumYJ61yz95cXxUMacg/edit?gid=387297493#gid=387297493" target="_blank" rel="noreferrer">참고 Google Sheet 열기</a>
-      </PageFooter>
     </div>
   );
 }
@@ -755,7 +759,7 @@ function PlayerRoleLinks({ player }) {
   return (
     <div className="record-view-links" aria-label="선수 기록 화면 이동">
       <span><span className="profile-label">현재 기록</span><strong>{roleLabel(player.role)} 기록</strong></span>
-      <a href={`./player.html?player_id=${encodeURIComponent(targetPlayerId)}`}>{roleLabel(targetRole)} 기록 보기 <span aria-hidden="true">→</span></a>
+      <a href={playerPageHref({ playerId: targetPlayerId })}>{roleLabel(targetRole)} 기록 보기 <span aria-hidden="true">→</span></a>
     </div>
   );
 }
@@ -1704,7 +1708,7 @@ function PlayerPage() {
 
   return (
     <div className="page-shell">
-      <PageHeader subtitle="선수 상세" action={<a href="./index.html">메인 표로 돌아가기</a>} />
+      <PageHeader subtitle="선수 상세" action={<a href={homeHref()}>메인 표로 돌아가기</a>} />
       <main className="page-content player-page-content">
         {error ? <LoadError>data/player_detail.json 파일과 데이터 접근 경로를 확인해 주세요.</LoadError> : player ? (
           <>
@@ -1716,14 +1720,14 @@ function PlayerPage() {
           </>
         ) : <LoadingState>선수 데이터를 불러오는 중입니다.</LoadingState>}
       </main>
-      <PageFooter><a href="./index.html">메인 페이지</a></PageFooter>
+      <PageFooter><a href={homeHref()}>메인 페이지</a></PageFooter>
     </div>
   );
 }
 
 function App() {
-  if (window.location.pathname.endsWith("/player.html")) return <PlayerPage />;
-  if (window.location.pathname.endsWith("/diff.html")) return <DiffPage />;
+  if (isPagePath("player")) return <PlayerPage />;
+  if (isPagePath("diff")) return <DiffPage />;
   return <HomePage />;
 }
 

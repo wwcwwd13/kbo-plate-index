@@ -28,11 +28,14 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: {
-        main: resolve(process.cwd(), "index.html"),
-        player: resolve(process.cwd(), "player.html"),
-        diff: resolve(process.cwd(), "diff.html")
-      }
+      input: [
+        resolve(process.cwd(), "index.html"),
+        resolve(process.cwd(), "player/index.html"),
+        resolve(process.cwd(), "diff/index.html"),
+        // Keep the old entrypoints available for existing bookmarks.
+        resolve(process.cwd(), "player.html"),
+        resolve(process.cwd(), "diff.html")
+      ]
     }
   }
 });

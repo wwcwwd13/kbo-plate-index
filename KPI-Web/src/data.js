@@ -1,6 +1,15 @@
+function isDirectoryPagePath() {
+  const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
+  return /\/(?:player|diff)\/(?:index\.html)?$/.test(pathname);
+}
+
+function staticDataPath(fileName) {
+  return `${isDirectoryPagePath() ? "../" : "./"}${fileName}`;
+}
+
 const DATA_PATHS = {
-  teamRatings: "./sheet_reference.json",
-  playerDetail: "./player_detail.json"
+  teamRatings: staticDataPath("sheet_reference.json"),
+  playerDetail: staticDataPath("player_detail.json")
 };
 
 function isLocalHost() {

@@ -221,6 +221,11 @@ h2 {
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+.legend-name-sample {
+  color: #a0a0a0;
+  font-weight: 600;
+}
+
 .rating-sections {
   padding: 0 12px 14px;
 }
