@@ -2,6 +2,8 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import aboutContent from "../data/about.json";
+import releaseNotes from "../data/release_notes.json";
 import "../styles.css";
 
 const DEFAULT_PLAYER_ID = "player:demo:noname:batter";
@@ -14,7 +16,7 @@ function isPagePath(pageName) {
 }
 
 function siteRelativePrefix() {
-  return /\/(?:player|diff)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
+  return /\/(?:player|diff|about|release-note)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
 }
 
 function homeHref() {
@@ -49,6 +51,12 @@ function formatDate(value) {
 function formatShortDate(value) {
   const date = String(value ?? "");
   return date.length >= 10 ? date.slice(5).replace("-", "/") : date;
+}
+
+function normalizePlateAppearanceResult(value) {
+  const result = String(value ?? "").trim();
+  if (result === "\ubcfc\ub128" || result === "\ubcfc\ub12c") return "\ubcfc\ub137";
+  return result;
 }
 
 function sectionDisplayName(league) {
@@ -206,6 +214,7 @@ function Delta({ value }) {
 
 function PageHeader({ subtitle, action }) {
   const isDiffPage = isPagePath("diff");
+  const isAboutPage = isPagePath("about") || isPagePath("release-note");
   return (
     <header className="page-header">
       <div className="header-main">
@@ -219,8 +228,9 @@ function PageHeader({ subtitle, action }) {
           </a>
         </div>
         <nav className="top-nav" aria-label="주요 메뉴">
-          <a className={!isDiffPage ? "is-active" : ""} href={homeHref()}>구단별 Rating</a>
+          <a className={!isDiffPage && !isAboutPage ? "is-active" : ""} href={homeHref()}>구단별 Rating</a>
           <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>KPI 변동표</a>
+          <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
       </div>
       {action ? <div className="source-meta">{action}</div> : null}
@@ -267,14 +277,14 @@ function PlayerLink({ player }) {
   const medicalClass = medicalText ? " is-medical" : "";
   const href = playerPageHref(player);
   return (
-    <td className={`name-cell${grayClass}${medicalClass}`} title={medicalText ? `${player.name} · ${medicalText}` : player.name}>
+    <td className={`name-cell${grayClass}${medicalClass}`}>
       <span className="player-name-content">
         {href ? (
           <a className="player-link" href={href}>{player.name}</a>
         ) : (
           <span className="player-link player-link--unresolved">{player.name}</span>
         )}
-        {medicalText ? <span className="medical-status-mark" title={medicalText} aria-label={medicalText}>+</span> : null}
+        {medicalText ? <span className="medical-status-mark" aria-label={medicalText}>+</span> : null}
       </span>
     </td>
   );
@@ -282,7 +292,12 @@ function PlayerLink({ player }) {
 
 function PlayerRating({ player }) {
   if (!player) return <td className="rating-cell empty-cell" aria-label="Rating 없음" />;
-  return <td className={`rating-cell ${ratingBand(player.rating)}`}>{formatRating(player.rating)}</td>;
+  const href = playerPageHref(player);
+  return (
+    <td className={`rating-cell ${ratingBand(player.rating)}`}>
+      {href ? <a className="player-link rating-link" href={href}>{formatRating(player.rating)}</a> : formatRating(player.rating)}
+    </td>
+  );
 }
 
 function AverageRow({ teams }) {
@@ -297,9 +312,9 @@ function AverageRow({ teams }) {
         const pitcherClass = averageBand(team.averages?.pitcher, pitcherValues);
         return (
           <Fragment key={`${team.team}-average`}>
-            <td className={`average-label ${batterClass}`}>9명 평균</td>
+            <td className="average-label">9명 평균</td>
             <td className={`average-value ${batterClass}`}>{formatRating(team.averages?.batter)}</td>
-            <td className={`average-label ${pitcherClass}`}>9명 평균</td>
+            <td className="average-label">9명 평균</td>
             <td className={`average-value ${pitcherClass}`}>{formatRating(team.averages?.pitcher)}</td>
           </Fragment>
         );
@@ -310,20 +325,15 @@ function AverageRow({ teams }) {
 
 function EstimatedStrengthRow({ teams }) {
   if (!teams.length || teams[0].league !== "1군") return null;
-  const values = teams.map((team) => team.averages?.average18);
 
   return (
     <tr className="strength-row">
       {teams.map((team) => {
-        const strengthClass = averageBand(team.averages?.average18, values);
         const rank = team.estimatedStrengthRank;
         return (
-          <Fragment key={`${team.team}-strength`}>
-            <td className={`average-label ${strengthClass}`}>18명 평균</td>
-            <td className={`average-value ${strengthClass}`}>{formatRating(team.averages?.average18)}</td>
-            <td className={`average-label ${strengthClass}`}>추정 전력</td>
-            <td className={`average-value ${strengthClass}`}>{rank ? `${rank}등` : "—"}</td>
-          </Fragment>
+          <td className="team-strength-cell" colSpan="4" key={`${team.team}-strength`}>
+            팀 전력: {rank ? `${rank}등` : "—"} ({formatRating(team.averages?.average18)})
+          </td>
         );
       })}
     </tr>
@@ -428,7 +438,10 @@ function floatingDiffTooltipPosition(rect) {
 }
 
 function DiffHoverCard({ player, role, position }) {
-  const plateAppearances = Array.isArray(player.plateAppearances) ? player.plateAppearances : [];
+  const plateAppearances = (Array.isArray(player.plateAppearances) ? player.plateAppearances : []).map((appearance) => ({
+    ...appearance,
+    result: normalizePlateAppearanceResult(appearance.result)
+  }));
   return createPortal(
     <div
       className="diff-hover-card diff-hover-card--floating"
@@ -493,7 +506,6 @@ function DiffPlayerCellsWithTooltip({ player, role }) {
       <td
         ref={nameCellRef}
         className={`diff-name-cell${grayClass}`}
-        title={player.summary || player.name}
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
         onFocus={showTooltip}
@@ -502,7 +514,7 @@ function DiffPlayerCellsWithTooltip({ player, role }) {
         {href ? <a className="player-link" href={href}>{player.name}</a> : <span className="player-link player-link--unresolved">{player.name}</span>}
       </td>
       <td className={`diff-rating-cell ${ratingBand(player.rating)}`}>
-        <span className="diff-rating-value">{formatRating(player.rating)}</span>
+        {href ? <a className="player-link diff-rating-value" href={href}>{formatRating(player.rating)}</a> : <span className="diff-rating-value">{formatRating(player.rating)}</span>}
         <span className={`diff-delta ${diffDeltaClass(player.ratingDelta)}`}>{formatDiffDelta(player.ratingDelta)}</span>
       </td>
       {tooltipVisible && tooltipPosition ? <DiffHoverCard player={player} role={role} position={tooltipPosition} /> : null}
@@ -709,6 +721,69 @@ function HomePage() {
   );
 }
 
+function AboutPage() {
+  const about = aboutContent && typeof aboutContent === "object" ? aboutContent : {};
+  const notes = Array.isArray(releaseNotes) ? releaseNotes : [];
+
+  useEffect(() => {
+    document.title = "KBO Plate Index · About";
+  }, []);
+
+  return (
+    <div className="page-shell">
+      <PageHeader subtitle="About" action={<span>사이트 소개 및 변경 기록</span>} />
+      <main className="page-content release-note-page-content">
+        <section className="sheet-card about-card" aria-labelledby="about-title">
+          <div className="sheet-card-header">
+            <div>
+              <p className="kicker">ABOUT</p>
+              <h2 id="about-title">{about.title || "KBO Plate Index"}</h2>
+              <p className="sheet-description">{about.summary || "사이트 소개"}</p>
+            </div>
+          </div>
+          <div className="about-copy">
+            {(Array.isArray(about.paragraphs) ? about.paragraphs : []).map((paragraph, index) => (
+              <p key={`${paragraph}-${index}`}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
+        <section className="sheet-card release-note-card" aria-labelledby="release-note-title">
+          <div className="sheet-card-header">
+            <div>
+              <p className="kicker">RELEASE NOTE</p>
+              <h2 id="release-note-title">변경 기록</h2>
+              <p className="sheet-description">KBO Plate Index의 주요 업데이트와 개발 기록입니다.</p>
+            </div>
+          </div>
+          <div className="release-note-list">
+            {notes.length ? notes.map((note, index) => {
+              const items = Array.isArray(note.items) ? note.items : [];
+              return (
+                <article className="release-note-entry" key={`${note.date ?? "note"}-${note.version ?? index}`}>
+                  <div className="release-note-entry-header">
+                    <div>
+                      <p className="release-note-version">{note.version || "Release Note"}</p>
+                      <h3>{note.title || "변경 사항"}</h3>
+                    </div>
+                    <time dateTime={note.date || undefined}>{note.date || "날짜 미상"}</time>
+                  </div>
+                  {note.summary ? <p className="release-note-summary">{note.summary}</p> : null}
+                  {items.length ? (
+                    <ul>
+                      {items.map((item, itemIndex) => <li key={`${item}-${itemIndex}`}>{item}</li>)}
+                    </ul>
+                  ) : <p className="release-note-empty">세부 변경 내용이 없습니다.</p>}
+                </article>
+              );
+            }) : <p className="release-note-empty">기록된 Release Note가 없습니다.</p>}
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
 function PlayerPhoto({ player }) {
   return player.imageUrl ? (
     <div className="player-photo"><img src={player.imageUrl} alt={`${player.displayName} 선수 이미지`} /></div>
@@ -756,6 +831,24 @@ function relatedPlayerIdForRole(player, targetRole) {
     ?? relationPlayerId(player?.[targetRole === "pitcher" ? "pitcher_player_id" : "batter_player_id"]);
 }
 
+function opponentPlayerIdForAppearance(appearance) {
+  const opponent = appearance?.opponentPlayer;
+  const nestedOpponent = opponent && typeof opponent === "object" ? opponent : null;
+  return relationPlayerId(
+    appearance?.opponentPlayerId
+      ?? appearance?.opponent_player_id
+      ?? nestedOpponent
+  );
+}
+
+function opponentPlayerNameForAppearance(appearance) {
+  const opponent = appearance?.opponentPlayer;
+  if (opponent && typeof opponent === "object") {
+    return opponent.displayName ?? opponent.name ?? opponent.nameKo ?? opponent.name_ko ?? appearance?.opponentPlayerName ?? null;
+  }
+  return appearance?.opponentPlayerName ?? opponent ?? null;
+}
+
 function PlayerRoleLinks({ player }) {
   const currentRole = isPitcherPlayer(player) ? "pitcher" : "batter";
   const targetRole = currentRole === "pitcher" ? "batter" : "pitcher";
@@ -775,8 +868,7 @@ function PlayerProfile({ player, ratings }) {
   const latest = ratings[ratings.length - 1] ?? null;
   const items = [
     ["역할·포지션", rolePositionLabel(player)],
-    ["소속 구단", fullTeamName(profile.team)],
-    ["현 소속", currentAffiliationLabel(player)],
+    ["소속 구단", `${fullTeamName(profile.team)} · ${currentAffiliationLabel(player)}`],
     ["생년월일", profile.birthDate]
   ];
 
@@ -800,7 +892,7 @@ function PlayerProfile({ player, ratings }) {
             {items.map(([label, value]) => (
               <div className="profile-item" key={label}>
                 <div className="profile-label">{label}</div>
-                <div className="profile-value" title={value || "—"}>{value || "—"}</div>
+                <div className="profile-value">{value || "—"}</div>
               </div>
             ))}
           </div>
@@ -829,7 +921,7 @@ function PlayerTechnicalInfo({ player }) {
         {items.map(([label, value]) => (
           <div className="technical-item" key={label}>
             <div className="profile-label">{label}</div>
-            <div className="technical-value" title={value || "—"}>{value || "—"}</div>
+            <div className="technical-value">{value || "—"}</div>
           </div>
         ))}
       </div>
@@ -910,7 +1002,7 @@ function summarizeBattingPerformance(appearances) {
   const counts = { plateAppearances: appearances.length, atBats: 0, hits: 0, homeRuns: 0, walks: 0, strikeouts: 0 };
 
   appearances.forEach((appearance) => {
-    const result = String(appearance.result ?? "");
+    const result = normalizePlateAppearanceResult(appearance.result);
     if (!result) return;
     if (/고의사구|볼넷|walk|bb/i.test(result)) {
       counts.walks += 1;
@@ -1049,7 +1141,7 @@ function buildGameEntries(ratings, appearances, player) {
       const value = appearanceDelta(appearance);
       return value === null ? total : total + value;
     }, 0);
-    const resultValues = group.map((appearance) => appearance.result).filter(Boolean);
+    const resultValues = group.map((appearance) => normalizePlateAppearanceResult(appearance.result)).filter(Boolean);
     const performance = isPitcherPlayer(player) && stat
       ? summarizePitchingPerformance(group, stat)
       : summarizeGamePerformance(group, player);
@@ -1099,7 +1191,7 @@ function buildPlateAppearanceEntries(ratings, appearances, player) {
     opponent: appearance.opponent,
     opponentDisplay: gameOpponentName(appearance, player?.profile?.team),
     homeAway: gameHomeAway(appearance.gameId, player?.profile?.team),
-    result: appearance.result,
+    result: normalizePlateAppearanceResult(appearance.result),
     plateAppearanceNumber: appearance.plateAppearanceNumber,
     paId: appearance.paId,
     appearances: [appearance],
@@ -1235,7 +1327,9 @@ function RatingChart({ ratings, player }) {
   const bottomMargin = entries.length ? Math.max(observedRange * 0.05, 0.5) : 0;
   const topMargin = entries.length ? observedRange * 0.1 : 0;
   const axisMin = entries.length ? Math.max(0, observedMin - bottomMargin) : 0;
-  const axisMax = entries.length ? Math.ceil((observedMax + topMargin) / 10) * 10 : 100;
+  // Keep the intended 10% headroom. Rounding this value up to the next
+  // multiple of 10 made the visible upper margin jump from roughly 70 to 80.
+  const axisMax = entries.length ? observedMax + topMargin : 100;
   const yAxisLabelValues = useMemo(() => {
     const first = Math.ceil(axisMin / 10) * 10;
     const last = Math.floor(axisMax / 10) * 10;
@@ -1300,7 +1394,7 @@ function RatingChart({ ratings, player }) {
         left: 52,
         right: 24,
         top: 22,
-        bottom: isZoomable ? 70 : 42,
+        bottom: 42,
         containLabel: true
       },
       tooltip: {
@@ -1361,35 +1455,17 @@ function RatingChart({ ratings, player }) {
         },
         splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
       },
-      dataZoom: isZoomable ? [
-        {
-          type: "inside",
-          xAxisIndex: [0],
-          filterMode: "none",
-          startValue,
-          endValue,
-          zoomOnMouseWheel: true,
-          moveOnMouseMove: true,
-          moveOnMouseWheel: true,
-          preventDefaultMouseMove: true
-        },
-        {
-          type: "slider",
-          xAxisIndex: [0],
-          filterMode: "none",
-          startValue,
-          endValue,
-          height: 16,
-          bottom: 10,
-          showDetail: false,
-          showDataShadow: false,
-          borderColor: "#d7dade",
-          backgroundColor: "#f4f5f6",
-          fillerColor: "rgba(169, 126, 75, 0.22)",
-          handleStyle: { color: "#8a633c", borderColor: "#6f4c2f" },
-          moveHandleStyle: { color: "#b28a59" }
-        }
-      ] : [],
+      dataZoom: entries.length > 1 ? [{
+        type: "inside",
+        xAxisIndex: [0],
+        filterMode: "none",
+        startValue,
+        endValue,
+        zoomOnMouseWheel: false,
+        moveOnMouseMove: false,
+        moveOnMouseWheel: false,
+        preventDefaultMouseMove: false
+      }] : [],
       series: [{
         type: "line",
         name: "Rating",
@@ -1489,12 +1565,10 @@ function RatingChart({ ratings, player }) {
               <button className={viewMode === mode ? "is-active" : ""} key={mode} type="button" onClick={() => setViewMode(mode)}>{label}</button>
             ))}
           </div>
-          {isZoomable ? (
-            <div className="chart-zoom-control" role="group" aria-label="경기별 표시 기간">
-              <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>최근 1개월</button>
-              <button className={showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(true)}>전체</button>
-            </div>
-          ) : null}
+          <div className="chart-zoom-control" role="group" aria-label="표시 기간">
+            <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>최근 1개월</button>
+            <button className={showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(true)}>전체</button>
+          </div>
         </div>
       </div>
       <div className="chart-shell">
@@ -1662,12 +1736,17 @@ function RatingHistory({ ratings, player }) {
 }
 
 function PlateAppearanceTable({ appearances, maximumRating, player }) {
+  const displayAppearances = appearances.map((appearance) => ({
+    ...appearance,
+    result: normalizePlateAppearanceResult(appearance.result)
+  }));
+
   return (
     <div className="data-table-scroller">
       <table className="detail-table">
-        <thead><tr><th scope="col">날짜</th><th scope="col">리그</th><th scope="col">경기</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">Rating 전후</th><th scope="col">변화</th></tr></thead>
+        <thead><tr><th scope="col">날짜</th><th scope="col">리그</th><th scope="col">경기</th><th scope="col">상대 선수</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">Rating 전후</th><th scope="col">변화</th></tr></thead>
         <tbody>
-          {appearances.length ? appearances.map((appearance) => {
+          {displayAppearances.length ? displayAppearances.map((appearance) => {
             const before = toNumber(appearance.ratingBefore);
             const after = toNumber(appearance.ratingAfter);
             const ratingValue = after ?? before;
@@ -1678,6 +1757,7 @@ function PlateAppearanceTable({ appearances, maximumRating, player }) {
                 <td>{formatDate(appearance.date)}</td>
                 <td><span className="record-league">{gameLeagueLabel(appearance.league)}</span></td>
                 <td><GameContextCell entry={appearance} player={player} includeVenue /></td>
+                <OpponentPlayerCell appearance={appearance} />
                 <td>{appearance.battingOrder || "—"}번</td>
                 <td>{appearance.plateAppearanceNumber || "—"}</td>
                 <td>{appearance.result || "—"}</td>
@@ -1685,10 +1765,22 @@ function PlateAppearanceTable({ appearances, maximumRating, player }) {
                 <td><Delta value={effect} /></td>
               </tr>
             );
-          }) : <tr><td colSpan="8">표시할 타석 기록이 없습니다.</td></tr>}
+          }) : <tr><td colSpan="9">표시할 타석 기록이 없습니다.</td></tr>}
         </tbody>
       </table>
     </div>
+  );
+}
+
+function OpponentPlayerCell({ appearance }) {
+  const name = opponentPlayerNameForAppearance(appearance);
+  const playerId = opponentPlayerIdForAppearance(appearance);
+  const href = playerId ? playerPageHref({ playerId }) : null;
+
+  return (
+    <td>
+      {name ? (href ? <a className="player-link opponent-player-link" href={href}>{name}</a> : name) : "—"}
+    </td>
   );
 }
 
@@ -1779,11 +1871,12 @@ function RosterHistory({ player }) {
   const note = events.length ? `${events.length}건` : hasRosterEventData ? "이력 없음" : "기록 연결 대기";
 
   return (
-    <PlayerRecordDisclosure
-      title="등록·말소·부상 기록"
-      note={note}
-      className="roster-history-disclosure"
-    >
+    <section className="detail-card detail-disclosure roster-history-disclosure" aria-labelledby="roster-history-title">
+      <div className="detail-disclosure-summary is-static roster-history-summary">
+        <span className="detail-disclosure-title" id="roster-history-title">등록·말소·부상 기록</span>
+        <span className="detail-disclosure-note">{note}</span>
+      </div>
+      <div className="detail-disclosure-body">
       {events.length ? (
         <div className="data-table-scroller">
           <table className="detail-table roster-history-table">
@@ -1816,7 +1909,8 @@ function RosterHistory({ player }) {
               : "등록·말소·부상 이력은 백엔드 API의 rosterEvents 연결 후 표시됩니다."}
         </p>
       )}
-    </PlayerRecordDisclosure>
+      </div>
+    </section>
   );
 }
 
@@ -1847,10 +1941,9 @@ function PlayerPage() {
           <>
             <PlayerProfile player={player} ratings={ratings} />
             <PlayerRatingChart ratings={ratings} player={player} />
+            <RosterHistory player={player} />
             <RatingHistory ratings={ratings} player={player} />
             <PlateAppearances player={player} />
-            <PlayerTechnicalInfo player={player} />
-            <RosterHistory player={player} />
           </>
         ) : <LoadingState>선수 데이터를 불러오는 중입니다.</LoadingState>}
       </main>
@@ -1862,6 +1955,7 @@ function PlayerPage() {
 function App() {
   if (isPagePath("player")) return <PlayerPage />;
   if (isPagePath("diff")) return <DiffPage />;
+  if (isPagePath("about") || isPagePath("release-note")) return <AboutPage />;
   return <HomePage />;
 }
 

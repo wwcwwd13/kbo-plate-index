@@ -222,6 +222,89 @@ h2 {
   font-size: 11px;
 }
 
+.release-note-page-content {
+  max-width: 920px;
+}
+
+.about-card {
+  margin-bottom: 16px;
+}
+
+.about-copy {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 18px;
+  color: #4d5257;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.release-note-list {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 18px;
+}
+
+.release-note-entry {
+  padding: 14px 16px;
+  border: 1px solid #d7dade;
+  border-left: 3px solid var(--brown-mid);
+  background: #ffffff;
+}
+
+.release-note-entry-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.release-note-version {
+  margin-bottom: 3px;
+  color: var(--brown-mid);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.release-note-entry h3 {
+  color: var(--brown-dark);
+  font-size: 15px;
+}
+
+.release-note-entry time {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.release-note-summary {
+  margin-top: 10px;
+  color: #4d5257;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.release-note-entry ul {
+  display: grid;
+  gap: 5px;
+  margin: 11px 0 0;
+  padding-left: 18px;
+  color: #4d5257;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.release-note-empty {
+  margin: 0;
+  padding: 20px 4px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -413,6 +496,10 @@ h2 {
   text-decoration: underline;
 }
 
+.rating-link {
+  text-align: center;
+}
+
 .empty-cell {
   color: #b1b1b1;
   background: #ffffff;
@@ -443,10 +530,24 @@ h2 {
   font-weight: 700;
 }
 
+.average-row .average-label {
+  background: #ffffff;
+}
+
 .strength-row td {
   height: 27px;
+  background: #ffffff;
   border-bottom: 2px solid var(--line-strong);
   font-weight: 700;
+}
+
+.strength-row .team-strength-cell {
+  border-right: 2px solid var(--line-strong);
+  text-align: center;
+}
+
+.strength-row .team-strength-cell:last-child {
+  border-right: 0;
 }
 
 .diff-card-header {
@@ -557,7 +658,7 @@ h2 {
   margin-top: 2px;
   font-size: 10px;
   font-weight: 700;
-  text-align: center;
+  text-align: right;
 }
 
 .diff-delta.is-up,
@@ -817,7 +918,7 @@ h2 {
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   border: 1px solid var(--line);
   background: var(--line);
@@ -1000,6 +1101,11 @@ h2 {
 
 .detail-disclosure-summary.is-static {
   cursor: default;
+}
+
+.roster-history-summary {
+  border-bottom: 1px solid var(--line);
+  background: #fafafa;
 }
 
 .detail-disclosure-summary.is-static::after {
@@ -1289,17 +1395,40 @@ h2 {
 
 .detail-table td:first-child,
 .detail-table th:first-child {
-  text-align: left;
+  text-align: center;
+}
+
+.detail-table .opponent-player-link {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.detail-table thead tr:nth-child(2) th:first-child {
+  text-align: center;
 }
 
 .delta-positive {
-  color: #226b32;
+  display: inline-block;
+  min-width: 3.2em;
+  padding: 2px 6px;
+  border: 1px solid #e5b5b5;
+  border-radius: 999px;
+  color: #c23535;
+  background: #fce4e4;
   font-weight: 700;
+  text-align: center;
 }
 
 .delta-negative {
-  color: #9a3030;
+  display: inline-block;
+  min-width: 3.2em;
+  padding: 2px 6px;
+  border: 1px solid #b8cce8;
+  border-radius: 999px;
+  color: #236bb5;
+  background: #e5efff;
   font-weight: 700;
+  text-align: center;
 }
 
 .delta-neutral {
