@@ -87,7 +87,7 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 
 ## 6. 웹페이지 제작 방향
 
-현재 웹페이지는 React + Vite 기반이다. GitHub Pages에 올릴 수 있는 정적 빌드 구조를 유지하면서, 로컬 개발에서는 API 서버가 제공하는 JSON 응답으로 SQLite를 읽도록 구성했다. API가 없는 정적 환경에서는 기존 임시 JSON으로 자동 fallback한다.
+현재 웹페이지는 React + Vite 기반이다. GitHub Pages에 올릴 수 있는 정적 빌드 구조를 유지하면서, 로컬과 배포 환경 모두 API 서버가 제공하는 JSON 응답으로 SQLite를 읽도록 구성했다. 로컬 API가 아직 시작되지 않은 경우에만 기존 임시 JSON을 참고용으로 사용하며, 공개 배포 환경에서 API가 없거나 실패하면 오래된 표 대신 빈 상태를 표시한다.
 
 현재 역할은 다음과 같다.
 
@@ -98,7 +98,7 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 - `KPI-Backend/api/`: private backend의 `database/kpi.db`에서 선수 프로필·Rating 스냅샷·타석 기록을 읽는 로컬 API
 - `KPI-Backend/database/images/`: KBO ID 파일명으로 저장된 선수 프로필 이미지
 - Apache ECharts/React 이벤트: 경기별·타석별 Rating 그래프, 경기별 X축 확대, 점 hover·focus·click 상세 tooltip
-- `data/sheet_reference.json`: API가 연결되지 않았을 때 사용하는 정적 fallback 표
+- `data/sheet_reference.json`: 로컬 API가 아직 시작되지 않았을 때만 사용하는 개발용 참고 표
 
 경기별 그래프는 Apache ECharts의 `dataZoom`으로 X축 표시 범위를 조정한다. `최근 1개월`과
 `전체` 보기만 제공하며, 그래프 높이와 Y축 눈금은 고정하고 확대·드래그는 X축에만 적용한다.
@@ -108,7 +108,7 @@ ECharts 청크는 선수 페이지에서만 지연 로딩되어 메인 표와 �
 
 현재는 `index.html`, `player.html`, `diff.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, 개발 환경에서는 `http://127.0.0.1:5050`, 배포 환경에서는 `VITE_API_BASE_URL`로 지정한 API를 통해 읽는다. `start-dev.cmd`를 실행하면 로컬 Vite와 API를 함께 시작할 수 있고, GitHub Pages workflow에는 Fly.io API 주소가 빌드 환경으로 설정되어 있다.
 
-메인 구단 표는 `GET /api/team-ratings`가 SQLite의 `player_rating_snapshots`를 기준으로 자동 구성한다. 쿼리 파라미터 `date=YYYY-MM-DD`를 주면 해당 날짜 이하에서 가장 최근인 선수 Rating을 기준으로 표를 만든다. 응답에는 `meta.asOf`, `meta.modelVersion`, `1군`·`2군`·`잔류군` `sections`, 구단별 타자·투수 배열, 9명 평균이 포함된다. 각 선수 항목에는 `gray`와 별도로 최신 로스터 이벤트 기준의 `medicalStatus`(`injury_list`, `rehab_list`, `foreign_player_rehab`)와 날짜·비고가 올 수 있다. `gray`는 Rating 모델의 기존 표시 플래그이고 부상·재활 상태와 같은 의미로 합치지 않는다. 프런트의 `fetchTeamRatings({ date })`가 이 API를 먼저 호출하고, API가 없으면 `data/sheet_reference.json`으로 fallback한다. 배포 환경에서 API를 연결할 때는 `VITE_API_BASE_URL`을 사용한다.
+메인 구단 표는 `GET /api/team-ratings`가 SQLite의 `player_rating_snapshots`를 기준으로 자동 구성한다. 쿼리 파라미터 `date=YYYY-MM-DD`를 주면 해당 날짜 이하에서 가장 최근인 선수 Rating을 기준으로 표를 만든다. 응답에는 `meta.asOf`, `meta.modelVersion`, `1군`·`2군`·`잔류군` `sections`, 구단별 타자·투수 배열, 9명 평균이 포함된다. 각 선수 항목에는 `gray`와 별도로 최신 로스터 이벤트 기준의 `medicalStatus`(`injury_list`, `rehab_list`, `foreign_player_rehab`)와 날짜·비고가 올 수 있다. `gray`는 Rating 모델의 기존 표시 플래그이고 부상·재활 상태와 같은 의미로 합치지 않는다. 프런트의 `fetchTeamRatings({ date })`가 이 API를 호출하며, 로컬에서만 API가 없을 때 `data/sheet_reference.json`으로 fallback한다. 공개 배포 환경에서 API가 없거나 실패하면 빈 상태를 표시한다. 배포 환경에서 API를 연결할 때는 `VITE_API_BASE_URL`을 사용한다.
 
 KPI 변동표는 `diff.html`에서 제공한다. `GET /api/rating-diff-dates`가 데이터 범위 안의 날짜와 날짜별 경기 수를 반환하고, `GET /api/rating-diffs?date=YYYY-MM-DD`가 선택한 경기일의 출전 선수만 반환한다. 응답은 1군·2군을 모두 포함하며, 선수별로 경기 종료 후 `rating`, 당일 `ratingDelta`, 역할별 기록 요약(`summary`), 타석별 상대 선수·결과·변동량(`plateAppearances`)을 제공한다. 경기 수가 0인 날짜를 선택하면 구단 헤더는 유지하고 선수 영역은 빈칸으로 표시한다. 프론트에서는 Rating 셀에 현재값과 `▲/▼ 변동량`을 두 줄로 보여주며, 선수명에 마우스를 올렸을 때만 역할별 요약과 타석별 상세를 표시한다. 툴팁에는 경기 번호를 표시하지 않는다.
 

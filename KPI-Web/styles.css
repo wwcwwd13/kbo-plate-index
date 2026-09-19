@@ -603,6 +603,24 @@ h2 {
   font-size: 12px;
 }
 
+.empty-data-state {
+  display: grid;
+  gap: 6px;
+  min-height: 180px;
+  place-content: center;
+  padding: 42px 20px;
+  border: 1px dashed #cfd3d7;
+  background: #fafafa;
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.empty-data-state strong {
+  color: #687078;
+  font-size: 13px;
+}
+
 .error-state strong {
   color: #8b2d2d;
 }
@@ -696,22 +714,6 @@ h2 {
   max-width: 1180px;
 }
 
-.breadcrumb {
-  margin-bottom: 10px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.breadcrumb a {
-  color: var(--brown-mid);
-  text-decoration: none;
-}
-
-.breadcrumb a:hover,
-.breadcrumb a:focus-visible {
-  text-decoration: underline;
-}
-
 .player-card,
 .detail-card {
   border: 1px solid #c7cbd0;
@@ -765,13 +767,6 @@ h2 {
   font-size: 12px;
 }
 
-.player-summary-note {
-  margin-top: 13px;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
-}
-
 .current-rating {
   display: grid;
   align-content: center;
@@ -782,22 +777,10 @@ h2 {
   text-align: center;
 }
 
-.current-rating-label {
-  color: var(--muted);
-  font-size: 10px;
-}
-
 .current-rating-value {
-  margin-top: 3px;
   font-size: 32px;
   font-weight: 700;
   line-height: 1;
-}
-
-.current-rating-date {
-  margin-top: 7px;
-  color: var(--muted);
-  font-size: 10px;
 }
 
 .profile-grid {

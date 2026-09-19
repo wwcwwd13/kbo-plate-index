@@ -15,7 +15,7 @@ KBO Plate Index(KPI) 웹페이지의 첫 화면입니다.
 
 ## 데이터 연결
 
-메인 표는 현재 `data/sheet_reference.json`을 사용합니다. 표의 선수 항목에는 DB의 실제 `playerId`를 함께 기록해 정적 GitHub Pages에서도 선수별 링크가 유지되며, 로컬 개발 서버에서는 private backend의 SQLite API가 제공하는 최신 연결표로 한 번 더 갱신합니다. DB에서 확인되지 않는 항목은 다른 선수로 잘못 연결하지 않고 링크 없이 표시합니다. 선수 상세 화면은 로컬 개발 서버에서 backend의 `database/kpi.db`를 읽는 API를 우선 사용하고, API가 실행되지 않았을 때와 정적 배포 환경에서는 `data/player_detail.json` 임시 fixture로 돌아갑니다.
+메인 표는 배포 환경에서 private backend의 SQLite API가 제공하는 최신 연결표를 사용합니다. API가 연결되지 않은 공개 환경에서는 오래된 참고 표를 보여주지 않고 빈 상태를 표시합니다. 로컬 개발 서버에서는 API가 아직 시작되지 않았을 때 `data/sheet_reference.json`을 참고용으로 사용할 수 있습니다. 선수 상세 화면은 backend API를 우선 사용하고, API가 실행되지 않았을 때에는 `data/player_detail.json` 임시 fixture로 돌아갑니다.
 
 DB 병합 및 API 연결 구조는 다음과 같습니다.
 
@@ -45,7 +45,7 @@ $env:VITE_API_BASE_URL = "https://kbo-plate-api-wwcwwd13.fly.dev"
 npm.cmd run dev -- --host 127.0.0.1 --port 4173
 ```
 
-GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 두었습니다. API가 응답하면 메인 화면 상단에 `SQLite 자동 구성`이 표시되고, 연결되지 않으면 정적 참고 표로 fallback합니다.
+GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 두었습니다. API가 응답하면 메인 화면 상단에 `SQLite 자동 구성`이 표시되고, 연결되지 않으면 표 대신 API 연결 필요 상태가 표시됩니다.
 
 ## 방향
 

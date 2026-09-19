@@ -230,6 +230,15 @@ function LoadError({ children }) {
   );
 }
 
+function EmptyDataState({ children }) {
+  return (
+    <div className="empty-data-state" role="status">
+      <strong>표시할 구단 Rating 데이터가 없습니다.</strong>
+      <span>{children}</span>
+    </div>
+  );
+}
+
 function PlayerLink({ player }) {
   if (!player) return <td className="name-cell empty-cell" aria-label="선수 없음" />;
   const grayClass = player.gray ? " is-gray" : "";
@@ -639,16 +648,19 @@ function HomePage() {
 
   const sections = data?.sections ?? [];
   const isDatabaseSource = data?.meta?.source === "sqlite_api";
+  const isUnavailable = Boolean(error) || Boolean(data && !sections.length);
   return (
     <div className="page-shell">
       <PageHeader
-        subtitle={`${data?.meta?.asOf ?? "기준일 확인 중"} KBO 구단별 Rating`}
+        subtitle={`${data?.meta?.asOf ?? (isUnavailable ? "데이터 대기 중" : "기준일 확인 중")} KBO 구단별 Rating`}
         action={
-          <>
-            <span>{data?.meta?.asOf ? `${data.meta.asOf} 기준` : "기준일 확인 중"}</span>
-            <span className="source-divider" aria-hidden="true">·</span>
-            <span>{isDatabaseSource ? "SQLite 자동 구성" : "정적 참고 표"}</span>
-          </>
+          isUnavailable ? <span>API 연결 필요</span> : (
+            <>
+              <span>{data?.meta?.asOf ? `${data.meta.asOf} 기준` : "기준일 확인 중"}</span>
+              <span className="source-divider" aria-hidden="true">·</span>
+              <span>{isDatabaseSource ? "SQLite 자동 구성" : "정적 참고 표"}</span>
+            </>
+          )
         }
       />
       <main className="page-content">
@@ -657,18 +669,26 @@ function HomePage() {
             <div>
               <p className="kicker">TEAM RATING</p>
               <h2 id="sheet-title">구단별 Rating</h2>
-              <p className="sheet-description">{isDatabaseSource ? "SQLite의 선수 Rating을 기준일에 맞춰 구단·리그별로 자동 구성합니다." : "백엔드 API가 연결되기 전에는 참고 시트의 구단·선수 배열을 표시합니다."}</p>
+              <p className="sheet-description">
+                {isDatabaseSource
+                  ? "SQLite의 선수 Rating을 기준일에 맞춰 구단·리그별로 자동 구성합니다."
+                  : isUnavailable
+                    ? "백엔드 API 연결 후 최신 구단·선수 Rating을 표시합니다."
+                    : "백엔드 API가 연결되기 전에는 참고 시트의 구단·선수 배열을 표시합니다."}
+              </p>
             </div>
-            <div className="legend" aria-label="Rating 색상 기준">
-              <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
-              <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
-              <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
-              <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
-              <span className="legend-item"><i className="legend-status-mark">†</i>부상·재활 명단</span>
-            </div>
+            {!isUnavailable ? (
+              <div className="legend" aria-label="Rating 색상 기준">
+                <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
+                <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
+                <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
+                <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
+                <span className="legend-item"><i className="legend-status-mark">†</i>부상·재활 명단</span>
+              </div>
+            ) : null}
           </div>
           <div className="rating-sections">
-            {error ? <LoadError>백엔드 API 또는 data/sheet_reference.json 파일을 확인해 주세요.</LoadError> : data ? sections.map((section, index) => <TeamRatingTable key={`${section.league}-${index}`} section={section} isSecondary={index > 0} />) : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
+            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? sections.map((section, index) => <TeamRatingTable key={`${section.league}-${index}`} section={section} isSecondary={index > 0} />) : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
         </section>
       </main>
@@ -758,22 +778,19 @@ function PlayerProfile({ player, ratings }) {
           <p className="kicker">PLAYER PROFILE</p>
           <h2 id="player-title">{player.displayName}</h2>
           <p className="player-english-name">{profile.englishName}</p>
-          <p className="player-summary-note">선수 기본 정보와 현재 Rating을 먼저 보여줍니다.<br />이후 경기별 변화와 세부 기록을 이어서 확인할 수 있습니다.</p>
+          <div className="profile-grid" aria-label="선수 기본 정보">
+            {items.map(([label, value]) => (
+              <div className="profile-item" key={label}>
+                <div className="profile-label">{label}</div>
+                <div className="profile-value" title={value || "—"}>{value || "—"}</div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className={`current-rating ${ratingBand(latest?.rating)}`}>
-          <span className="current-rating-label">현재 Rating</span>
           <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
-          <span className="current-rating-date">{latest ? `${formatDate(latest.date)} 기준` : "기준일 없음"}</span>
         </div>
       </section>
-      <div className="profile-grid" aria-label="선수 기본 정보">
-        {items.map(([label, value]) => (
-          <div className="profile-item" key={label}>
-            <div className="profile-label">{label}</div>
-            <div className="profile-value" title={value || "—"}>{value || "—"}</div>
-          </div>
-        ))}
-      </div>
       <PlayerRoleLinks player={player} />
     </>
   );
@@ -1689,7 +1706,6 @@ function PlayerPage() {
     <div className="page-shell">
       <PageHeader subtitle="선수 상세" action={<a href="./index.html">메인 표로 돌아가기</a>} />
       <main className="page-content player-page-content">
-        <div className="breadcrumb"><a href="./index.html">구단별 Rating</a><span aria-hidden="true"> / </span><span>{player?.displayName || "선수 상세"}</span></div>
         {error ? <LoadError>data/player_detail.json 파일과 데이터 접근 경로를 확인해 주세요.</LoadError> : player ? (
           <>
             <PlayerProfile player={player} ratings={ratings} />

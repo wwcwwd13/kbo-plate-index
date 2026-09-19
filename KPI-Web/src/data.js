@@ -11,6 +11,24 @@ function configuredApiBase() {
   return String(import.meta.env.VITE_API_BASE_URL ?? "").trim().replace(/\/$/, "");
 }
 
+function resolveApiAssetUrl(value, apiBase) {
+  const url = String(value ?? "").trim();
+  if (!url || !apiBase || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url)) return url;
+  return url.startsWith("/") ? `${apiBase}${url}` : `${apiBase}/${url}`;
+}
+
+function attachApiAssetUrls(data, apiBase) {
+  const player = data?.player;
+  if (!player?.imageUrl) return data;
+  return {
+    ...data,
+    player: {
+      ...player,
+      imageUrl: resolveApiAssetUrl(player.imageUrl, apiBase)
+    }
+  };
+}
+
 async function fetchJson(path) {
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error("HTTP " + response.status);
@@ -21,16 +39,20 @@ export async function fetchTeamRatings({ date } = {}) {
   const apiBase = configuredApiBase();
   const query = date ? `?date=${encodeURIComponent(date)}` : "";
 
+  if (!isLocalHost() && !apiBase) {
+    throw new Error("KPI API is not configured");
+  }
+
   if (isLocalHost() || apiBase) {
     try {
       return await fetchJson(`${apiBase}/api/team-ratings${query}`);
     } catch (error) {
-      // Keep the static table available when the API is not running yet.
+      // Local development can continue with the reference table while the API starts.
+      if (!isLocalHost()) throw error;
     }
   }
 
   const data = await fetchJson(DATA_PATHS.teamRatings);
-  if (!isLocalHost()) return data;
 
   try {
     const linkMap = await fetchJson("/api/players/link-map");
@@ -121,7 +143,7 @@ export async function fetchPlayerDetail(playerId) {
   const query = new URLSearchParams({ player_id: playerId }).toString();
   try {
     const data = await fetchJson(`${apiBase}/api/player?${query}`);
-    return attachRelatedRoleLink(data, apiBase);
+    return attachRelatedRoleLink(attachApiAssetUrls(data, apiBase), apiBase);
   } catch (error) {
     // Keep the static fixture available when the API is not running yet.
     return fetchJson(DATA_PATHS.playerDetail);
