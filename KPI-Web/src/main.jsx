@@ -779,9 +779,17 @@ function PlayerProfile({ player, ratings }) {
       <section className="player-card" aria-labelledby="player-title">
         <PlayerPhoto player={player} />
         <div className="player-summary">
-          <p className="kicker">PLAYER PROFILE</p>
-          <h2 id="player-title">{player.displayName}</h2>
-          <p className="player-english-name">{profile.englishName}</p>
+          <div className="player-summary-head">
+            <div className="player-heading">
+              <p className="kicker">PLAYER PROFILE</p>
+              <h2 id="player-title">{player.displayName}</h2>
+              {profile.englishName ? <p className="player-english-name">{profile.englishName}</p> : null}
+            </div>
+            <div className={`current-rating ${ratingBand(latest?.rating)}`}>
+              <span className="current-rating-label">현재 Rating</span>
+              <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
+            </div>
+          </div>
           <div className="profile-grid" aria-label="선수 기본 정보">
             {items.map(([label, value]) => (
               <div className="profile-item" key={label}>
@@ -790,12 +798,9 @@ function PlayerProfile({ player, ratings }) {
               </div>
             ))}
           </div>
-        </div>
-        <div className={`current-rating ${ratingBand(latest?.rating)}`}>
-          <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
+          <PlayerRoleLinks player={player} />
         </div>
       </section>
-      <PlayerRoleLinks player={player} />
     </>
   );
 }
