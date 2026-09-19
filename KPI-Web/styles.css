@@ -162,15 +162,6 @@ h1 {
   padding: 12px 12px 24px;
 }
 
-.site-disclaimer {
-  margin: 0 auto 10px;
-  padding: 0 2px;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
-  text-align: center;
-}
-
 .site-footer {
   width: 100%;
   margin: 0 auto;

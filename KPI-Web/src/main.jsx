@@ -241,9 +241,9 @@ function PageHeader({ subtitle, action }) {
 function SiteFooter() {
   return (
     <footer className="site-footer">
-      <p>본 사이트는 개인이 취미로 운영하는 비공식·비영리 프로젝트이며, KBO·구단·선수 및 관련 기관과 제휴·승인·후원 관계가 없습니다.</p>
-      <p>표시된 선수명·구단명·리그명·경기 정보·이미지 및 기타 자료의 권리는 KBO, 각 구단, 선수 또는 해당 원권리자에게 있습니다. 본 사이트는 이에 대한 소유권이나 상업적 이용권을 주장하지 않습니다.</p>
-      <p>데이터는 공개 자료를 바탕으로 자동 처리한 참고용 정보이며 정확성·완전성·최신성을 보장하지 않습니다. 법령이 허용하는 범위에서 정보 이용으로 발생한 결과에 대해 운영자는 책임을 지지 않습니다.</p>
+      <p>KBO Plate Index는 개인이 취미로 만들고 있는 비공식·비영리 프로젝트입니다.</p>
+      <p>선수·구단·리그 및 관련 자료에 대한 권리는 각 원권리자에게 있습니다.</p>
+      <p>표시 정보는 공개 자료를 바탕으로 정리한 참고용 데이터입니다.</p>
     </footer>
   );
 }
@@ -690,10 +690,6 @@ function HomePage() {
         }
       />
       <main className="page-content">
-        <p className="site-disclaimer" role="note">
-          개인이 취미로 만들고 있는 비공식·비영리 웹사이트입니다. (열심히 진행중)<br />
-          표시 정보가 정확하지 않거나 최신 상태와 다를 수 있습니다.
-        </p>
         <section className="sheet-card" aria-labelledby="sheet-title">
           <div className="sheet-card-header">
             <div>
