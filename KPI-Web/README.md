@@ -10,8 +10,8 @@ KBO Plate Index(KPI) 웹페이지의 첫 화면입니다.
 - 팀별 타자·투수 이름과 Rating을 가로형으로 배치
 - 1군 9명 평균, Rating 구간별 색상, 불확실·오래된 선수의 회색 표시
 - DB의 실제 `playerId`가 연결된 선수명에서 선수 상세 페이지로 이동
-- 선수 기본정보, 경기별 Rating 그래프, 타격 통계, 타석 기록
-- Rating 그래프의 경기별·타석별 전환, 경기별 가로 확대, 점 hover·focus·click 상세 정보
+- 선수 기본정보, 경기별 Rating 그래프, 역할별 타격·투구 기록, 경기·타석 기록
+- Apache ECharts 기반 Rating 그래프의 경기별·타석별 전환, 경기별 X축 확대, 점 hover·focus·click 상세 정보
 
 ## 데이터 연결
 
@@ -37,6 +37,15 @@ npm run enrich:links
 `enrich:links`는 로컬 SQLite API의 `/api/players/link-map`을 기준으로 `data/sheet_reference.json`의 선수 링크를 다시 맞춥니다. DB나 구단별 표가 갱신된 뒤 실행하면 됩니다.
 
 Windows에서 `npm` 명령을 바로 사용할 수 없다면 `start-dev.cmd`를 더블클릭해 개발 서버를 시작할 수 있습니다. 이 실행 파일은 작업 폴더에 준비된 휴대용 Node.js가 있으면 그것을 먼저 사용하고, 없으면 시스템에 설치된 Node.js를 사용합니다. 로컬 workspace에 sibling인 `KPI-Backend`가 있고 `dotnet`이 설치되어 있으면 별도 창에서 private SQLite API도 함께 시작합니다. public 웹 저장소만 따로 clone한 경우에는 API 없이 정적 fixture로 실행됩니다.
+
+Fly.io의 원격 API를 사용해 프론트를 확인하려면 Vite를 시작하기 전에 PowerShell에서 다음 환경 변수를 설정합니다. Vite 환경 변수는 서버 시작 또는 빌드 시점에 읽힙니다.
+
+```powershell
+$env:VITE_API_BASE_URL = "https://kbo-plate-api-wwcwwd13.fly.dev"
+npm.cmd run dev -- --host 127.0.0.1 --port 4173
+```
+
+GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 두었습니다. API가 응답하면 메인 화면 상단에 `SQLite 자동 구성`이 표시되고, 연결되지 않으면 정적 참고 표로 fallback합니다.
 
 ## 방향
 

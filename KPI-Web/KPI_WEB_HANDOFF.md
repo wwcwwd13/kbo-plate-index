@@ -33,7 +33,7 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 - 마지막에 정리한 **구단별 KPI Rating 표**를 중심으로 한다.
 - 전체 타석 로그 표는 외부 기본 화면에 보여주지 않는다.
 - 타석별 before/after 값과 각종 내부 변수는 계산 검증용 자료로 보관하되, 초기 공개 화면에는 노출하지 않는다.
-- 구단·리그·1군/2군을 구분해서 볼 수 있으면 좋겠다.
+- 구단·리그·1군/2군/잔류군을 구분해서 볼 수 있으면 좋겠다.
 - 선수 이름, 소속, Rating, 순위 또는 구단 내 위치가 한눈에 들어오면 좋겠다.
 
 ### 시간 그래프
@@ -97,10 +97,22 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 - `src/data.js`: 임시 JSON과 로컬 API 사이의 데이터 접근 경계
 - `KPI-Backend/api/`: private backend의 `database/kpi.db`에서 선수 프로필·Rating 스냅샷·타석 기록을 읽는 로컬 API
 - `KPI-Backend/database/images/`: KBO ID 파일명으로 저장된 선수 프로필 이미지
-- SVG/React 이벤트: 경기별·타석별 Rating 그래프, 경기별 가로 확대, 점 hover·focus·click 상세 tooltip
-- `data/sheet_reference.json`: 구단별 표의 선수 항목에 실제 DB `playerId`를 기록해 정적 배포에서도 선수별 링크를 유지
+- Apache ECharts/React 이벤트: 경기별·타석별 Rating 그래프, 경기별 X축 확대, 점 hover·focus·click 상세 tooltip
+- `data/sheet_reference.json`: API가 연결되지 않았을 때 사용하는 정적 fallback 표
 
-현재는 `index.html`과 `player.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, `http://127.0.0.1:5050`의 로컬 API를 통해 읽는다. `start-dev.cmd`를 실행하면 Vite와 API를 함께 시작한다.
+경기별 그래프는 Apache ECharts의 `dataZoom`으로 X축 표시 범위를 조정한다. `최근 1개월`과
+`전체` 보기만 제공하며, 그래프 높이와 Y축 눈금은 고정하고 확대·드래그는 X축에만 적용한다.
+`markArea`로 Rating 구간 배경을,
+`markLine`으로 최고점 기준선을, HTML tooltip으로 경기·타석 상세를 표시한다.
+ECharts 청크는 선수 페이지에서만 지연 로딩되어 메인 표와 변동표의 첫 번들에 포함되지 않는다.
+
+현재는 `index.html`, `player.html`, `diff.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, 개발 환경에서는 `http://127.0.0.1:5050`, 배포 환경에서는 `VITE_API_BASE_URL`로 지정한 API를 통해 읽는다. `start-dev.cmd`를 실행하면 로컬 Vite와 API를 함께 시작할 수 있고, GitHub Pages workflow에는 Fly.io API 주소가 빌드 환경으로 설정되어 있다.
+
+메인 구단 표는 `GET /api/team-ratings`가 SQLite의 `player_rating_snapshots`를 기준으로 자동 구성한다. 쿼리 파라미터 `date=YYYY-MM-DD`를 주면 해당 날짜 이하에서 가장 최근인 선수 Rating을 기준으로 표를 만든다. 응답에는 `meta.asOf`, `meta.modelVersion`, `1군`·`2군`·`잔류군` `sections`, 구단별 타자·투수 배열, 9명 평균이 포함된다. 각 선수 항목에는 `gray`와 별도로 최신 로스터 이벤트 기준의 `medicalStatus`(`injury_list`, `rehab_list`, `foreign_player_rehab`)와 날짜·비고가 올 수 있다. `gray`는 Rating 모델의 기존 표시 플래그이고 부상·재활 상태와 같은 의미로 합치지 않는다. 프런트의 `fetchTeamRatings({ date })`가 이 API를 먼저 호출하고, API가 없으면 `data/sheet_reference.json`으로 fallback한다. 배포 환경에서 API를 연결할 때는 `VITE_API_BASE_URL`을 사용한다.
+
+KPI 변동표는 `diff.html`에서 제공한다. `GET /api/rating-diff-dates`가 데이터 범위 안의 날짜와 날짜별 경기 수를 반환하고, `GET /api/rating-diffs?date=YYYY-MM-DD`가 선택한 경기일의 출전 선수만 반환한다. 응답은 1군·2군을 모두 포함하며, 선수별로 경기 종료 후 `rating`, 당일 `ratingDelta`, 역할별 기록 요약(`summary`), 타석별 상대 선수·결과·변동량(`plateAppearances`)을 제공한다. 경기 수가 0인 날짜를 선택하면 구단 헤더는 유지하고 선수 영역은 빈칸으로 표시한다. 프론트에서는 Rating 셀에 현재값과 `▲/▼ 변동량`을 두 줄로 보여주며, 선수명에 마우스를 올렸을 때만 역할별 요약과 타석별 상세를 표시한다. 툴팁에는 경기 번호를 표시하지 않는다.
+
+현재 메인 표 구성 규칙은 다음과 같다. 2025년 KBO 정규시즌 순서(`LG → 한화 → 삼성 → SSG → NC → KT → 두산 → 롯데 → KIA → 키움`)를 고정 정렬 기준으로 사용하고, 고양은 키움 2군으로 묶는다. Rating에 존재하는 선수는 최근 출전 여부와 관계없이 모두 표에 남긴다. 현재 등록 스냅샷 또는 최신 `call_up` 이벤트로 확인되는 선수는 `1군`, 최신 `demotion` 이벤트로 확인되는 선수는 `2군`, 그 외 선수는 `잔류군`으로 분류한다. 현재 DB에는 별도의 완전한 2군 등록 스냅샷이 없으므로 퓨처스 배치는 `demotion` 이벤트를 우선 사용한다. 최신 부상자·치료/재활 이벤트가 현재 로스터 상태보다 같거나 뒤에 있으면 `잔류군`으로 두고 `medicalStatus`·날짜·비고를 표시한다. 이후 콜업·등록 등 후속 상태 이벤트가 더 최근이면 이전 부상 상태는 현재 표시에서 해제한다. 부상·재활 표시는 이름 옆 `†`와 마우스오버 설명으로 제공하며, 비고에 들어온 재활 기간도 함께 보여준다. 1군 표에는 타자·투수 각각 9명 평균과 18명 평균·추정 전력 순위를 표시한다.
 
 현재 연결 범위:
 
@@ -109,7 +121,8 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 - `people`, `players`, `external_player_ids`, 로스터 스냅샷: 선수 기본 정보
 - `batting_stat_snapshots`: 데이터가 있는 선수만 타격 통계를 표시
 - `KPI-Backend/database/images`: KBO ID와 파일명을 매칭해 선수 프로필 사진을 표시
-- `team_rating_snapshots`: 아직 데이터가 없어 메인 구단 표는 기존 `sheet_reference.json`을 사용
+- `player_rating_snapshots`: 메인 구단 표의 선수별 Rating과 구단·리그 grouping에 사용
+- `team_rating_snapshots`: 향후 구단 Rating 자체를 별도 스냅샷으로 제공할 때 사용할 수 있음
 
 선수 링크는 이름만으로 연결하지 않는다. 로컬 API의 `/api/players/link-map`에서 역할·구단·리그·Rating을 함께 확인해 `playerId`를 정하고, `npm run enrich:links`로 정적 표 데이터에 반영한다. DB에서 확인되지 않는 선수는 다른 선수 페이지로 잘못 연결하지 않는다.
 
@@ -156,9 +169,12 @@ Rating이라는 단어보다, 타석과 경기 흐름에서 파생된 지표라�
 ### 선수 상세 화면
 
 - 메인 표의 선수명을 클릭하면 선수 개인 화면으로 이동한다.
-- 공개 가능한 선수 기본 정보(선수명, 소속 구단, 역할, 1군/2군 등)를 보여준다.
+- 공개 가능한 선수 기본 정보(선수명, 정식 소속 구단명, 역할·포지션, 현 소속, 생년월일)를 보여준다.
+- 투수는 `투수`, 타자는 `야수 · 내야수`처럼 역할과 포지션을 하나로 표시하며, 포수도 `야수 · 포수`에 포함한다.
+- 현 소속은 `1군`·`2군`·`잔류군`으로 표시한다.
 - 경기별 KPI Rating 변화 그래프를 제공한다.
-- 필요하면 경기·타석 기록과 Rating 변화가 연결되어 보이도록 확장한다.
+- 역할에 맞는 타격 또는 투구 기록을 별도 카드로 보여주고, 반대 역할의 `playerId`가 연결된 경우 해당 기록 화면 이동 버튼을 제공한다.
+- 경기 기록은 원시 경기 키 대신 상대 구단·홈/원정·구장을 표시하고, 타격/투구 전용 성적 열로 나눈다.
 
 ### 날짜별 구단 Rating
 

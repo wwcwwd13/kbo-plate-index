@@ -44,6 +44,8 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Build
+        env:
+          VITE_API_BASE_URL: https://kbo-plate-api-wwcwwd13.fly.dev
         run: npm run build
 
       - name: Upload Pages artifact

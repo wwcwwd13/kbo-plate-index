@@ -30,7 +30,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(process.cwd(), "index.html"),
-        player: resolve(process.cwd(), "player.html")
+        player: resolve(process.cwd(), "player.html"),
+        diff: resolve(process.cwd(), "diff.html")
       }
     }
   }

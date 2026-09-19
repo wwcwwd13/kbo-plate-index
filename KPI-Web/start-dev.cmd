@@ -32,10 +32,11 @@ set "BACKEND_DIR=%KPI_BACKEND_ROOT%"
 if not defined BACKEND_DIR if exist "%~dp0..\..\KPI-Backend\start-api.cmd" set "BACKEND_DIR=%~dp0..\..\KPI-Backend"
 if not defined BACKEND_DIR if exist "%~dp0..\KPI-Backend\start-api.cmd" set "BACKEND_DIR=%~dp0..\KPI-Backend"
 if defined BACKEND_DIR start "KBO Plate Index API" /D "%BACKEND_DIR%" "%ComSpec%" /d /k call "%BACKEND_DIR%\start-api.cmd"
+if not defined KPI_WEB_PORT set "KPI_WEB_PORT=4173"
 echo Starting the KBO Plate Index development server.
-echo Open http://127.0.0.1:5173/ in your browser.
+echo Open http://127.0.0.1:%KPI_WEB_PORT%/ in your browser.
 echo Press Ctrl+C in this window to stop the server.
-call "%NPM_COMMAND%" run dev -- --host 127.0.0.1
+call "%NPM_COMMAND%" run dev -- --host 127.0.0.1 --port %KPI_WEB_PORT%
 exit /b %ERRORLEVEL%
 
 :install_error

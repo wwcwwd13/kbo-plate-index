@@ -10,6 +10,7 @@
     "enrich:links": "node scripts/enrich-sheet-links.mjs"
   },
   "dependencies": {
+    "echarts": "^6.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
