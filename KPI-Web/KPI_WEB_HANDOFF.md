@@ -108,11 +108,11 @@ ECharts 청크는 선수 페이지에서만 지연 로딩되어 메인 표와 �
 
 현재는 `index.html`, `player.html`, `diff.html`을 각각 Vite 진입점으로 사용한다. 실제 SQLite는 브라우저에서 직접 읽지 않고, 개발 환경에서는 `http://127.0.0.1:5050`, 배포 환경에서는 `VITE_API_BASE_URL`로 지정한 API를 통해 읽는다. `start-dev.cmd`를 실행하면 로컬 Vite와 API를 함께 시작할 수 있고, GitHub Pages workflow에는 Fly.io API 주소가 빌드 환경으로 설정되어 있다.
 
-메인 구단 표는 `GET /api/team-ratings`가 SQLite의 `player_rating_snapshots`를 기준으로 자동 구성한다. 쿼리 파라미터 `date=YYYY-MM-DD`를 주면 해당 날짜 이하에서 가장 최근인 선수 Rating을 기준으로 표를 만든다. 응답에는 `meta.asOf`, `meta.modelVersion`, `1군`·`2군`·`잔류군` `sections`, 구단별 타자·투수 배열, 9명 평균이 포함된다. 각 선수 항목에는 `gray`와 별도로 최신 로스터 이벤트 기준의 `medicalStatus`(`injury_list`, `rehab_list`, `foreign_player_rehab`)와 날짜·비고가 올 수 있다. `gray`는 Rating 모델의 기존 표시 플래그이고 부상·재활 상태와 같은 의미로 합치지 않는다. 프런트의 `fetchTeamRatings({ date })`가 이 API를 호출하며, 로컬에서만 API가 없을 때 `data/sheet_reference.json`으로 fallback한다. 공개 배포 환경에서 API가 없거나 실패하면 빈 상태를 표시한다. 배포 환경에서 API를 연결할 때는 `VITE_API_BASE_URL`을 사용한다.
+메인 구단 표는 `GET /api/team-ratings`가 SQLite의 `player_rating_snapshots`를 기준으로 자동 구성한다. 쿼리 파라미터 `date=YYYY-MM-DD`를 주면 해당 날짜 이하에서 가장 최근인 선수 Rating을 기준으로 표를 만든다. 응답에는 `meta.asOf`, `meta.modelVersion`, `1군`·`2군`·`잔류군`·`말소` `sections`, 구단별 타자·투수 배열, 9명 평균이 포함된다. 자유계약·웨이버·군 보류·은퇴 등 활성 리그가 없는 최신 로스터 상태는 `말소` 섹션으로 분리하고, `1군 말소`처럼 퓨처스 이동을 뜻하는 이벤트는 `2군`으로 유지한다. 각 선수 항목에는 `gray`와 별도로 최신 로스터 이벤트 기준의 `medicalStatus`(`injury_list`, `rehab_list`, `foreign_player_rehab`)와 날짜·비고가 올 수 있다. `gray`는 Rating 모델의 기존 표시 플래그이고 부상·재활 상태와 같은 의미로 합치지 않는다. 프런트의 `fetchTeamRatings({ date })`가 이 API를 호출하며, 로컬에서만 API가 없을 때 `data/sheet_reference.json`으로 fallback한다. 공개 배포 환경에서 API가 없거나 실패하면 빈 상태를 표시한다. 배포 환경에서 API를 연결할 때는 `VITE_API_BASE_URL`을 사용한다.
 
 KPI 변동표는 `diff.html`에서 제공한다. `GET /api/rating-diff-dates`가 데이터 범위 안의 날짜와 날짜별 경기 수를 반환하고, `GET /api/rating-diffs?date=YYYY-MM-DD`가 선택한 경기일의 출전 선수만 반환한다. 응답은 1군·2군을 모두 포함하며, 선수별로 경기 종료 후 `rating`, 당일 `ratingDelta`, 역할별 기록 요약(`summary`), 타석별 상대 선수·결과·변동량(`plateAppearances`)을 제공한다. 경기 수가 0인 날짜를 선택하면 구단 헤더는 유지하고 선수 영역은 빈칸으로 표시한다. 프론트에서는 Rating 셀에 현재값과 `▲/▼ 변동량`을 두 줄로 보여주며, 선수명에 마우스를 올렸을 때만 역할별 요약과 타석별 상세를 표시한다. 툴팁에는 경기 번호를 표시하지 않는다.
 
-현재 메인 표 구성 규칙은 다음과 같다. 2025년 KBO 정규시즌 순서(`LG → 한화 → 삼성 → SSG → NC → KT → 두산 → 롯데 → KIA → 키움`)를 고정 정렬 기준으로 사용하고, 고양은 키움 2군으로 묶는다. Rating에 존재하는 선수는 최근 출전 여부와 관계없이 모두 표에 남긴다. 현재 등록 스냅샷 또는 최신 `call_up` 이벤트로 확인되는 선수는 `1군`, 최신 `demotion` 이벤트로 확인되는 선수는 `2군`, 그 외 선수는 `잔류군`으로 분류한다. 현재 DB에는 별도의 완전한 2군 등록 스냅샷이 없으므로 퓨처스 배치는 `demotion` 이벤트를 우선 사용한다. 최신 부상자·치료/재활 이벤트가 현재 로스터 상태보다 같거나 뒤에 있으면 `잔류군`으로 두고 `medicalStatus`·날짜·비고를 표시한다. 이후 콜업·등록 등 후속 상태 이벤트가 더 최근이면 이전 부상 상태는 현재 표시에서 해제한다. 부상·재활 표시는 이름 옆 `†`와 마우스오버 설명으로 제공하며, 비고에 들어온 재활 기간도 함께 보여준다. 1군 표에는 타자·투수 각각 9명 평균과 18명 평균·추정 전력 순위를 표시한다.
+현재 메인 표 구성 규칙은 다음과 같다. 2025년 KBO 정규시즌 순서(`LG → 한화 → 삼성 → SSG → NC → KT → 두산 → 롯데 → KIA → 키움`)를 고정 정렬 기준으로 사용하고, 고양은 키움 2군으로 묶는다. Rating에 존재하는 선수는 최근 출전 여부와 관계없이 모두 표에 남긴다. 현재 등록 스냅샷 또는 최신 `call_up` 이벤트로 확인되는 선수는 `1군`, 최신 `demotion` 이벤트로 확인되는 선수는 `2군`, 활성 리그가 없는 자유계약·웨이버·군 보류·은퇴 등은 `말소`, 그 외 선수는 `잔류군`으로 분류한다. `1군 말소`처럼 퓨처스 이동을 뜻하는 이벤트는 말소가 아니라 `2군`으로 처리한다. 현재 DB에는 별도의 완전한 2군 등록 스냅샷이 없으므로 퓨처스 배치는 `demotion` 이벤트를 우선 사용한다. 최신 부상자·치료/재활 이벤트가 현재 로스터 상태보다 같거나 뒤에 있으면 `잔류군`으로 두고 `medicalStatus`·날짜·비고를 표시한다. 이후 콜업·등록 등 후속 상태 이벤트가 더 최근이면 이전 부상 상태는 현재 표시에서 해제한다. 부상·재활 표시는 이름 옆 `+`와 마우스오버 설명으로 제공하며, 비고에 들어온 재활 기간도 함께 보여준다. 1군 표에는 타자·투수 각각 9명 평균과 18명 평균·추정 전력 순위를 표시한다.
 
 현재 연결 범위:
 
@@ -175,6 +175,10 @@ KPI 변동표는 `diff.html`에서 제공한다. `GET /api/rating-diff-dates`가
 - 경기별 KPI Rating 변화 그래프를 제공한다.
 - 역할에 맞는 타격 또는 투구 기록을 별도 카드로 보여주고, 반대 역할의 `playerId`가 연결된 경우 해당 기록 화면 이동 버튼을 제공한다.
 - 경기 기록은 원시 경기 키 대신 상대 구단·홈/원정·구장을 표시하고, 타격/투구 전용 성적 열로 나눈다.
+- 투수 경기별 성적은 `player.pitchingGameStats`를 사용한다. 각 행은 `date`, `gameId`,
+  `opponent`, `battersFaced`, `outs`, `innings`, `hitsAllowed`, `homeRunsAllowed`,
+  `walksHitByPitch`, `strikeouts`, `runs`, `earnedRuns`를 제공하고,
+  `statSource`와 `completeness`로 공식 박스스코어/타석 파생 여부를 구분한다.
 
 ### 날짜별 구단 Rating
 

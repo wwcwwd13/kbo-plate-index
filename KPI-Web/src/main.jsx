@@ -52,8 +52,16 @@ function formatShortDate(value) {
 }
 
 function sectionDisplayName(league) {
+  if (league === "말소" || league === "released") return "말소";
   if (league === "잔류군" || league === "residual") return "잔류군";
   return league === "1군" || league === "major" ? "KBO 리그" : "퓨쳐스리그";
+}
+
+function gameLeagueLabel(value) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (["1군", "major", "kbo", "kbo 리그"].includes(normalized)) return "1군";
+  if (["2군", "minor", "futures", "퓨처스리그", "퓨쳐스리그"].includes(normalized)) return "2군";
+  return String(value ?? "").trim() || "—";
 }
 
 const TEAM_ORDER_2025 = ["LG", "한화", "삼성", "SSG", "NC", "KT", "두산", "롯데", "KIA", "키움"];
@@ -135,6 +143,7 @@ function currentAffiliationLabel(player) {
   if (["1군", "major", "kbo", "kbo 리그"].includes(normalized)) return "1군";
   if (["2군", "minor", "futures", "퓨처스리그", "퓨쳐스리그"].includes(normalized)) return "2군";
   if (["잔류군", "residual", "reserve"].includes(normalized)) return "잔류군";
+  if (["말소", "released", "release"].includes(normalized)) return "말소";
   return String(value ?? "").trim() || "—";
 }
 
@@ -182,15 +191,6 @@ function averageBand(value, values) {
   return rank <= Math.ceil(total / 2) ? "average-upper" : "average-lower";
 }
 
-function formatStatValue(key, value) {
-  const number = toNumber(value);
-  if (number === null) return "—";
-  if (["battingAverage", "onBasePercentage", "sluggingPercentage", "ops"].includes(key)) {
-    return number.toFixed(3).replace(/^0\./, ".");
-  }
-  return Number.isInteger(number) ? String(number) : number.toFixed(1);
-}
-
 function deltaClass(value) {
   const number = toNumber(value);
   if (number === null || number === 0) return "delta-neutral";
@@ -223,16 +223,17 @@ function PageHeader({ subtitle, action }) {
           <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>KPI 변동표</a>
         </nav>
       </div>
-      <div className="source-meta">{action}</div>
+      {action ? <div className="source-meta">{action}</div> : null}
     </header>
   );
 }
 
-function PageFooter({ children }) {
+function SiteFooter() {
   return (
-    <footer className="page-footer">
-      <span>KBO Plate Index</span>
-      {children}
+    <footer className="site-footer">
+      <p>본 사이트는 개인이 취미로 운영하는 비공식·비영리 프로젝트이며, KBO·구단·선수 및 관련 기관과 제휴·승인·후원 관계가 없습니다.</p>
+      <p>표시된 선수명·구단명·리그명·경기 정보·이미지 및 기타 자료의 권리는 KBO, 각 구단, 선수 또는 해당 원권리자에게 있습니다. 본 사이트는 이에 대한 소유권이나 상업적 이용권을 주장하지 않습니다.</p>
+      <p>데이터는 공개 자료를 바탕으로 자동 처리한 참고용 정보이며 정확성·완전성·최신성을 보장하지 않습니다. 법령이 허용하는 범위에서 정보 이용으로 발생한 결과에 대해 운영자는 책임을 지지 않습니다.</p>
     </footer>
   );
 }
@@ -649,7 +650,7 @@ function DiffPage() {
           </div>
         </section>
       </main>
-      <PageFooter><a href={homeHref()}>구단별 Rating으로 돌아가기</a></PageFooter>
+      <SiteFooter />
     </div>
   );
 }
@@ -677,6 +678,10 @@ function HomePage() {
         }
       />
       <main className="page-content">
+        <p className="site-disclaimer" role="note">
+          개인이 취미로 만들고 있는 비공식·비영리 웹사이트입니다. (열심히 진행중)<br />
+          표시 정보가 정확하지 않거나 최신 상태와 다를 수 있습니다.
+        </p>
         <section className="sheet-card" aria-labelledby="sheet-title">
           <div className="sheet-card-header">
             <div>
@@ -690,7 +695,7 @@ function HomePage() {
                 <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
                 <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
                 <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
-                <span className="legend-item"><span className="legend-name-sample">선수명</span>최근 출전수 적음</span>
+                <span className="legend-item"><span className="legend-name-sample">회색</span><span>출전수 적음</span></span>
               </div>
             ) : null}
           </div>
@@ -699,6 +704,7 @@ function HomePage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }
@@ -882,7 +888,8 @@ function gameOpponentName(appearance, playerTeam) {
 }
 
 function gameContextText(entry, player) {
-  const opponent = entry.opponentDisplay || gameOpponentName(entry, player?.profile?.team);
+  const opponentValue = entry.opponentDisplay || gameOpponentName(entry, player?.profile?.team);
+  const opponent = opponentValue ? fullTeamName(opponentValue) : "구단 미상";
   const homeAway = entry.homeAway || gameHomeAway(entry.gameId, player?.profile?.team);
   return { opponent, homeAway };
 }
@@ -950,7 +957,22 @@ function formatInnings(outs) {
   return `${Math.floor(wholeOuts / 3)}.${wholeOuts % 3}`;
 }
 
-function summarizePitchingPerformance(appearances) {
+function summarizePitchingPerformance(appearances, gameStat = null) {
+  if (gameStat) {
+    const statOuts = numericField(gameStat, ["outs", "pitchingOuts", "inningOuts"]);
+    return {
+      kind: "pitching",
+      innings: gameStat.innings ?? (statOuts === null ? null : formatInnings(statOuts)),
+      hitsAllowed: numericField(gameStat, ["hitsAllowed", "hits_allowed", "pitchingHits"]),
+      homeRunsAllowed: numericField(gameStat, ["homeRunsAllowed", "hrAllowed", "pitchingHomeRuns"]),
+      walks: numericField(gameStat, ["walks", "walksHitByPitch", "bbHbp", "bb_hbp"]),
+      strikeouts: numericField(gameStat, ["strikeouts", "so", "strikeOuts"]),
+      runs: numericField(gameStat, ["runs", "r"]),
+      earnedRuns: numericField(gameStat, ["earnedRuns", "er"]),
+      battersFaced: numericField(gameStat, ["battersFaced", "bf"])
+    };
+  }
+
   const outs = sumNumericFields(appearances, ["outs", "pitchingOuts", "inningOuts"])
     ?? (appearances
       .map((appearance) => numericField(appearance, ["inningsPitched", "ip", "ipText", "innings", "inning"]))
@@ -997,6 +1019,13 @@ function summarizeAppearances(appearances) {
 function buildGameEntries(ratings, appearances, player) {
   const ratingByDate = new Map(ratings.map((snapshot) => [String(snapshot.date), snapshot.rating]));
   const groups = new Map();
+  const pitchingStats = isPitcherPlayer(player) ? (player?.pitchingGameStats ?? []) : [];
+  const pitchingStatsByGame = new Map();
+
+  pitchingStats.forEach((stat) => {
+    const key = `${stat.date ?? "unknown"}::${stat.gameId ?? "unknown"}`;
+    pitchingStatsByGame.set(key, stat);
+  });
 
   appearances.forEach((appearance) => {
     const groupKey = `${appearance.date ?? "unknown"}::${appearance.gameId ?? `game-${appearance.sourceIndex}`}`;
@@ -1004,42 +1033,53 @@ function buildGameEntries(ratings, appearances, player) {
     groups.get(groupKey).push(appearance);
   });
 
-  return [...groups.values()].map((group, index) => {
-    const first = group[0];
-    const last = group[group.length - 1];
-    const firstBefore = toNumber(first.ratingBefore);
-    const lastAfter = toNumber(last.ratingAfter);
-    const rating = appearanceRating(last) ?? ratingByDate.get(String(first.date));
+  pitchingStats.forEach((stat) => {
+    const groupKey = `${stat.date ?? "unknown"}::${stat.gameId ?? "unknown"}`;
+    if (!groups.has(groupKey)) groups.set(groupKey, []);
+  });
+
+  return [...groups.entries()].map(([groupKey, group], index) => {
+    const stat = pitchingStatsByGame.get(groupKey) ?? null;
+    const first = group[0] ?? stat;
+    const last = group[group.length - 1] ?? stat;
+    const firstBefore = toNumber(first?.ratingBefore);
+    const lastAfter = toNumber(last?.ratingAfter);
+    const rating = appearanceRating(last) ?? ratingByDate.get(String(first?.date));
     const delta = group.reduce((total, appearance) => {
       const value = appearanceDelta(appearance);
       return value === null ? total : total + value;
     }, 0);
     const resultValues = group.map((appearance) => appearance.result).filter(Boolean);
-    const performance = summarizeGamePerformance(group, player);
-    const opponentDisplay = gameOpponentName(first, player?.profile?.team);
+    const performance = isPitcherPlayer(player) && stat
+      ? summarizePitchingPerformance(group, stat)
+      : summarizeGamePerformance(group, player);
+    const opponentDisplay = stat?.opponent || gameOpponentName(first, player?.profile?.team);
 
     return {
-      key: `game-${first.date}-${first.gameId ?? index}`,
+      key: `game-${first?.date}-${first?.gameId ?? index}`,
       granularity: "game",
       granularityLabel: "경기별",
-      date: first.date,
+      date: first?.date,
+      league: stat?.league || first?.league || null,
       rating,
       ratingBefore: firstBefore,
       ratingAfter: lastAfter,
       ratingDelta: delta || (firstBefore !== null && lastAfter !== null ? lastAfter - firstBefore : null),
-      gameId: first.gameId,
-      venue: first.venue,
-      opponent: first.opponent,
+      gameId: first?.gameId,
+      venue: stat?.venue || first?.venue,
+      opponent: stat?.opponent || first?.opponent,
       opponentDisplay,
-      homeAway: gameHomeAway(first.gameId, player?.profile?.team),
+      homeAway: gameHomeAway(first?.gameId, player?.profile?.team),
       appearances: group,
-      paCount: group.length,
+      paCount: stat?.battersFaced ?? group.length,
       results: resultValues,
       performance,
       summary: performanceSummaryText(performance),
-      modelVersion: last.modelVersion ?? last.ratingEffect?.modelVersion
+      modelVersion: last?.modelVersion ?? last?.ratingEffect?.modelVersion,
+      statSource: stat?.statSource,
+      completeness: stat?.completeness
     };
-  }).filter((entry) => entry.rating !== null && entry.rating !== undefined);
+  });
 }
 
 function buildPlateAppearanceEntries(ratings, appearances, player) {
@@ -1049,6 +1089,7 @@ function buildPlateAppearanceEntries(ratings, appearances, player) {
     granularity: "plateAppearance",
     granularityLabel: "타석별",
     date: appearance.date,
+    league: appearance.league || null,
     rating: appearanceRating(appearance) ?? ratingByDate.get(String(appearance.date)),
     ratingBefore: toNumber(appearance.ratingBefore),
     ratingAfter: toNumber(appearance.ratingAfter),
@@ -1071,16 +1112,19 @@ function buildPlateAppearanceEntries(ratings, appearances, player) {
 function buildChartEntries(mode, ratings, player) {
   const appearances = sortAppearances(player);
   if (mode === "plateAppearance") return buildPlateAppearanceEntries(ratings, appearances, player);
-  return buildGameEntries(ratings, appearances, player);
+  return buildGameEntries(ratings, appearances, player)
+    .filter((entry) => entry.rating !== null && entry.rating !== undefined);
 }
 
 function chartEntrySummary(entry) {
   if (entry.granularity === "game") {
     const venue = entry.venue ? `${entry.venue} · ` : "";
-    const opponent = entry.opponentDisplay ? `상대 ${entry.opponentDisplay}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
+    const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
+    const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
     return `${venue}${opponent}${entry.summary}`;
   }
-  const opponent = entry.opponentDisplay ? `상대 ${entry.opponentDisplay}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
+  const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
+  const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
   return `${opponent}${entry.result || "결과 기록 없음"}`;
 }
 
@@ -1118,11 +1162,14 @@ function chartDeltaHtml(value) {
 
 function chartTooltipHtml(entry, delta) {
   if (!entry) return "";
-  const gameContext = `${entry.opponentDisplay || "상대 정보 없음"}${entry.homeAway ? ` · ${entry.homeAway}` : ""}`;
+  const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "상대 정보 없음";
+  const gameContext = `${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""}`;
   const lines = entry.granularity === "game"
     ? [
         `vs. ${gameContext} · ${entry.venue || "구장 미상"}`,
-        `${entry.paCount ?? 0}타석`,
+        entry.performance?.kind === "pitching"
+          ? `${entry.performance.battersFaced ?? entry.paCount ?? 0}타자 상대`
+          : `${entry.paCount ?? 0}타석`,
         `성적 ${entry.summary || "기록 없음"}`,
         ...(entry.results?.length ? [`결과 ${entry.results.slice(0, 6).join(" · ")}${entry.results.length > 6 ? " · …" : ""}`] : []),
         `Rating 변화 ${chartDeltaHtml(delta)}`
@@ -1149,20 +1196,11 @@ function chartDateFromAxisValue(value) {
 
 function RatingChart({ ratings, player }) {
   const [viewMode, setViewMode] = useState("game");
-  const [showAllGames, setShowAllGames] = useState(false);
+  const [showAllGames, setShowAllGames] = useState(true);
   const entries = useMemo(() => buildChartEntries(viewMode, ratings, player), [viewMode, ratings, player]);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(entries.length ? entries.length - 1 : null);
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const chartOptionRef = useRef({});
-  const entriesRef = useRef(entries);
-  entriesRef.current = entries;
-
-  useEffect(() => {
-    setSelectedIndex(entries.length ? entries.length - 1 : null);
-    setHoveredIndex(null);
-  }, [viewMode, entries.length]);
 
   const isZoomable = viewMode === "game";
   const timelineInfo = useMemo(() => {
@@ -1194,16 +1232,22 @@ function RatingChart({ ratings, player }) {
   const observedMin = entries.length ? Math.min(...values) : 0;
   const observedMax = entries.length ? Math.max(...values) : 100;
   const observedRange = Math.max(observedMax - observedMin, 1);
-  const verticalMargin = entries.length ? observedRange * 0.1 : 0;
-  const axisMin = entries.length ? Math.floor((observedMin - verticalMargin) / 10) * 10 : 0;
-  const axisMax = entries.length ? Math.ceil((observedMax + verticalMargin) / 10) * 10 : 100;
+  const bottomMargin = entries.length ? Math.max(observedRange * 0.05, 0.5) : 0;
+  const topMargin = entries.length ? observedRange * 0.1 : 0;
+  const axisMin = entries.length ? Math.max(0, observedMin - bottomMargin) : 0;
+  const axisMax = entries.length ? Math.ceil((observedMax + topMargin) / 10) * 10 : 100;
+  const yAxisLabelValues = useMemo(() => {
+    const first = Math.ceil(axisMin / 10) * 10;
+    const last = Math.floor(axisMax / 10) * 10;
+    const values = [];
+    for (let value = first; value <= last; value += 10) {
+      values.push(value);
+    }
+    return values;
+  }, [axisMax, axisMin]);
   const maximumRating = entries.length ? Math.max(...values) : null;
   const maximumIndex = entries.reduce((lastIndex, entry, index) => (isSameRating(entry.rating, maximumRating) ? index : lastIndex), -1);
   const maximumEntry = maximumIndex >= 0 ? entries[maximumIndex] : null;
-  const activeIndex = hoveredIndex ?? selectedIndex;
-  const active = activeIndex === null ? null : entries[activeIndex];
-  const previous = activeIndex !== null && activeIndex > 0 ? entries[activeIndex - 1] : null;
-  const activeDelta = active?.ratingDelta ?? (active && previous ? active.rating - previous.rating : null);
 
   const chartOption = useMemo(() => {
     if (!entries.length) return {};
@@ -1213,13 +1257,10 @@ function RatingChart({ ratings, player }) {
       : entries.map((_, index) => index);
     const chartData = entries.map((entry, index) => {
       const maximum = isSameRating(entry.rating, maximumRating);
-      const selected = selectedIndex === index;
       return {
         value: [xValues[index], entry.rating],
         entryIndex: index,
-        itemStyle: selected
-          ? { color: "#fff0ad", borderColor: "#a77a25", borderWidth: 3 }
-          : maximum
+        itemStyle: maximum
             ? { color: "#fff8d6", borderColor: "#a77a25", borderWidth: 2.5 }
             : { color: "#ffffff", borderColor: "#6f4c2f", borderWidth: 1.8 }
       };
@@ -1306,8 +1347,18 @@ function RatingChart({ ratings, player }) {
         max: axisMax,
         interval: 10,
         axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: { color: "#727980", fontSize: 11, formatter: (value) => Number(value).toFixed(0) },
+        axisTick: { show: false, customValues: yAxisLabelValues },
+        axisLabel: {
+          color: "#727980",
+          fontSize: 11,
+          customValues: yAxisLabelValues,
+          formatter: (value) => {
+            const number = Number(value);
+            if (!Number.isFinite(number)) return "";
+            const multiple = Math.round(number / 10) * 10;
+            return Math.abs(number - multiple) < 0.000001 ? String(multiple) : "";
+          }
+        },
         splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
       },
       dataZoom: isZoomable ? [
@@ -1374,7 +1425,7 @@ function RatingChart({ ratings, player }) {
         } : undefined
       }]
     };
-  }, [axisMax, axisMin, entries, isZoomable, maximumRating, selectedIndex, showAllGames, timelineInfo]);
+  }, [axisMax, axisMin, entries, isZoomable, maximumRating, showAllGames, timelineInfo, yAxisLabelValues]);
 
   useEffect(() => {
     const element = chartRef.current;
@@ -1396,30 +1447,6 @@ function RatingChart({ ratings, player }) {
         chartInstanceRef.current = chart;
         chart.setOption(chartOptionRef.current, true);
 
-        const getIndex = (params) => {
-          if (params?.componentType !== "series") return null;
-          const index = Number(params.data?.entryIndex ?? params.dataIndex);
-          const currentEntries = entriesRef.current;
-          return Number.isInteger(index) && index >= 0 && index < currentEntries.length ? index : null;
-        };
-        const handleMouseOver = (params) => {
-          const index = getIndex(params);
-          if (index !== null) setHoveredIndex(index);
-        };
-        const handleMouseOut = (params) => {
-          if (params?.componentType === "series") setHoveredIndex(null);
-        };
-        const handleClick = (params) => {
-          const index = getIndex(params);
-          if (index !== null) setSelectedIndex(index);
-        };
-        const handleGlobalOut = () => setHoveredIndex(null);
-
-        chart.on("mouseover", handleMouseOver);
-        chart.on("mouseout", handleMouseOut);
-        chart.on("click", handleClick);
-        chart.on("globalout", handleGlobalOut);
-
         const resize = () => chart.resize();
         let observer = null;
         if (typeof ResizeObserver === "function") {
@@ -1432,10 +1459,6 @@ function RatingChart({ ratings, player }) {
         cleanupChart = () => {
           observer?.disconnect();
           if (!observer) window.removeEventListener("resize", resize);
-          chart.off("mouseover", handleMouseOver);
-          chart.off("mouseout", handleMouseOut);
-          chart.off("click", handleClick);
-          chart.off("globalout", handleGlobalOut);
           chart.dispose();
           if (chartInstanceRef.current === chart) chartInstanceRef.current = null;
         };
@@ -1457,21 +1480,24 @@ function RatingChart({ ratings, player }) {
   }, [chartOption]);
 
   return (
-    <div className="chart-shell">
-      <div className="chart-toolbar">
-        <div className="chart-mode-control" role="group" aria-label="Rating 표시 단위">
-          {CHART_MODES.map(([mode, label]) => (
-            <button className={viewMode === mode ? "is-active" : ""} key={mode} type="button" onClick={() => setViewMode(mode)}>{label}</button>
-          ))}
-        </div>
-        {isZoomable ? (
-          <div className="chart-zoom-control" role="group" aria-label="경기별 그래프 X축 확대">
-            <span className="chart-toolbar-label">X축 확대</span>
-            <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>최근 1개월</button>
-            <button className={showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(true)}>전체</button>
+    <>
+      <div className="detail-card-header rating-chart-header">
+        <h3 id="rating-chart-title">Rating 변화</h3>
+        <div className="chart-toolbar">
+          <div className="chart-mode-control" role="group" aria-label="Rating 표시 단위">
+            {CHART_MODES.map(([mode, label]) => (
+              <button className={viewMode === mode ? "is-active" : ""} key={mode} type="button" onClick={() => setViewMode(mode)}>{label}</button>
+            ))}
           </div>
-        ) : <span className="chart-zoom-note">X축 확대와 이동은 경기별 보기에서만 사용</span>}
+          {isZoomable ? (
+            <div className="chart-zoom-control" role="group" aria-label="경기별 표시 기간">
+              <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>최근 1개월</button>
+              <button className={showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(true)}>전체</button>
+            </div>
+          ) : null}
+        </div>
       </div>
+      <div className="chart-shell">
       {entries.length ? (
         <div className="chart-scroller">
           <div className="chart-stage">
@@ -1486,19 +1512,8 @@ function RatingChart({ ratings, player }) {
       ) : (
         <LoadingState>{CHART_MODES.find(([mode]) => mode === viewMode)?.[1] ?? "선택한"} 기록이 없습니다.</LoadingState>
       )}
-      <div className="chart-interaction" aria-live="polite">
-        <div>
-          <span className="chart-interaction-label">{hoveredIndex !== null ? "가리킨 기록" : "선택된 기록"}</span>
-          {active ? (
-            <>
-              <strong>{active.granularityLabel} · {formatDate(active.date)} · Rating {formatRating(active.rating)} · <Delta value={activeDelta} /></strong>
-              <span className="chart-interaction-summary">{chartEntrySummary(active)}</span>
-            </>
-          ) : <strong>그래프의 점을 가리키거나 클릭해 주세요.</strong>}
-        </div>
-        <button type="button" onClick={() => setSelectedIndex(null)} disabled={selectedIndex === null}>선택 해제</button>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -1539,6 +1554,79 @@ function GameContextCell({ entry, player, includeVenue = true }) {
   );
 }
 
+function PlayerRecordDisclosure({ title, note, children, preview, hasMore = false, className = "" }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasPreview = preview !== undefined;
+  const classes = ["detail-card", "detail-disclosure", className].filter(Boolean).join(" ");
+
+  if (hasPreview) {
+    return (
+      <section className={`${classes} detail-record-preview`}>
+        <div className="detail-disclosure-summary is-static">
+          <span className="detail-disclosure-title" role="heading" aria-level="3">{title}</span>
+          <span className="detail-disclosure-note">{note}</span>
+        </div>
+        <div className="detail-disclosure-body">{isOpen ? children : preview}</div>
+        {hasMore ? (
+          <div className="detail-disclosure-actions">
+            <button type="button" onClick={() => setIsOpen((current) => !current)}>
+              {isOpen ? "최근 10개만 보기" : "전체 보기"}
+            </button>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
+
+  return (
+    <details
+      className={classes}
+      onToggle={(event) => setIsOpen(event.currentTarget.open)}
+    >
+      <summary className="detail-disclosure-summary">
+        <span className="detail-disclosure-title" role="heading" aria-level="3">{title}</span>
+        <span className="detail-disclosure-note">{note}</span>
+      </summary>
+      {isOpen ? <div className="detail-disclosure-body">{children}</div> : null}
+    </details>
+  );
+}
+
+function RatingHistoryTable({ rows, maximumRating, columns, isPitcher, player }) {
+  return (
+    <div className="data-table-scroller">
+      <table className="detail-table">
+        <thead>
+          <tr>
+            <th scope="col" rowSpan="2">날짜</th>
+            <th scope="col" rowSpan="2">리그</th>
+            <th scope="col" rowSpan="2">경기</th>
+            <th scope="col" rowSpan="2">Rating</th>
+            <th scope="col" rowSpan="2">변화</th>
+            <th scope="col" colSpan={columns.length}>{isPitcher ? "투구 성적" : "타격 성적"}</th>
+          </tr>
+          <tr>{columns.map(([label]) => <th scope="col" key={label}>{label}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.length ? rows.map((row) => {
+            const isMaximum = isSameRating(row.rating, maximumRating);
+            return (
+              <tr className={isMaximum ? "rating-history-max-row" : ""} key={row.key}>
+                <td>{formatDate(row.date)}</td>
+                <td><span className="record-league">{gameLeagueLabel(row.league)}</span></td>
+                <td><GameContextCell entry={row} player={player} /></td>
+                <td className={`${ratingBand(row.rating)}${isMaximum ? " rating-history-max-rating" : ""}`}>{formatRating(row.rating)}</td>
+                <td><Delta value={row.ratingDelta} /></td>
+                {columns.map(([, key]) => <td key={key}>{formatPerformanceValue(row.performance?.[key])}</td>)}
+              </tr>
+            );
+          }) : <tr><td colSpan={columns.length + 5}>표시할 경기 기록이 없습니다.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function RatingHistory({ ratings, player }) {
   const gameEntries = useMemo(() => buildGameEntries(ratings, sortAppearances(player), player), [ratings, player]);
   const rows = gameEntries.length
@@ -1546,6 +1634,7 @@ function RatingHistory({ ratings, player }) {
     : ratings.map((snapshot, index) => ({
       key: `snapshot-${snapshot.date}-${index}`,
       date: snapshot.date,
+      league: snapshot.league || null,
       gameId: null,
       rating: snapshot.rating,
       ratingDelta: toNumber(snapshot.ratingDelta) ?? (index > 0 ? snapshot.rating - ratings[index - 1].rating : null),
@@ -1557,138 +1646,177 @@ function RatingHistory({ ratings, player }) {
   const maximumRating = rowRatings.length ? Math.max(...rowRatings) : null;
   const columns = performanceColumns(player);
   const isPitcher = isPitcherPlayer(player);
+  const note = rows.length > 10 ? `최근 10개 표시 · 전체 ${rows.length}경기` : rows.length ? `${rows.length}경기` : "기록 없음";
+  const tableProps = { maximumRating, columns, isPitcher, player };
+
   return (
-    <section className="detail-card" aria-labelledby="rating-history-title">
-      <div className="detail-card-header"><h3 id="rating-history-title">경기별 Rating</h3><span>더블헤더는 gameId 기준으로 별도 집계됩니다</span></div>
-      <RatingChart ratings={ratings} player={player} />
-      <div className="data-table-scroller">
-        <table className="detail-table">
-          <thead>
-            <tr>
-              <th scope="col" rowSpan="2">날짜</th>
-              <th scope="col" rowSpan="2">경기</th>
-              <th scope="col" rowSpan="2">Rating</th>
-              <th scope="col" rowSpan="2">변화</th>
-              <th scope="col" colSpan={columns.length}>{isPitcher ? "투구 성적" : "타격 성적"}</th>
-            </tr>
-            <tr>{columns.map(([label]) => <th scope="col" key={label}>{label}</th>)}</tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => {
-              const isMaximum = isSameRating(row.rating, maximumRating);
-              return (
-                <tr className={isMaximum ? "rating-history-max-row" : ""} key={row.key}>
-                  <td>{formatDate(row.date)}</td>
-                  <td><GameContextCell entry={row} player={player} /></td>
-                  <td className={`${ratingBand(row.rating)}${isMaximum ? " rating-history-max-rating" : ""}`}>{formatRating(row.rating)}</td>
-                  <td><Delta value={row.ratingDelta} /></td>
-                  {columns.map(([, key]) => <td key={key}>{formatPerformanceValue(row.performance?.[key])}</td>)}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <PlayerRecordDisclosure
+      title="경기 기록"
+      note={note}
+      preview={<RatingHistoryTable {...tableProps} rows={rows.slice(0, 10)} />}
+      hasMore={rows.length > 10}
+    >
+      <RatingHistoryTable {...tableProps} rows={rows} />
+    </PlayerRecordDisclosure>
   );
 }
 
-function latestSnapshot(snapshots) {
-  return [...(snapshots ?? [])].sort((a, b) => String(a.date ?? "").localeCompare(String(b.date ?? ""))).at(-1) ?? null;
-}
-
-function snapshotValue(snapshot, key) {
-  const keys = Array.isArray(key) ? key : [key];
-  for (const candidate of keys) {
-    if (snapshot?.[candidate] !== null && snapshot?.[candidate] !== undefined && snapshot?.[candidate] !== "") return snapshot[candidate];
-  }
-  return null;
-}
-
-function EmptyStatsCard({ title, id, note }) {
+function PlateAppearanceTable({ appearances, maximumRating, player }) {
   return (
-    <section className="detail-card" aria-labelledby={id}>
-      <div className="detail-card-header"><h3 id={id}>{title}</h3><span>기록 없음</span></div>
-      <p className="record-empty">{note}</p>
-    </section>
-  );
-}
-
-function BattingStats({ player }) {
-  const snapshots = player.battingStatSnapshots ?? [];
-  const latest = latestSnapshot(snapshots);
-  if (!snapshots.length) return <EmptyStatsCard title="타격 기록" id="batting-stats-title" note="연결된 타격 통계 스냅샷이 아직 없습니다." />;
-  const definitions = [
-    ["타석", "plateAppearances"], ["타수", "atBats"], ["안타", "hits"], ["타율", "battingAverage"],
-    ["출루율", "onBasePercentage"], ["장타율", "sluggingPercentage"], ["OPS", "ops"], ["타점", "rbi"],
-    ["득점", "runs"], ["홈런", "homeRuns"], ["볼넷", "walks"], ["사구", "hitByPitch"], ["도루", "stolenBases"], ["삼진", "strikeouts"]
-  ];
-  return (
-    <section className="detail-card" aria-labelledby="batting-stats-title">
-      <div className="detail-card-header"><h3 id="batting-stats-title">타격 기록</h3><span>{latest ? `${formatDate(latest.date)} 기준` : "기록 없음"}</span></div>
-      <div className="stat-grid">
-        {definitions.map(([label, key]) => <div className="stat-item" key={key}><span className="stat-item-label">{label}</span><strong className="stat-item-value">{formatStatValue(key, snapshotValue(latest, key))}</strong></div>)}
-      </div>
-    </section>
-  );
-}
-
-function PitchingStats({ player }) {
-  const snapshots = player.pitchingStatSnapshots ?? [];
-  const latest = latestSnapshot(snapshots);
-  if (!snapshots.length) return <EmptyStatsCard title="투구 기록" id="pitching-stats-title" note="연결된 투구 통계 스냅샷이 아직 없습니다." />;
-  const definitions = [
-    ["경기", ["games", "g"]], ["타자 상대", ["battersFaced", "bf"]], ["이닝", ["innings", "ipText", "ip"]],
-    ["피안타", ["hitsAllowed", "hits", "h"]], ["피홈런", ["homeRunsAllowed", "hr"]], ["볼넷·사구", ["walksHitByPitch", "bbHbp", "bb_hbp", "walks"]],
-    ["삼진", ["strikeouts", "so"]], ["실점", ["runs", "r"]], ["자책점", ["earnedRuns", "er"]]
-  ];
-  return (
-    <section className="detail-card" aria-labelledby="pitching-stats-title">
-      <div className="detail-card-header"><h3 id="pitching-stats-title">투구 기록</h3><span>{latest ? `${formatDate(latest.date)} 기준` : "기록 없음"}</span></div>
-      <div className="stat-grid">
-        {definitions.map(([label, key]) => <div className="stat-item" key={label}><span className="stat-item-label">{label}</span><strong className="stat-item-value">{formatStatValue(key, snapshotValue(latest, key))}</strong></div>)}
-      </div>
-    </section>
+    <div className="data-table-scroller">
+      <table className="detail-table">
+        <thead><tr><th scope="col">날짜</th><th scope="col">리그</th><th scope="col">경기</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">Rating 전후</th><th scope="col">변화</th></tr></thead>
+        <tbody>
+          {appearances.length ? appearances.map((appearance) => {
+            const before = toNumber(appearance.ratingBefore);
+            const after = toNumber(appearance.ratingAfter);
+            const ratingValue = after ?? before;
+            const isMaximum = isSameRating(ratingValue, maximumRating);
+            const effect = appearance.ratingEffect?.ratingDelta ?? appearance.ratingDelta ?? (before !== null && after !== null ? after - before : null);
+            return (
+              <tr className={isMaximum ? "rating-history-max-row" : ""} key={appearance.paId}>
+                <td>{formatDate(appearance.date)}</td>
+                <td><span className="record-league">{gameLeagueLabel(appearance.league)}</span></td>
+                <td><GameContextCell entry={appearance} player={player} includeVenue /></td>
+                <td>{appearance.battingOrder || "—"}번</td>
+                <td>{appearance.plateAppearanceNumber || "—"}</td>
+                <td>{appearance.result || "—"}</td>
+                <td className={`${ratingBand(ratingValue)}${isMaximum ? " rating-history-max-rating" : ""}`}>{before !== null && after !== null ? `${formatRating(before)} → ${formatRating(after)}` : "—"}</td>
+                <td><Delta value={effect} /></td>
+              </tr>
+            );
+          }) : <tr><td colSpan="8">표시할 타석 기록이 없습니다.</td></tr>}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 function PlateAppearances({ player }) {
   const appearances = [...(player.plateAppearances ?? [])].sort((a, b) => {
     const dateOrder = String(b.date ?? "").localeCompare(String(a.date ?? ""));
-    return dateOrder || ((toNumber(a.plateAppearanceNumber) ?? 0) - (toNumber(b.plateAppearanceNumber) ?? 0));
+    if (dateOrder) return dateOrder;
+
+    const gameOrder = String(b.gameId ?? "").localeCompare(String(a.gameId ?? ""));
+    if (gameOrder) return gameOrder;
+
+    const plateA = toNumber(a.plateAppearanceNumber) ?? 0;
+    const plateB = toNumber(b.plateAppearanceNumber) ?? 0;
+    return plateB - plateA || String(b.paId ?? "").localeCompare(String(a.paId ?? ""));
   });
   const appearanceRatings = appearances.map((appearance) => toNumber(appearance.ratingAfter) ?? toNumber(appearance.ratingBefore)).filter((value) => value !== null);
   const maximumRating = appearanceRatings.length ? Math.max(...appearanceRatings) : null;
   const title = isPitcherPlayer(player) ? "상대 타석 기록" : "타석 기록";
+  const note = appearances.length > 10 ? `최근 10개 표시 · 전체 ${appearances.length}건` : appearances.length ? `${appearances.length}건` : "기록 없음";
   return (
-    <section className="detail-card" aria-labelledby="plate-appearances-title">
-      <div className="detail-card-header"><h3 id="plate-appearances-title">{title}</h3><span>DB에 저장된 타석 단위 원자료</span></div>
-      <div className="data-table-scroller">
-        <table className="detail-table">
-          <thead><tr><th scope="col">날짜</th><th scope="col">경기</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">Rating 전후</th><th scope="col">변화</th></tr></thead>
-          <tbody>
-            {appearances.length ? appearances.map((appearance) => {
-              const before = toNumber(appearance.ratingBefore);
-              const after = toNumber(appearance.ratingAfter);
-              const ratingValue = after ?? before;
-              const isMaximum = isSameRating(ratingValue, maximumRating);
-              const effect = appearance.ratingEffect?.ratingDelta ?? appearance.ratingDelta ?? (before !== null && after !== null ? after - before : null);
-              return (
-                <tr className={isMaximum ? "rating-history-max-row" : ""} key={appearance.paId}>
-                  <td>{formatDate(appearance.date)}</td>
-                  <td><GameContextCell entry={appearance} player={player} includeVenue /></td>
-                  <td>{appearance.battingOrder || "—"}번</td>
-                  <td>{appearance.plateAppearanceNumber || "—"}</td>
-                  <td>{appearance.result || "—"}</td>
-                  <td className={isMaximum ? "rating-history-max-rating" : ""}>{before !== null && after !== null ? `${formatRating(before)} → ${formatRating(after)}` : "—"}</td>
-                  <td><Delta value={effect} /></td>
-                </tr>
-              );
-            }) : <tr><td colSpan="7">표시할 타석 기록이 없습니다.</td></tr>}
-          </tbody>
-        </table>
-      </div>
+    <PlayerRecordDisclosure
+      title={title}
+      note={note}
+      preview={<PlateAppearanceTable appearances={appearances.slice(0, 10)} maximumRating={maximumRating} player={player} />}
+      hasMore={appearances.length > 10}
+    >
+      <PlateAppearanceTable appearances={appearances} maximumRating={maximumRating} player={player} />
+    </PlayerRecordDisclosure>
+  );
+}
+
+function PlayerRatingChart({ ratings, player }) {
+  return (
+    <section className="detail-card rating-chart-card" aria-labelledby="rating-chart-title">
+      <RatingChart ratings={ratings} player={player} />
     </section>
+  );
+}
+
+const ROSTER_EVENT_LABELS = {
+  call_up: "1군 등록",
+  demotion: "1군 말소",
+  registration: "등록",
+  reinstatement: "복귀 등록",
+  return: "복귀",
+  return_from_rehab: "재활 복귀",
+  injury_list: "부상자 명단",
+  rehab_list: "치료·재활 명단",
+  foreign_player_rehab: "외국인 재활 명단",
+  trade: "이적",
+  leave: "말소·이동",
+  military_hold: "군 보류"
+};
+
+function rosterEventsFor(player) {
+  const events = player?.rosterEvents ?? player?.rosterHistory ?? player?.registrationHistory ?? [];
+  if (!Array.isArray(events)) return [];
+  return events.slice().sort((a, b) => {
+    const dateOrder = String(b.eventDate ?? b.date ?? "").localeCompare(String(a.eventDate ?? a.date ?? ""));
+    if (dateOrder) return dateOrder;
+    return String(b.eventId ?? b.id ?? "").localeCompare(String(a.eventId ?? a.id ?? ""));
+  });
+}
+
+function rosterEventLabel(event) {
+  const normalized = String(event?.eventTypeNormalized ?? event?.eventType ?? event?.type ?? "")
+    .trim()
+    .toLowerCase();
+  return ROSTER_EVENT_LABELS[normalized]
+    ?? event?.eventTypeRaw
+    ?? event?.eventType
+    ?? event?.type
+    ?? "상태 변경";
+}
+
+function rosterEventContext(event) {
+  const teamValue = event?.teamName ?? event?.team ?? event?.teamCode;
+  const team = teamValue ? fullTeamName(teamValue) : null;
+  const league = event?.toLeague ?? event?.league ?? event?.fromLeague;
+  return [team, league].filter(Boolean).join(" · ") || "구단·리그 정보 없음";
+}
+
+function RosterHistory({ player }) {
+  const events = rosterEventsFor(player);
+  const currentMedicalStatus = medicalStatusText(player);
+  const hasRosterEventData = [player?.rosterEvents, player?.rosterHistory, player?.registrationHistory]
+    .some((value) => Array.isArray(value));
+  const note = events.length ? `${events.length}건` : hasRosterEventData ? "이력 없음" : "기록 연결 대기";
+
+  return (
+    <PlayerRecordDisclosure
+      title="등록·말소·부상 기록"
+      note={note}
+      className="roster-history-disclosure"
+    >
+      {events.length ? (
+        <div className="data-table-scroller">
+          <table className="detail-table roster-history-table">
+            <thead>
+              <tr>
+                <th scope="col">날짜</th>
+                <th scope="col">구분</th>
+                <th scope="col">구단·리그</th>
+                <th scope="col">메모</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((event, index) => (
+                <tr key={event.eventId ?? event.id ?? `${event.eventDate ?? event.date ?? "event"}-${index}`}>
+                  <td>{formatDate(event.eventDate ?? event.date)}</td>
+                  <td>{rosterEventLabel(event)}</td>
+                  <td>{rosterEventContext(event)}</td>
+                  <td>{event.note ?? event.noteRaw ?? event.medicalNote ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="record-empty">
+          {currentMedicalStatus
+            ? `현재 상태: ${currentMedicalStatus}`
+            : hasRosterEventData
+              ? "등록·말소·부상 이력이 없습니다."
+              : "등록·말소·부상 이력은 백엔드 API의 rosterEvents 연결 후 표시됩니다."}
+        </p>
+      )}
+    </PlayerRecordDisclosure>
   );
 }
 
@@ -1713,19 +1841,20 @@ function PlayerPage() {
 
   return (
     <div className="page-shell">
-      <PageHeader subtitle="선수 상세" action={<a href={homeHref()}>메인 표로 돌아가기</a>} />
+      <PageHeader subtitle="선수 상세" />
       <main className="page-content player-page-content">
         {error ? <LoadError>data/player_detail.json 파일과 데이터 접근 경로를 확인해 주세요.</LoadError> : player ? (
           <>
             <PlayerProfile player={player} ratings={ratings} />
+            <PlayerRatingChart ratings={ratings} player={player} />
             <RatingHistory ratings={ratings} player={player} />
-            {isPitcherPlayer(player) ? <PitchingStats player={player} /> : <BattingStats player={player} />}
             <PlateAppearances player={player} />
             <PlayerTechnicalInfo player={player} />
+            <RosterHistory player={player} />
           </>
         ) : <LoadingState>선수 데이터를 불러오는 중입니다.</LoadingState>}
       </main>
-      <PageFooter><a href={homeHref()}>메인 페이지</a></PageFooter>
+      <SiteFooter />
     </div>
   );
 }
