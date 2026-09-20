@@ -1093,7 +1093,7 @@ function gameTeamsFromId(gameId) {
   const value = String(gameId ?? "");
   const match = value.match(/^\d{8}([A-Za-z]{2})([A-Za-z]{2})/);
   if (!match) return null;
-  return { home: match[1], away: match[2] };
+  return { away: match[1], home: match[2] };
 }
 
 function gameHomeAway(gameId, playerTeam) {
@@ -1293,7 +1293,6 @@ function buildGameEntries(ratings, appearances, player) {
       ratingAfter: lastAfter,
       ratingDelta: delta || (firstBefore !== null && lastAfter !== null ? lastAfter - firstBefore : null),
       gameId: first?.gameId,
-      venue: stat?.venue || first?.venue,
       opponent: stat?.opponent || first?.opponent,
       opponentDisplay,
       homeAway: gameHomeAway(first?.gameId, player?.profile?.team),
@@ -1322,7 +1321,6 @@ function buildPlateAppearanceEntries(ratings, appearances, player) {
     ratingAfter: toNumber(appearance.ratingAfter),
     ratingDelta: appearanceDelta(appearance),
     gameId: appearance.gameId,
-    venue: appearance.venue,
     opponent: appearance.opponent,
     opponentDisplay: gameOpponentName(appearance, player?.profile?.team),
     homeAway: gameHomeAway(appearance.gameId, player?.profile?.team),
@@ -1345,10 +1343,9 @@ function buildChartEntries(mode, ratings, player) {
 
 function chartEntrySummary(entry) {
   if (entry.granularity === "game") {
-    const venue = entry.venue ? `${entry.venue} · ` : "";
     const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
     const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
-    return `${venue}${opponent}${entry.summary}`;
+    return `${opponent}${entry.summary}`;
   }
   const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
   const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
@@ -1393,7 +1390,7 @@ function chartTooltipHtml(entry, delta) {
   const gameContext = `${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""}`;
   const lines = entry.granularity === "game"
     ? [
-        `vs. ${gameContext} · ${entry.venue || "구장 미상"}`,
+        `vs. ${gameContext}`,
         entry.performance?.kind === "pitching"
           ? `${entry.performance.battersFaced ?? entry.paCount ?? 0}타자 상대`
           : `${entry.paCount ?? 0}타석`,
@@ -1402,7 +1399,7 @@ function chartTooltipHtml(entry, delta) {
         `Rating 변화 ${chartDeltaHtml(delta)}`
       ]
     : [
-        `vs. ${gameContext} · ${entry.venue || "구장 미상"}`,
+        `vs. ${gameContext}`,
         `${entry.plateAppearanceNumber ? `${entry.plateAppearanceNumber}번째 타석` : "타석 번호 없음"}`,
         `결과 ${entry.result || "—"}`,
         `Rating 변화 ${chartDeltaHtml(delta)}`
@@ -1752,13 +1749,13 @@ function formatPerformanceValue(value) {
   return number === null ? "—" : Number.isInteger(number) ? String(number) : number.toFixed(1);
 }
 
-function GameContextCell({ entry, player, includeVenue = true }) {
+function GameContextCell({ entry, player }) {
   if (!entry?.gameId && !entry?.opponent) return <span>—</span>;
   const context = gameContextText(entry, player);
   return (
     <span className="game-context">
       <strong>vs. {context.opponent}</strong>
-      <span>{context.homeAway || "홈·원정 미상"}{includeVenue && entry.venue ? ` · ${entry.venue}` : ""}</span>
+      <span>{context.homeAway || "홈·원정 미상"}</span>
     </span>
   );
 }
@@ -1891,7 +1888,7 @@ function PlateAppearanceTable({ appearances, maximumRating, player }) {
               <tr className={isMaximum ? "rating-history-max-row" : ""} key={appearance.paId}>
                 <td>{formatDate(appearance.date)}</td>
                 <td><span className="record-league">{gameLeagueLabel(appearance.league)}</span></td>
-                <td><GameContextCell entry={appearance} player={player} includeVenue /></td>
+                <td><GameContextCell entry={appearance} player={player} /></td>
                 <OpponentPlayerCell appearance={appearance} />
                 <td>{appearance.battingOrder || "—"}번</td>
                 <td>{appearance.plateAppearanceNumber || "—"}</td>
