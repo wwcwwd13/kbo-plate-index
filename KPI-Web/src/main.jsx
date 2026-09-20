@@ -2,8 +2,8 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
-import aboutContent from "../data/about.json";
-import releaseNotes from "../data/release_notes.json";
+import aboutContent from "./content/about.json";
+import releaseNotes from "./content/release_notes.json";
 import "../styles.css";
 
 const DEFAULT_PLAYER_ID = "player:demo:noname:batter";
@@ -60,7 +60,7 @@ function normalizePlateAppearanceResult(value) {
 }
 
 function sectionDisplayName(league) {
-  if (league === "말소" || league === "released") return "말소";
+  if (["말소", "소속 말소", "released"].includes(league)) return "소속 말소";
   if (league === "잔류군" || league === "residual") return "잔류군";
   return league === "1군" || league === "major" ? "KBO 리그" : "퓨쳐스리그";
 }
@@ -155,6 +155,27 @@ function currentAffiliationLabel(player) {
   return String(value ?? "").trim() || "—";
 }
 
+function profileHandednessLabel(profile) {
+  const raw = String(profile?.batsThrowsRaw ?? "").trim();
+  if (raw) return raw;
+
+  const formatHand = (value, suffix) => {
+    const text = String(value ?? "").trim();
+    if (!text) return null;
+    return /[투타]$/.test(text) ? text : `${text}${suffix}`;
+  };
+  return [formatHand(profile?.throws, "투"), formatHand(profile?.bats, "타")]
+    .filter(Boolean)
+    .join("") || null;
+}
+
+function profileMeasurement(value, unit) {
+  const number = toNumber(value);
+  if (number === null) return null;
+  const formatted = Number.isInteger(number) ? String(number) : number.toFixed(1);
+  return `${formatted}${unit}`;
+}
+
 function teamOrderIndex(value) {
   const index = TEAM_ORDER_2025.indexOf(canonicalTeamLabel(value));
   return index === -1 ? TEAM_ORDER_2025.length : index;
@@ -180,6 +201,23 @@ function medicalStatusText(player) {
   if (!label) return null;
   const details = [label, player.medicalEventDate, player.medicalNote].filter(Boolean);
   return details.join(" · ");
+}
+
+function medicalTooltipPosition(element) {
+  const rect = element.getBoundingClientRect();
+  const margin = 12;
+  const gap = 8;
+  const width = Math.min(260, Math.max(190, window.innerWidth - margin * 2));
+  const left = Math.min(
+    Math.max(rect.left, margin),
+    Math.max(margin, window.innerWidth - width - margin)
+  );
+  const estimatedHeight = 78;
+  const below = rect.bottom + gap;
+  const top = below + estimatedHeight <= window.innerHeight - margin
+    ? below
+    : Math.max(margin, rect.top - estimatedHeight - gap);
+  return { left, top };
 }
 
 function averageBand(value, values) {
@@ -241,9 +279,7 @@ function PageHeader({ subtitle, action }) {
 function SiteFooter() {
   return (
     <footer className="site-footer">
-      <p>KBO Plate Index는 개인이 취미로 만들고 있는 비공식·비영리 프로젝트입니다.</p>
-      <p>선수·구단·리그 및 관련 자료에 대한 권리는 각 원권리자에게 있습니다.</p>
-      <p>표시 정보는 공개 자료를 바탕으로 정리한 참고용 데이터입니다.</p>
+      <p>KBO Plate Index는 개인이 취미로 만들고 있는 비공식·비영리 프로젝트입니다. · 선수·구단·리그 및 관련 자료에 대한 권리는 각 원권리자에게 있습니다. · 표시 정보는 공개 자료를 바탕으로 정리한 참고용 데이터입니다.</p>
     </footer>
   );
 }
@@ -271,14 +307,58 @@ function EmptyDataState({ children }) {
 }
 
 function PlayerLink({ player }) {
+  const medicalTooltipRef = useRef(null);
+  const [medicalTooltipVisible, setMedicalTooltipVisible] = useState(false);
+  const [medicalTooltipCoordinates, setMedicalTooltipCoordinates] = useState(null);
+  const medicalText = medicalStatusText(player);
+
+  const updateMedicalTooltipPosition = useCallback(() => {
+    if (!medicalTooltipRef.current) return;
+    setMedicalTooltipCoordinates(medicalTooltipPosition(medicalTooltipRef.current));
+  }, []);
+
+  useEffect(() => {
+    if (!medicalTooltipVisible) return undefined;
+    updateMedicalTooltipPosition();
+    window.addEventListener("resize", updateMedicalTooltipPosition);
+    window.addEventListener("scroll", updateMedicalTooltipPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateMedicalTooltipPosition);
+      window.removeEventListener("scroll", updateMedicalTooltipPosition, true);
+    };
+  }, [medicalTooltipVisible, updateMedicalTooltipPosition]);
+
+  useEffect(() => {
+    if (medicalText) return;
+    setMedicalTooltipVisible(false);
+    setMedicalTooltipCoordinates(null);
+  }, [medicalText]);
+
+  const showMedicalTooltip = () => {
+    if (!medicalText) return;
+    updateMedicalTooltipPosition();
+    setMedicalTooltipVisible(true);
+  };
+
+  const hideMedicalTooltip = (event) => {
+    if (event?.type === "blur" && event.currentTarget.contains(event.relatedTarget)) return;
+    setMedicalTooltipVisible(false);
+  };
+
   if (!player) return <td className="name-cell empty-cell" aria-label="선수 없음" />;
   const grayClass = player.gray ? " is-gray" : "";
-  const medicalText = medicalStatusText(player);
   const medicalClass = medicalText ? " is-medical" : "";
   const href = playerPageHref(player);
   return (
     <td className={`name-cell${grayClass}${medicalClass}`}>
-      <span className="player-name-content">
+      <span
+        ref={medicalText ? medicalTooltipRef : null}
+        className="player-name-content"
+        onMouseEnter={medicalText ? showMedicalTooltip : undefined}
+        onMouseLeave={medicalText ? hideMedicalTooltip : undefined}
+        onFocus={medicalText ? showMedicalTooltip : undefined}
+        onBlur={medicalText ? hideMedicalTooltip : undefined}
+      >
         {href ? (
           <a className="player-link" href={href}>{player.name}</a>
         ) : (
@@ -286,6 +366,18 @@ function PlayerLink({ player }) {
         )}
         {medicalText ? <span className="medical-status-mark" aria-label={medicalText}>+</span> : null}
       </span>
+      {medicalTooltipVisible && medicalTooltipCoordinates && medicalText ? createPortal(
+        <div
+          className="medical-hover-card"
+          role="tooltip"
+          style={{ left: `${medicalTooltipCoordinates.left}px`, top: `${medicalTooltipCoordinates.top}px` }}
+        >
+          <strong>{MEDICAL_STATUS_LABELS[player.medicalStatus] ?? "부상·재활 명단"}</strong>
+          {player.medicalEventDate ? <span>기준일 {formatDate(player.medicalEventDate)}</span> : null}
+          {player.medicalNote ? <span>{player.medicalNote}</span> : null}
+        </div>,
+        document.body
+      ) : null}
     </td>
   );
 }
@@ -720,6 +812,8 @@ function HomePage() {
 function AboutPage() {
   const about = aboutContent && typeof aboutContent === "object" ? aboutContent : {};
   const notes = Array.isArray(releaseNotes) ? releaseNotes : [];
+  const [activeTab, setActiveTab] = useState("about");
+  const sortedNotes = [...notes].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")));
 
   useEffect(() => {
     document.title = "KBO Plate Index · About";
@@ -729,7 +823,30 @@ function AboutPage() {
     <div className="page-shell">
       <PageHeader subtitle="About" action={<span>사이트 소개 및 변경 기록</span>} />
       <main className="page-content release-note-page-content">
-        <section className="sheet-card about-card" aria-labelledby="about-title">
+        <div className="about-tabs" role="tablist" aria-label="About 하위 메뉴">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "about"}
+            aria-controls="about-panel"
+            className={`about-tab${activeTab === "about" ? " is-active" : ""}`}
+            onClick={() => setActiveTab("about")}
+          >
+            About
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "release-notes"}
+            aria-controls="release-notes-panel"
+            className={`about-tab${activeTab === "release-notes" ? " is-active" : ""}`}
+            onClick={() => setActiveTab("release-notes")}
+          >
+            Release Notes
+          </button>
+        </div>
+        {activeTab === "about" ? (
+        <section id="about-panel" className="sheet-card about-card" aria-labelledby="about-title">
           <div className="sheet-card-header">
             <div>
               <p className="kicker">ABOUT</p>
@@ -742,8 +859,20 @@ function AboutPage() {
               <p key={`${paragraph}-${index}`}>{paragraph}</p>
             ))}
           </div>
+          <div className="about-rules" aria-labelledby="roster-classification-title">
+            <p className="kicker">ROSTER CLASSIFICATION</p>
+            <h3 id="roster-classification-title">선수군 이동 분류 규칙</h3>
+            <ol>
+              <li><strong>1군</strong> 공식 1군 등록 명단에 포함된 선수</li>
+              <li><strong>2군</strong> 1군 명단에는 없고, 부상·재활 상태가 아니며 최근 30일 이내 경기에 출전한 선수</li>
+              <li><strong>잔류군</strong> 부상·재활 중이거나 최근 경기 기록이 30일을 초과한 선수</li>
+              <li><strong>소속 말소</strong> 현재 팀 소속으로 계속 뛰기 어려운 것으로 판단되는 선수</li>
+              <li><strong>판정의 한계</strong> 위 규칙을 기준으로 분류하려고 노력하지만 예외가 많고 데이터가 부족해 실제 선수 소속과 다르게 보일 수 있습니다. 현재 계속 수정 중입니다.</li>
+            </ol>
+          </div>
         </section>
-        <section className="sheet-card release-note-card" aria-labelledby="release-note-title">
+        ) : (
+        <section id="release-notes-panel" className="sheet-card release-note-card" aria-labelledby="release-note-title">
           <div className="sheet-card-header">
             <div>
               <p className="kicker">RELEASE NOTE</p>
@@ -752,7 +881,7 @@ function AboutPage() {
             </div>
           </div>
           <div className="release-note-list">
-            {notes.length ? notes.map((note, index) => {
+            {sortedNotes.length ? sortedNotes.map((note, index) => {
               const items = Array.isArray(note.items) ? note.items : [];
               return (
                 <article className="release-note-entry" key={`${note.date ?? "note"}-${note.version ?? index}`}>
@@ -774,6 +903,7 @@ function AboutPage() {
             }) : <p className="release-note-empty">기록된 Release Note가 없습니다.</p>}
           </div>
         </section>
+        )}
       </main>
       <SiteFooter />
     </div>
@@ -862,10 +992,16 @@ function PlayerRoleLinks({ player }) {
 function PlayerProfile({ player, ratings }) {
   const profile = player.profile ?? {};
   const latest = ratings[ratings.length - 1] ?? null;
+  const physicalInfo = [
+    profileHandednessLabel(profile),
+    profileMeasurement(profile.heightCm, "cm"),
+    profileMeasurement(profile.weightKg, "kg")
+  ].filter(Boolean).join(" · ");
   const items = [
     ["역할·포지션", rolePositionLabel(player)],
     ["소속 구단", `${fullTeamName(profile.team)} · ${currentAffiliationLabel(player)}`],
-    ["생년월일", profile.birthDate]
+    ["생년월일", profile.birthDate],
+    ["투타·신체", physicalInfo]
   ];
 
   return (
@@ -876,7 +1012,10 @@ function PlayerProfile({ player, ratings }) {
           <div className="player-summary-head">
             <div className="player-heading">
               <p className="kicker">PLAYER PROFILE</p>
-              <h2 id="player-title">{player.displayName}</h2>
+              <h2 id="player-title">
+                {player.displayName}
+                {profile.uniformNumber ? <span className="uniform-number">#{profile.uniformNumber}</span> : null}
+              </h2>
               {profile.englishName ? <p className="player-english-name">{profile.englishName}</p> : null}
             </div>
             <div className={`current-rating ${ratingBand(latest?.rating)}`}>
@@ -1863,11 +2002,21 @@ function rosterTeamLabel(value) {
 
 function rosterLeagueLabel(value) {
   const normalized = rosterComparisonKey(value);
+  if (!normalized) return null;
   if (["major", "1군", "kbo", "kbo리그"].includes(normalized)) return "1군";
   if (["futures", "2군", "퓨처스리그", "퓨쳐스리그"].includes(normalized)) return "2군";
   if (["residual", "잔류군"].includes(normalized)) return "잔류군";
   if (["released", "말소", "소속말소"].includes(normalized)) return "말소";
   return String(value ?? "").trim() || null;
+}
+
+function rosterLeagueTransition(fromValue, toValue) {
+  const from = rosterLeagueLabel(fromValue);
+  const to = rosterLeagueLabel(toValue);
+  if (!to) return null;
+  if (!from) return `None → ${to}`;
+  if (rosterComparisonKey(from) === rosterComparisonKey(to)) return null;
+  return `${from} → ${to}`;
 }
 
 function rosterTransition(fromValue, toValue, formatter) {
@@ -1883,7 +2032,7 @@ function rosterEventMovement(event) {
     event?.toTeamName ?? event?.toTeamCode ?? event?.toTeamId ?? event?.to_team_id,
     rosterTeamLabel
   );
-  const leagueMovement = rosterTransition(event?.fromLeague, event?.toLeague, rosterLeagueLabel);
+  const leagueMovement = rosterLeagueTransition(event?.fromLeague, event?.toLeague);
   return [teamMovement, leagueMovement].filter(Boolean).join(" · ") || "—";
 }
 

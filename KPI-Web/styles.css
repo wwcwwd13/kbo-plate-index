@@ -165,16 +165,12 @@ h1 {
 .site-footer {
   width: 100%;
   margin: 0 auto;
-  padding: 14px 16px 24px;
+  padding: 8px 16px 12px;
   border-top: 1px solid #d1d5d9;
   color: var(--muted);
   font-size: 10px;
-  line-height: 1.6;
+  line-height: 1.4;
   text-align: center;
-}
-
-.site-footer p + p {
-  margin-top: 3px;
 }
 
 .sheet-card {
@@ -217,6 +213,38 @@ h2 {
   max-width: 920px;
 }
 
+.about-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #d7dade;
+}
+
+.about-tab {
+  padding: 9px 15px 8px;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.about-tab:hover,
+.about-tab:focus-visible {
+  color: var(--brown-dark);
+  background: #fafafa;
+}
+
+.about-tab.is-active {
+  border-color: #d7dade;
+  border-bottom-color: var(--brown-mid);
+  color: var(--brown-dark);
+  background: #ffffff;
+  font-weight: 700;
+}
+
 .about-card {
   margin-bottom: 16px;
 }
@@ -228,6 +256,31 @@ h2 {
   color: #4d5257;
   font-size: 11px;
   line-height: 1.6;
+}
+
+.about-rules {
+  margin: 0 16px 18px;
+  padding-top: 14px;
+  border-top: 1px solid #d7dade;
+  color: #4d5257;
+}
+
+.about-rules h3 {
+  color: var(--brown-dark);
+  font-size: 15px;
+}
+
+.about-rules ol {
+  display: grid;
+  gap: 7px;
+  margin: 11px 0 0;
+  padding-left: 21px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.about-rules li strong {
+  color: var(--brown-dark);
 }
 
 .release-note-list {
@@ -460,6 +513,36 @@ h2 {
 
 .medical-status-mark {
   font-size: 11px;
+}
+
+.medical-hover-card {
+  position: fixed;
+  z-index: 1100;
+  display: grid;
+  gap: 4px;
+  min-width: 190px;
+  max-width: min(260px, calc(100vw - 24px));
+  padding: 8px 9px;
+  border: 1px solid #d7a0a0;
+  border-radius: 3px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 14px rgba(34, 34, 34, 0.18);
+  text-align: left;
+  white-space: normal;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+.medical-hover-card strong {
+  color: #8f4545;
+  font-size: 10px;
+}
+
+.medical-hover-card span {
+  color: #4d5257;
+  font-size: 10px;
+  overflow-wrap: anywhere;
 }
 
 .legend-status-mark {
@@ -877,6 +960,16 @@ h2 {
   font-size: 25px;
 }
 
+.uniform-number {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
 .player-english-name {
   margin: 4px 0 0;
   color: var(--muted);
@@ -909,7 +1002,7 @@ h2 {
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
   border: 1px solid var(--line);
   background: var(--line);
@@ -1474,7 +1567,7 @@ h2 {
   }
 
   .profile-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
 }
