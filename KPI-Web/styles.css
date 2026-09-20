@@ -1164,6 +1164,14 @@ h2 {
   min-width: 640px;
 }
 
+.roster-history-table tr.roster-event-row--official td {
+  background: #fff8d6;
+}
+
+.roster-history-table tr.roster-event-row--estimated td {
+  background: #ffffff;
+}
+
 .chart-scroller {
   overflow: hidden;
   border: 1px solid var(--line);

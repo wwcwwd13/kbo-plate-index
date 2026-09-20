@@ -1852,11 +1852,45 @@ function rosterEventLabel(event) {
     ?? "상태 변경";
 }
 
-function rosterEventContext(event) {
-  const teamValue = event?.teamName ?? event?.team ?? event?.teamCode;
-  const team = teamValue ? fullTeamName(teamValue) : null;
-  const league = event?.toLeague ?? event?.league ?? event?.fromLeague;
-  return [team, league].filter(Boolean).join(" · ") || "구단·리그 정보 없음";
+function rosterComparisonKey(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function rosterTeamLabel(value) {
+  const raw = String(value ?? "").trim().replace(/^team:/i, "");
+  return raw ? fullTeamName(raw) : null;
+}
+
+function rosterLeagueLabel(value) {
+  const normalized = rosterComparisonKey(value);
+  if (["major", "1군", "kbo", "kbo리그"].includes(normalized)) return "1군";
+  if (["futures", "2군", "퓨처스리그", "퓨쳐스리그"].includes(normalized)) return "2군";
+  if (["residual", "잔류군"].includes(normalized)) return "잔류군";
+  if (["released", "말소", "소속말소"].includes(normalized)) return "말소";
+  return String(value ?? "").trim() || null;
+}
+
+function rosterTransition(fromValue, toValue, formatter) {
+  const from = formatter(fromValue);
+  const to = formatter(toValue);
+  if (!from || !to || rosterComparisonKey(from) === rosterComparisonKey(to)) return null;
+  return `${from} → ${to}`;
+}
+
+function rosterEventMovement(event) {
+  const teamMovement = rosterTransition(
+    event?.fromTeamName ?? event?.fromTeamCode ?? event?.fromTeamId ?? event?.from_team_id,
+    event?.toTeamName ?? event?.toTeamCode ?? event?.toTeamId ?? event?.to_team_id,
+    rosterTeamLabel
+  );
+  const leagueMovement = rosterTransition(event?.fromLeague, event?.toLeague, rosterLeagueLabel);
+  return [teamMovement, leagueMovement].filter(Boolean).join(" · ") || "—";
+}
+
+function isOfficialRosterEvent(event) {
+  const origin = String(event?.eventOrigin ?? event?.origin ?? "").trim().toLowerCase();
+  if (origin) return origin === "official";
+  return event?.confirmed === true || event?.confirmed === 1 || event?.confirmed === "1";
 }
 
 function RosterHistory({ player }) {
@@ -1880,16 +1914,19 @@ function RosterHistory({ player }) {
               <tr>
                 <th scope="col">날짜</th>
                 <th scope="col">구분</th>
-                <th scope="col">구단·리그</th>
+                <th scope="col">이동 정보</th>
                 <th scope="col">메모</th>
               </tr>
             </thead>
             <tbody>
               {events.map((event, index) => (
-                <tr key={event.eventId ?? event.id ?? `${event.eventDate ?? event.date ?? "event"}-${index}`}>
+                <tr
+                  className={`roster-event-row ${isOfficialRosterEvent(event) ? "roster-event-row--official" : "roster-event-row--estimated"}`}
+                  key={event.eventId ?? event.id ?? `${event.eventDate ?? event.date ?? "event"}-${index}`}
+                >
                   <td>{formatDate(event.eventDate ?? event.date)}</td>
                   <td>{rosterEventLabel(event)}</td>
-                  <td>{rosterEventContext(event)}</td>
+                  <td>{rosterEventMovement(event)}</td>
                   <td>{event.note ?? event.noteRaw ?? event.medicalNote ?? "—"}</td>
                 </tr>
               ))}

@@ -44,9 +44,8 @@ async function fetchJson(path) {
   return response.json();
 }
 
-export async function fetchTeamRatings({ date } = {}) {
+export async function fetchTeamRatings() {
   const apiBase = configuredApiBase();
-  const query = date ? `?date=${encodeURIComponent(date)}` : "";
 
   if (!isLocalHost() && !apiBase) {
     throw new Error("KPI API is not configured");
@@ -54,7 +53,7 @@ export async function fetchTeamRatings({ date } = {}) {
 
   if (isLocalHost() || apiBase) {
     try {
-      return await fetchJson(`${apiBase}/api/team-ratings${query}`);
+      return await fetchJson(`${apiBase}/api/team-ratings`);
     } catch (error) {
       // Local development can continue with the reference table while the API starts.
       if (!isLocalHost()) throw error;
@@ -152,30 +151,9 @@ export async function fetchPlayerDetail(playerId) {
   const query = new URLSearchParams({ player_id: playerId }).toString();
   try {
     const data = await fetchJson(`${apiBase}/api/player?${query}`);
-    return attachRelatedRoleLink(attachApiAssetUrls(data, apiBase), apiBase);
+    return attachApiAssetUrls(data, apiBase);
   } catch (error) {
     // Keep the static fixture available when the API is not running yet.
     return fetchJson(DATA_PATHS.playerDetail);
-  }
-}
-
-async function attachRelatedRoleLink(data, apiBase) {
-  const player = data?.player;
-  const kboId = String(player?.profile?.kboId ?? "").trim();
-  if (!player || !kboId || player.roleLinks) return data;
-
-  try {
-    const candidates = await fetchJson(`${apiBase}/api/players/link-map`);
-    const currentRole = player.role === "투수" ? "pitcher" : "batter";
-    const targetRole = currentRole === "pitcher" ? "batter" : "pitcher";
-    const currentTeam = normalize(player.profile?.team);
-    const matches = (Array.isArray(candidates) ? candidates : []).filter((candidate) =>
-      String(candidate?.kboId ?? "").trim() === kboId && candidate.role === targetRole
-    );
-    const related = matches.find((candidate) => normalize(candidate.teamCode) === currentTeam || normalize(candidate.teamName) === currentTeam) ?? matches[0];
-    if (!related?.playerId) return data;
-    return { ...data, player: { ...player, roleLinks: { ...(player.roleLinks ?? {}), [targetRole]: related.playerId } } };
-  } catch (error) {
-    return data;
   }
 }
