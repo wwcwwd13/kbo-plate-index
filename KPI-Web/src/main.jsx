@@ -1009,29 +1009,31 @@ function PlayerProfile({ player, ratings }) {
       <section className="player-card" aria-labelledby="player-title">
         <PlayerPhoto player={player} />
         <div className="player-summary">
-          <div className="player-summary-head">
-            <div className="player-heading">
-              <p className="kicker">PLAYER PROFILE</p>
-              <h2 id="player-title">
-                {player.displayName}
-                {profile.uniformNumber ? <span className="uniform-number">#{profile.uniformNumber}</span> : null}
-              </h2>
-              {profile.englishName ? <p className="player-english-name">{profile.englishName}</p> : null}
-            </div>
-            <div className={`current-rating ${ratingBand(latest?.rating)}`}>
-              <span className="current-rating-label">현재 Rating</span>
-              <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
-            </div>
-          </div>
-          <div className="profile-grid" aria-label="선수 기본 정보">
-            {items.map(([label, value]) => (
-              <div className="profile-item" key={label}>
-                <div className="profile-label">{label}</div>
-                <div className="profile-value">{value || "—"}</div>
+          <div className="player-summary-main">
+            <div className="player-summary-head">
+              <div className="player-heading">
+                <p className="kicker">PLAYER PROFILE</p>
+                <h2 id="player-title">
+                  {player.displayName}
+                  {profile.uniformNumber ? <span className="uniform-number">#{profile.uniformNumber}</span> : null}
+                </h2>
+                {profile.englishName ? <p className="player-english-name">{profile.englishName}</p> : null}
               </div>
-            ))}
+            </div>
+            <div className="profile-grid" aria-label="선수 기본 정보">
+              {items.map(([label, value]) => (
+                <div className="profile-item" key={label}>
+                  <div className="profile-label">{label}</div>
+                  <div className="profile-value">{value || "—"}</div>
+                </div>
+              ))}
+            </div>
+            <PlayerRoleLinks player={player} />
           </div>
-          <PlayerRoleLinks player={player} />
+          <div className={`current-rating ${ratingBand(latest?.rating)}`}>
+            <span className="current-rating-label">현재 Rating</span>
+            <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
+          </div>
         </div>
       </section>
     </>
@@ -1523,9 +1525,9 @@ function RatingChart({ ratings, player }) {
     return {
       animation: false,
       grid: {
-        left: 52,
-        right: 24,
-        top: 22,
+        left: 38,
+        right: 16,
+        top: 14,
         bottom: 42,
         containLabel: true
       },
@@ -1587,17 +1589,37 @@ function RatingChart({ ratings, player }) {
         },
         splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
       },
-      dataZoom: entries.length > 1 ? [{
-        type: "inside",
-        xAxisIndex: [0],
-        filterMode: "none",
-        startValue,
-        endValue,
-        zoomOnMouseWheel: false,
-        moveOnMouseMove: false,
-        moveOnMouseWheel: false,
-        preventDefaultMouseMove: false
-      }] : [],
+      dataZoom: entries.length > 1 && isZoomable ? [
+        {
+          type: "inside",
+          xAxisIndex: [0],
+          filterMode: "none",
+          startValue,
+          endValue,
+          zoomOnMouseWheel: false,
+          moveOnMouseMove: false,
+          moveOnMouseWheel: false,
+          preventDefaultMouseMove: false
+        },
+        {
+          type: "slider",
+          xAxisIndex: [0],
+          filterMode: "none",
+          startValue,
+          endValue,
+          height: 12,
+          bottom: 8,
+          showDetail: false,
+          showDataShadow: false,
+          brushSelect: false,
+          borderColor: "#c9ced2",
+          backgroundColor: "#f3f4f5",
+          fillerColor: "#d8c09c",
+          handleSize: "90%",
+          handleStyle: { color: "#8b623d", borderColor: "#6f4c2f", borderWidth: 1 },
+          moveHandleSize: 0
+        }
+      ] : [],
       series: [{
         type: "line",
         name: "Rating",
