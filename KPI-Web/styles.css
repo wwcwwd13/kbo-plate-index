@@ -43,10 +43,9 @@ a {
 .page-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 56px;
-  padding: 8px 16px;
+  justify-content: flex-start;
+  min-height: 52px;
+  padding: 6px 14px;
   border-bottom: 1px solid #d1d5d9;
   background: var(--surface);
 }
@@ -58,18 +57,14 @@ a {
   min-width: 0;
 }
 
-.title-lockup {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
-
 .brand-link {
   display: flex;
   align-items: center;
-  gap: 11px;
-  color: inherit;
+  gap: 9px;
+  flex-shrink: 0;
+  color: #25251f;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .brand-link:focus-visible {
@@ -109,19 +104,6 @@ a {
   font-weight: 700;
 }
 
-.project-mark {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 4px;
-  color: #ffffff;
-  background: var(--brown-dark);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-}
-
 h1,
 h2,
 h3,
@@ -134,22 +116,23 @@ h1 {
   line-height: 1.2;
 }
 
-.title-lockup p,
-.source-meta,
+.brand-link h1 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+}
+
+.brand-mark {
+  display: block;
+  width: 29px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
 .section-heading span {
   color: var(--muted);
   font-size: 11px;
-}
-
-.title-lockup p {
-  margin-top: 2px;
-}
-
-.source-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
 }
 
 .source-divider {
@@ -171,6 +154,11 @@ h1 {
   font-size: 10px;
   line-height: 1.4;
   text-align: center;
+}
+
+.site-footer-status {
+  color: var(--brown-mid);
+  font-weight: 700;
 }
 
 .sheet-card {
@@ -359,6 +347,11 @@ h2 {
   white-space: nowrap;
 }
 
+.team-rating-legend {
+  justify-content: flex-start;
+  padding: 0 12px 12px;
+}
+
 .legend-item {
   display: inline-flex;
   align-items: center;
@@ -513,6 +506,22 @@ h2 {
 
 .medical-status-mark {
   font-size: 11px;
+}
+
+.asian-games-status-mark,
+.asian-games-legend-mark {
+  color: #EF4536;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.asian-games-status-mark {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.asian-games-legend-mark {
+  font-size: 14px;
 }
 
 .medical-hover-card {
@@ -737,12 +746,12 @@ h2 {
 
 .diff-delta.is-up,
 .diff-legend-delta.is-up {
-  color: #c23535;
+  color: #236bb5;
 }
 
 .diff-delta.is-down,
 .diff-legend-delta.is-down {
-  color: #236bb5;
+  color: #c23535;
 }
 
 .diff-delta.is-neutral {
@@ -830,25 +839,33 @@ h2 {
 
 @media (max-width: 700px) {
   .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 14px;
-  }
-
-  .source-meta {
-    padding-left: 45px;
+    align-items: center;
+    padding: 6px 10px;
   }
 
   .header-main {
     width: 100%;
-    flex-wrap: wrap;
-    gap: 8px 16px;
+    flex-wrap: nowrap;
+    gap: 15px;
+  }
+
+  .brand-link h1 {
+    font-size: 21px;
+  }
+
+  .brand-mark {
+    width: 25px;
+    height: 28px;
+  }
+
+  .top-nav a {
+    padding-inline: 7px;
+    font-size: 10px;
   }
 
   .top-nav {
-    width: 100%;
-    padding-left: 45px;
+    width: auto;
+    padding-left: 0;
   }
 
   .page-content {
@@ -1316,6 +1333,46 @@ h2 {
   margin-bottom: 0;
 }
 
+.rating-chart-title-group,
+.chart-league-legend,
+.chart-league-legend span {
+  display: flex;
+  align-items: center;
+}
+
+.rating-chart-title-group {
+  gap: 12px;
+  min-width: 0;
+}
+
+.chart-league-legend {
+  gap: 9px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.chart-league-legend span {
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.chart-league-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+}
+
+.chart-league-dot.is-major {
+  border-color: #245a88;
+  background: #3c82bf;
+}
+
+.chart-league-dot.is-minor {
+  border-color: #704324;
+  background: #a66b3f;
+}
+
 .chart-mode-control,
 .chart-zoom-control {
   display: flex;
@@ -1526,10 +1583,10 @@ h2 {
   display: inline-block;
   min-width: 3.2em;
   padding: 2px 6px;
-  border: 1px solid #e5b5b5;
+  border: 1px solid #b8cce8;
   border-radius: 999px;
-  color: #c23535;
-  background: #fce4e4;
+  color: #236bb5;
+  background: #e5efff;
   font-weight: 700;
   text-align: center;
 }
@@ -1538,10 +1595,10 @@ h2 {
   display: inline-block;
   min-width: 3.2em;
   padding: 2px 6px;
-  border: 1px solid #b8cce8;
+  border: 1px solid #e5b5b5;
   border-radius: 999px;
-  color: #236bb5;
-  background: #e5efff;
+  color: #c23535;
+  background: #fce4e4;
   font-weight: 700;
   text-align: center;
 }
@@ -1639,6 +1696,15 @@ h2 {
   .chart-toolbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .rating-chart-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .rating-chart-title-group {
+    gap: 8px;
   }
 
   .chart-mode-control {

@@ -203,6 +203,11 @@ function medicalStatusText(player) {
   return details.join(" · ");
 }
 
+function isAsianGamesAssignment(player) {
+  const reason = String(player?.rosterStatusReason ?? "").trim().toLowerCase().replace(/\s+/g, "");
+  return ["아시안게임출전", "asian_games_assignment"].includes(reason);
+}
+
 function medicalTooltipPosition(element) {
   const rect = element.getBoundingClientRect();
   const margin = 12;
@@ -250,36 +255,37 @@ function Delta({ value }) {
   return <span className={deltaClass(number)}>{sign}{number.toFixed(1)}</span>;
 }
 
-function PageHeader({ subtitle, action }) {
+function PageHeader() {
   const isDiffPage = isPagePath("diff");
   const isAboutPage = isPagePath("about") || isPagePath("release-note");
   return (
     <header className="page-header">
       <div className="header-main">
-        <div className="title-lockup">
-          <a className="brand-link" href={homeHref()} aria-label="KBO Plate Index 메인 페이지">
-            <span className="project-mark" aria-hidden="true">KPI</span>
-            <div>
-              <h1>KBO Plate Index</h1>
-              <p>{subtitle}</p>
-            </div>
-          </a>
-        </div>
+        <a className="brand-link" href={homeHref()} aria-label="오늘의 폼 메인 페이지">
+          <svg className="brand-mark" viewBox="0 0 32 36" aria-hidden="true" focusable="false">
+            <path d="M16 1 31 16 16 35 1 16Z" fill="#65452b" />
+            <path d="M8 21v-5m8 10V12m8 9V8" stroke="#fffdf8" strokeWidth="2.4" />
+            <path d="m7 16 9-5 8-3" fill="none" stroke="#d0b388" strokeWidth="1.5" />
+          </svg>
+          <h1>오늘의 폼</h1>
+        </a>
         <nav className="top-nav" aria-label="주요 메뉴">
-          <a className={!isDiffPage && !isAboutPage ? "is-active" : ""} href={homeHref()}>구단별 Rating</a>
-          <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>KPI 변동표</a>
+          <a className={!isDiffPage && !isAboutPage ? "is-active" : ""} href={homeHref()}>전체</a>
+          <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>폼 변동</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
       </div>
-      {action ? <div className="source-meta">{action}</div> : null}
     </header>
   );
 }
 
-function SiteFooter() {
+function SiteFooter({ status }) {
   return (
     <footer className="site-footer">
-      <p>KBO Plate Index는 개인이 취미로 만들고 있는 비공식·비영리 프로젝트입니다. · 선수·구단·리그 및 관련 자료에 대한 권리는 각 원권리자에게 있습니다. · 표시 정보는 공개 자료를 바탕으로 정리한 참고용 데이터입니다.</p>
+      <p>
+        {status ? <><span className="site-footer-status">{status}</span> · </> : null}
+        오늘의 폼은 개인이 취미로 만들고 있는 비공식·비영리 프로젝트입니다. · 선수·구단·리그 및 관련 자료에 대한 권리는 각 원권리자에게 있습니다. · 표시 정보는 공개 자료를 바탕으로 정리한 참고용 데이터입니다.
+      </p>
     </footer>
   );
 }
@@ -311,6 +317,8 @@ function PlayerLink({ player }) {
   const [medicalTooltipVisible, setMedicalTooltipVisible] = useState(false);
   const [medicalTooltipCoordinates, setMedicalTooltipCoordinates] = useState(null);
   const medicalText = medicalStatusText(player);
+  const asianGamesText = isAsianGamesAssignment(player) ? "아시안 게임 출전" : null;
+  const statusTooltipText = [medicalText, asianGamesText].filter(Boolean).join(" · ");
 
   const updateMedicalTooltipPosition = useCallback(() => {
     if (!medicalTooltipRef.current) return;
@@ -329,13 +337,13 @@ function PlayerLink({ player }) {
   }, [medicalTooltipVisible, updateMedicalTooltipPosition]);
 
   useEffect(() => {
-    if (medicalText) return;
+    if (statusTooltipText) return;
     setMedicalTooltipVisible(false);
     setMedicalTooltipCoordinates(null);
-  }, [medicalText]);
+  }, [statusTooltipText]);
 
   const showMedicalTooltip = () => {
-    if (!medicalText) return;
+    if (!statusTooltipText) return;
     updateMedicalTooltipPosition();
     setMedicalTooltipVisible(true);
   };
@@ -352,12 +360,12 @@ function PlayerLink({ player }) {
   return (
     <td className={`name-cell${grayClass}${medicalClass}`}>
       <span
-        ref={medicalText ? medicalTooltipRef : null}
+        ref={statusTooltipText ? medicalTooltipRef : null}
         className="player-name-content"
-        onMouseEnter={medicalText ? showMedicalTooltip : undefined}
-        onMouseLeave={medicalText ? hideMedicalTooltip : undefined}
-        onFocus={medicalText ? showMedicalTooltip : undefined}
-        onBlur={medicalText ? hideMedicalTooltip : undefined}
+        onMouseEnter={statusTooltipText ? showMedicalTooltip : undefined}
+        onMouseLeave={statusTooltipText ? hideMedicalTooltip : undefined}
+        onFocus={statusTooltipText ? showMedicalTooltip : undefined}
+        onBlur={statusTooltipText ? hideMedicalTooltip : undefined}
       >
         {href ? (
           <a className="player-link" href={href}>{player.name}</a>
@@ -365,14 +373,16 @@ function PlayerLink({ player }) {
           <span className="player-link player-link--unresolved">{player.name}</span>
         )}
         {medicalText ? <span className="medical-status-mark" aria-label={medicalText}>+</span> : null}
+        {asianGamesText ? <span className="asian-games-status-mark" aria-label={asianGamesText}>✵</span> : null}
       </span>
-      {medicalTooltipVisible && medicalTooltipCoordinates && medicalText ? createPortal(
+      {medicalTooltipVisible && medicalTooltipCoordinates && statusTooltipText ? createPortal(
         <div
           className="medical-hover-card"
           role="tooltip"
           style={{ left: `${medicalTooltipCoordinates.left}px`, top: `${medicalTooltipCoordinates.top}px` }}
         >
-          <strong>{MEDICAL_STATUS_LABELS[player.medicalStatus] ?? "부상·재활 명단"}</strong>
+          {asianGamesText ? <strong>{asianGamesText}</strong> : null}
+          {medicalText ? <strong>{MEDICAL_STATUS_LABELS[player.medicalStatus] ?? "부상·재활 명단"}</strong> : null}
           {player.medicalEventDate ? <span>기준일 {formatDate(player.medicalEventDate)}</span> : null}
           {player.medicalNote ? <span>{player.medicalNote}</span> : null}
         </div>,
@@ -714,10 +724,7 @@ function DiffPage() {
 
   return (
     <div className="page-shell">
-      <PageHeader
-        subtitle="KPI 변동표"
-        action={<span>{meta?.date ? `${meta.date} 기준` : "기준일 확인 중"}</span>}
-      />
+      <PageHeader />
       <main className="page-content">
         <section className="sheet-card" aria-labelledby="diff-title">
           <div className="sheet-card-header diff-card-header">
@@ -754,7 +761,7 @@ function DiffPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter status={meta?.date ? `${meta.date} 기준` : "기준일 확인 중"} />
     </div>
   );
 }
@@ -775,36 +782,26 @@ function HomePage() {
   const isUnavailable = Boolean(error) || Boolean(data && !sections.length);
   return (
     <div className="page-shell">
-      <PageHeader
-        subtitle={`${data?.meta?.asOf ?? (isUnavailable ? "데이터 대기 중" : "기준일 확인 중")} KBO 구단별 Rating`}
-        action={
-          <span>{data?.meta?.asOf ? `${data.meta.asOf} 기준` : isUnavailable ? "API 연결 필요" : "기준일 확인 중"}</span>
-        }
-      />
+      <PageHeader />
       <main className="page-content">
-        <section className="sheet-card" aria-labelledby="sheet-title">
-          <div className="sheet-card-header">
-            <div>
-              <p className="kicker">TEAM RATING</p>
-              <h2 id="sheet-title">구단별 Rating</h2>
-            </div>
-            {!isUnavailable ? (
-              <div className="legend" aria-label="Rating 색상 기준">
-                <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
-                <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
-                <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
-                <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
-                <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
-                <span className="legend-item"><span className="legend-name-sample">회색</span><span>출전수 적음</span></span>
-              </div>
-            ) : null}
-          </div>
+        <section className="sheet-card" aria-label="구단별 Rating">
           <div className="rating-sections">
             {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? sections.map((section, index) => <TeamRatingTable key={`${section.league}-${index}`} section={section} isSecondary={index > 0} />) : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
+          {!isUnavailable ? (
+            <div className="legend team-rating-legend" aria-label="Rating 색상 기준">
+              <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
+              <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
+              <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
+              <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
+              <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
+              <span className="legend-item"><span className="asian-games-legend-mark" aria-hidden="true">✵</span><span>아시안 게임 출전</span></span>
+              <span className="legend-item"><span className="legend-name-sample">회색</span><span>출전수 적음</span></span>
+            </div>
+          ) : null}
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter status={data?.meta?.asOf ? `${data.meta.asOf} 기준` : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
     </div>
   );
 }
@@ -815,13 +812,9 @@ function AboutPage() {
   const [activeTab, setActiveTab] = useState("about");
   const sortedNotes = [...notes].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")));
 
-  useEffect(() => {
-    document.title = "KBO Plate Index · About";
-  }, []);
-
   return (
     <div className="page-shell">
-      <PageHeader subtitle="About" action={<span>사이트 소개 및 변경 기록</span>} />
+      <PageHeader />
       <main className="page-content release-note-page-content">
         <div className="about-tabs" role="tablist" aria-label="About 하위 메뉴">
           <button
@@ -850,7 +843,7 @@ function AboutPage() {
           <div className="sheet-card-header">
             <div>
               <p className="kicker">ABOUT</p>
-              <h2 id="about-title">{about.title || "KBO Plate Index"}</h2>
+              <h2 id="about-title">{about.title || "오늘의 폼"}</h2>
               <p className="sheet-description">{about.summary || "사이트 소개"}</p>
             </div>
           </div>
@@ -877,7 +870,7 @@ function AboutPage() {
             <div>
               <p className="kicker">RELEASE NOTE</p>
               <h2 id="release-note-title">변경 기록</h2>
-              <p className="sheet-description">KBO Plate Index의 주요 업데이트와 개발 기록입니다.</p>
+              <p className="sheet-description">오늘의 폼의 주요 업데이트와 개발 기록입니다.</p>
             </div>
           </div>
           <div className="release-note-list">
@@ -1017,7 +1010,6 @@ function PlayerProfile({ player, ratings }) {
                   {player.displayName}
                   {profile.uniformNumber ? <span className="uniform-number">#{profile.uniformNumber}</span> : null}
                 </h2>
-                {profile.englishName ? <p className="player-english-name">{profile.englishName}</p> : null}
               </div>
             </div>
             <div className="profile-grid" aria-label="선수 기본 정보">
@@ -1107,18 +1099,26 @@ function gameHomeAway(gameId, playerTeam) {
   return null;
 }
 
+function gameOpponentDisplayName(value, league) {
+  const raw = String(value ?? "").trim();
+  const normalized = raw.toLowerCase();
+  const isKiwoomAffiliate = canonicalTeamLabel(raw) === "키움" || normalized === "고양 히어로즈";
+  if (gameLeagueLabel(league) === "2군" && isKiwoomAffiliate) return "고양 히어로즈";
+  return fullTeamName(raw);
+}
+
 function gameOpponentName(appearance, playerTeam) {
   const teams = gameTeamsFromId(appearance?.gameId);
   const playerLabel = canonicalTeamLabel(playerTeam);
   const parsedOpponent = teams
     ? (playerLabel === canonicalTeamLabel(teams.home) ? teams.away : playerLabel === canonicalTeamLabel(teams.away) ? teams.home : null)
     : null;
-  return fullTeamName(appearance?.opponent || parsedOpponent);
+  return gameOpponentDisplayName(appearance?.opponent || parsedOpponent, appearance?.league);
 }
 
 function gameContextText(entry, player) {
   const opponentValue = entry.opponentDisplay || gameOpponentName(entry, player?.profile?.team);
-  const opponent = opponentValue ? fullTeamName(opponentValue) : "구단 미상";
+  const opponent = opponentValue ? gameOpponentDisplayName(opponentValue, entry.league) : "구단 미상";
   const homeAway = entry.homeAway || gameHomeAway(entry.gameId, player?.profile?.team);
   return { opponent, homeAway };
 }
@@ -1282,14 +1282,16 @@ function buildGameEntries(ratings, appearances, player) {
     const performance = isPitcherPlayer(player) && stat
       ? summarizePitchingPerformance(group, stat)
       : summarizeGamePerformance(group, player);
-    const opponentDisplay = stat?.opponent || gameOpponentName(first, player?.profile?.team);
+    const league = stat?.league || first?.league || null;
+    const opponentValue = stat?.opponent || first?.opponent || gameOpponentName(first, player?.profile?.team);
+    const opponentDisplay = gameOpponentDisplayName(opponentValue, league);
 
     return {
       key: `game-${first?.date}-${first?.gameId ?? index}`,
       granularity: "game",
       granularityLabel: "경기별",
       date: first?.date,
-      league: stat?.league || first?.league || null,
+      league,
       rating,
       ratingBefore: firstBefore,
       ratingAfter: lastAfter,
@@ -1340,16 +1342,17 @@ function buildChartEntries(mode, ratings, player) {
   const appearances = sortAppearances(player);
   if (mode === "plateAppearance") return buildPlateAppearanceEntries(ratings, appearances, player);
   return buildGameEntries(ratings, appearances, player)
-    .filter((entry) => entry.rating !== null && entry.rating !== undefined);
+    .filter((entry) => entry.rating !== null && entry.rating !== undefined)
+    .sort((a, b) => String(a.date ?? "").localeCompare(String(b.date ?? "")) || String(a.gameId ?? "").localeCompare(String(b.gameId ?? "")));
 }
 
 function chartEntrySummary(entry) {
   if (entry.granularity === "game") {
-    const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
+    const opponentName = entry.opponentDisplay ? gameOpponentDisplayName(entry.opponentDisplay, entry.league) : "";
     const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
     return `${opponent}${entry.summary}`;
   }
-  const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "";
+  const opponentName = entry.opponentDisplay ? gameOpponentDisplayName(entry.opponentDisplay, entry.league) : "";
   const opponent = opponentName ? `상대 ${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""} · ` : "";
   return `${opponent}${entry.result || "결과 기록 없음"}`;
 }
@@ -1381,14 +1384,14 @@ function escapeChartHtml(value) {
 function chartDeltaHtml(value) {
   const number = toNumber(value);
   if (number === null || number === 0) return "—";
-  const color = number > 0 ? "#b14f4f" : "#356b9a";
+  const color = number > 0 ? "#236bb5" : "#c23535";
   const arrow = number > 0 ? "▲" : "▼";
   return `<span style="color:${color};font-weight:700">${arrow}${Math.abs(number).toFixed(1)}</span>`;
 }
 
 function chartTooltipHtml(entry, delta) {
   if (!entry) return "";
-  const opponentName = entry.opponentDisplay ? fullTeamName(entry.opponentDisplay) : "상대 정보 없음";
+  const opponentName = entry.opponentDisplay ? gameOpponentDisplayName(entry.opponentDisplay, entry.league) : "상대 정보 없음";
   const gameContext = `${opponentName}${entry.homeAway ? ` · ${entry.homeAway}` : ""}`;
   const lines = entry.granularity === "game"
     ? [
@@ -1420,6 +1423,17 @@ function chartDateFromAxisValue(value) {
   return formatShortDate(date.toISOString().slice(0, 10));
 }
 
+function ratingLeaguePalette(league) {
+  const normalized = gameLeagueLabel(league);
+  if (normalized === "1군") {
+    return { key: "major", label: "1군", fill: "#3c82bf", border: "#245a88", line: "#2f6f9f" };
+  }
+  if (normalized === "2군") {
+    return { key: "minor", label: "2군", fill: "#a66b3f", border: "#704324", line: "#8b5e3c" };
+  }
+  return { key: "unknown", label: "기타", fill: "#8a9299", border: "#626970", line: "#737b82" };
+}
+
 function RatingChart({ ratings, player }) {
   const [viewMode, setViewMode] = useState("game");
   const [showAllGames, setShowAllGames] = useState(true);
@@ -1430,29 +1444,44 @@ function RatingChart({ ratings, player }) {
 
   const isZoomable = viewMode === "game";
   const timelineInfo = useMemo(() => {
+    const dayMilliseconds = 24 * 60 * 60 * 1000;
     const times = entries.map((entry) => Date.parse(`${entry.date}T00:00:00`));
     const validTimes = times.filter(Number.isFinite);
     const useTimeScale = isZoomable && validTimes.length === entries.length && validTimes.length > 1;
     const earliest = validTimes.length ? Math.min(...validTimes) : 0;
     const latest = validTimes.length ? Math.max(...validTimes) : 0;
-    const fullSpanDays = earliest < latest ? (latest - earliest) / (24 * 60 * 60 * 1000) : 0;
-    const visibleDays = showAllGames ? fullSpanDays : Math.min(Math.max(fullSpanDays, 1), 30);
-    const startTime = useTimeScale ? Math.max(earliest, latest - visibleDays * 24 * 60 * 60 * 1000) : earliest;
-    const startIndex = useTimeScale
-      ? times.findIndex((time) => Number.isFinite(time) && time >= startTime)
-      : showAllGames
-        ? 0
-        : Math.max(0, entries.length - Math.min(entries.length, 30));
+    const recentStartTime = Math.max(earliest, latest - 30 * dayMilliseconds);
+    const recentStartIndexCandidate = times.findIndex((time) => Number.isFinite(time) && time >= recentStartTime);
+    const recentStartIndex = recentStartIndexCandidate >= 0
+      ? recentStartIndexCandidate
+      : Math.max(0, entries.length - Math.min(entries.length, 30));
+
+    // Give every plate appearance one X-axis unit so a 100-unit window is exactly 100 PA.
+    const plateAppearanceXValues = entries.map((_, index) => index + 0.5);
+    const recentPlateAppearanceStartValue = Math.max(0, entries.length - 100);
+    const fullRange = useTimeScale
+      ? latest - earliest
+      : isZoomable
+        ? Math.max(entries.length - 1, 0)
+        : entries.length;
+    const minimumZoomSpan = useTimeScale
+      ? Math.min(30 * dayMilliseconds, Math.max(fullRange, 1))
+      : isZoomable
+        ? Math.min(30, Math.max(fullRange, 1))
+        : Math.min(100, Math.max(entries.length, 1));
 
     return {
       times,
       useTimeScale,
       earliest,
       latest,
-      startTime,
-      startIndex: startIndex < 0 ? 0 : startIndex
+      recentStartTime,
+      recentStartIndex,
+      plateAppearanceXValues,
+      recentPlateAppearanceStartValue,
+      minimumZoomSpan
     };
-  }, [entries, isZoomable, showAllGames]);
+  }, [entries, isZoomable]);
 
   const values = entries.map((entry) => entry.rating);
   const observedMin = entries.length ? Math.min(...values) : 0;
@@ -1482,17 +1511,56 @@ function RatingChart({ ratings, player }) {
 
     const xValues = timelineInfo.useTimeScale
       ? timelineInfo.times
-      : entries.map((_, index) => index);
+      : isZoomable
+        ? entries.map((_, index) => index)
+        : timelineInfo.plateAppearanceXValues;
     const chartData = entries.map((entry, index) => {
       const maximum = isSameRating(entry.rating, maximumRating);
+      const palette = ratingLeaguePalette(entry.league);
       return {
         value: [xValues[index], entry.rating],
         entryIndex: index,
-        itemStyle: maximum
-            ? { color: "#fff8d6", borderColor: "#a77a25", borderWidth: 2.5 }
-            : { color: "#ffffff", borderColor: "#6f4c2f", borderWidth: 1.8 }
+        itemStyle: {
+          color: palette.fill,
+          borderColor: palette.border,
+          borderWidth: maximum ? 2.8 : 1.6
+        }
       };
     });
+    const lineSeries = [];
+    if (entries.length > 1) {
+      const addLeagueRun = (startEdge, endPoint, palette, runIndex) => {
+        const data = [];
+        for (let index = startEdge - 1; index <= endPoint; index += 1) {
+          data.push([xValues[index], entries[index].rating]);
+        }
+        lineSeries.push({
+          type: "line",
+          name: `${palette.label} Rating 구간 ${runIndex + 1}`,
+          data,
+          showSymbol: false,
+          connectNulls: false,
+          smooth: false,
+          silent: true,
+          tooltip: { show: false },
+          lineStyle: { color: palette.line, width: 2.5 },
+          z: 3
+        });
+      };
+      let runStartEdge = 1;
+      let runPalette = ratingLeaguePalette(entries[1].league);
+      let runIndex = 0;
+      for (let edgeIndex = 2; edgeIndex < entries.length; edgeIndex += 1) {
+        const nextPalette = ratingLeaguePalette(entries[edgeIndex].league);
+        if (nextPalette.key !== runPalette.key) {
+          addLeagueRun(runStartEdge, edgeIndex - 1, runPalette, runIndex);
+          runStartEdge = edgeIndex;
+          runPalette = nextPalette;
+          runIndex += 1;
+        }
+      }
+      addLeagueRun(runStartEdge, entries.length - 1, runPalette, runIndex);
+    }
 
     const ratingBands = [
       { min: Number.NEGATIVE_INFINITY, max: 50, color: "#f4cccc" },
@@ -1513,9 +1581,13 @@ function RatingChart({ ratings, player }) {
       ]);
 
     const startValue = showAllGames
-      ? (timelineInfo.useTimeScale ? timelineInfo.earliest : 0)
-      : (timelineInfo.useTimeScale ? timelineInfo.startTime : timelineInfo.startIndex);
-    const endValue = timelineInfo.useTimeScale ? timelineInfo.latest : entries.length - 1;
+      ? (isZoomable ? (timelineInfo.useTimeScale ? timelineInfo.earliest : 0) : 0)
+      : (isZoomable
+        ? (timelineInfo.useTimeScale ? timelineInfo.recentStartTime : timelineInfo.recentStartIndex)
+        : timelineInfo.recentPlateAppearanceStartValue);
+    const endValue = isZoomable
+      ? (timelineInfo.useTimeScale ? timelineInfo.latest : entries.length - 1)
+      : entries.length;
     const deltaForIndex = (index) => {
       const entry = entries[index];
       const prior = index > 0 ? entries[index - 1] : null;
@@ -1548,7 +1620,9 @@ function RatingChart({ ratings, player }) {
         textStyle: { color: "#2f3133", fontFamily: "Arial, Noto Sans KR, Malgun Gothic, sans-serif", fontSize: 11 },
         formatter: (params) => {
           const items = Array.isArray(params) ? params : [params];
-          const item = items.find((candidate) => candidate?.seriesType === "line") ?? items[0];
+          const item = items.find((candidate) => candidate?.seriesName === "Rating" && candidate?.data?.entryIndex !== undefined)
+            ?? items.find((candidate) => candidate?.data?.entryIndex !== undefined)
+            ?? items[0];
           const index = Number(item?.data?.entryIndex ?? item?.dataIndex);
           return Number.isInteger(index) && entries[index]
             ? chartTooltipHtml(entries[index], deltaForIndex(index))
@@ -1556,16 +1630,27 @@ function RatingChart({ ratings, player }) {
         }
       },
       xAxis: {
-        type: timelineInfo.useTimeScale ? "time" : "category",
+        type: timelineInfo.useTimeScale ? "time" : isZoomable ? "category" : "value",
         boundaryGap: false,
-        data: timelineInfo.useTimeScale ? undefined : entries.map((entry) => entry.date),
+        min: isZoomable ? undefined : 0,
+        max: isZoomable ? undefined : entries.length,
+        data: timelineInfo.useTimeScale || !isZoomable ? undefined : entries.map((entry) => entry.date),
         axisLine: { lineStyle: { color: "#c9ced2" } },
         axisTick: { alignWithLabel: true, lineStyle: { color: "#c9ced2" } },
         axisLabel: {
           color: "#727980",
           fontSize: 10,
           hideOverlap: true,
-          formatter: timelineInfo.useTimeScale ? chartDateFromAxisValue : (value) => formatShortDate(value)
+          formatter: timelineInfo.useTimeScale
+            ? chartDateFromAxisValue
+            : isZoomable
+              ? (value) => formatShortDate(value)
+              : (value) => {
+                  const numericValue = Number(value);
+                  if (!Number.isFinite(numericValue) || !entries.length) return "";
+                  const entryIndex = Math.min(entries.length - 1, Math.max(0, Math.floor(numericValue)));
+                  return formatShortDate(entries[entryIndex]?.date);
+                }
         },
         splitLine: { show: false }
       },
@@ -1589,13 +1674,14 @@ function RatingChart({ ratings, player }) {
         },
         splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
       },
-      dataZoom: entries.length > 1 && isZoomable ? [
+      dataZoom: entries.length > 1 ? [
         {
           type: "inside",
           xAxisIndex: [0],
           filterMode: "none",
           startValue,
           endValue,
+          minValueSpan: timelineInfo.minimumZoomSpan,
           zoomOnMouseWheel: false,
           moveOnMouseMove: false,
           moveOnMouseWheel: false,
@@ -1607,6 +1693,7 @@ function RatingChart({ ratings, player }) {
           filterMode: "none",
           startValue,
           endValue,
+          minValueSpan: timelineInfo.minimumZoomSpan,
           height: 12,
           bottom: 8,
           showDetail: false,
@@ -1620,7 +1707,7 @@ function RatingChart({ ratings, player }) {
           moveHandleSize: 0
         }
       ] : [],
-      series: [{
+      series: [...lineSeries, {
         type: "line",
         name: "Rating",
         data: chartData,
@@ -1629,9 +1716,11 @@ function RatingChart({ ratings, player }) {
         symbolSize: 8,
         connectNulls: false,
         smooth: false,
-        lineStyle: { color: "#8b623d", width: 2.5 },
-        itemStyle: { color: "#ffffff", borderColor: "#6f4c2f", borderWidth: 1.8 },
-        emphasis: { focus: "series", scale: true, itemStyle: { color: "#fff0ad", borderColor: "#a77a25", borderWidth: 2.5 } },
+        lineStyle: { color: "rgba(0, 0, 0, 0)", opacity: 0, width: 0 },
+        // Hover emphasis on the points blurred the separate league-colored line series.
+        // Keep the axis tooltip, but do not visually alter the chart on point hover.
+        emphasis: { disabled: true },
+        z: 4,
         markArea: {
           silent: true,
           label: { show: false },
@@ -1712,7 +1801,13 @@ function RatingChart({ ratings, player }) {
   return (
     <>
       <div className="detail-card-header rating-chart-header">
-        <h3 id="rating-chart-title">Rating 변화</h3>
+        <div className="rating-chart-title-group">
+          <h3 id="rating-chart-title">Rating 변화</h3>
+          <div className="chart-league-legend" aria-label="그래프 색상 구분">
+            <span><i className="chart-league-dot is-major" />1군</span>
+            <span><i className="chart-league-dot is-minor" />2군</span>
+          </div>
+        </div>
         <div className="chart-toolbar">
           <div className="chart-mode-control" role="group" aria-label="Rating 표시 단위">
             {CHART_MODES.map(([mode, label]) => (
@@ -1720,7 +1815,7 @@ function RatingChart({ ratings, player }) {
             ))}
           </div>
           <div className="chart-zoom-control" role="group" aria-label="표시 기간">
-            <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>최근 1개월</button>
+            <button className={!showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(false)}>{isZoomable ? "최근 1개월" : "최근 100타석"}</button>
             <button className={showAllGames ? "is-active" : ""} type="button" onClick={() => setShowAllGames(true)}>전체</button>
           </div>
         </div>
@@ -2130,13 +2225,9 @@ function PlayerPage() {
 
   const player = data?.player;
   const ratings = player ? sortRatings(player) : [];
-  useEffect(() => {
-    if (player?.displayName) document.title = `KBO Plate Index · ${player.displayName}`;
-  }, [player?.displayName]);
-
   return (
     <div className="page-shell">
-      <PageHeader subtitle="선수 상세" />
+      <PageHeader />
       <main className="page-content player-page-content">
         {error ? <LoadError>data/player_detail.json 파일과 데이터 접근 경로를 확인해 주세요.</LoadError> : player ? (
           <>
