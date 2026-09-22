@@ -65,6 +65,101 @@ function sectionDisplayName(league) {
   return league === "1군" || league === "major" ? "KBO 리그" : "퓨쳐스리그";
 }
 
+function useHorizontalDragScroll() {
+  const containerRef = useRef(null);
+  const dragRef = useRef(null);
+  const suppressClickRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handlePointerDown = useCallback((event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const container = event.currentTarget;
+    if (container.scrollWidth <= container.clientWidth) return;
+
+    suppressClickRef.current = false;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: container.scrollLeft,
+      axis: null,
+      moved: false
+    };
+    container.setPointerCapture?.(event.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback((event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - drag.startX;
+    const deltaY = event.clientY - drag.startY;
+    if (!drag.axis) {
+      if (Math.hypot(deltaX, deltaY) < 6) return;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        dragRef.current = null;
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+        return;
+      }
+      drag.axis = "x";
+      drag.moved = true;
+      setIsDragging(true);
+    }
+
+    if (drag.axis !== "x") return;
+    event.preventDefault();
+    event.currentTarget.scrollLeft = drag.startScrollLeft - deltaX;
+  }, []);
+
+  const finishPointerDrag = useCallback((event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    suppressClickRef.current = drag.moved;
+    dragRef.current = null;
+    setIsDragging(false);
+  }, []);
+
+  const handleClickCapture = useCallback((event) => {
+    if (!suppressClickRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppressClickRef.current = false;
+  }, []);
+
+  return {
+    containerRef,
+    isDragging,
+    handlePointerDown,
+    handlePointerMove,
+    finishPointerDrag,
+    handleClickCapture
+  };
+}
+
+function MatrixScroller({ children, className = "" }) {
+  const dragScroll = useHorizontalDragScroll();
+  const classes = ["matrix-scroller", className, dragScroll.isDragging ? "is-dragging" : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div
+      ref={dragScroll.containerRef}
+      className={classes}
+      onPointerDown={dragScroll.handlePointerDown}
+      onPointerMove={dragScroll.handlePointerMove}
+      onPointerUp={dragScroll.finishPointerDrag}
+      onPointerCancel={dragScroll.finishPointerDrag}
+      onClickCapture={dragScroll.handleClickCapture}
+    >
+      {children}
+    </div>
+  );
+}
+
 function gameLeagueLabel(value) {
   const normalized = String(value ?? "").trim().toLowerCase();
   if (["1군", "major", "kbo", "kbo 리그"].includes(normalized)) return "1군";
@@ -402,14 +497,22 @@ function PlayerRating({ player }) {
   );
 }
 
-function AverageRow({ teams }) {
+function AverageRow({ teams, activeTeamKeys = null }) {
   if (!teams.length || teams[0].league !== "1군") return null;
   const batterValues = teams.map((team) => team.averages?.batter);
   const pitcherValues = teams.map((team) => team.averages?.pitcher);
+  const lastActiveIndex = activeTeamKeys
+    ? teams.reduce((lastIndex, team, index) => activeTeamKeys.has(ratingTeamKey(team.team)) ? index : lastIndex, -1)
+    : teams.length - 1;
+  const visibleTeams = teams.slice(0, lastActiveIndex + 1);
+  const trailingEmptySpan = (teams.length - lastActiveIndex - 1) * 4;
 
   return (
     <tr className="average-row">
-      {teams.map((team) => {
+      {visibleTeams.map((team, index) => {
+        if (activeTeamKeys && !activeTeamKeys.has(ratingTeamKey(team.team))) {
+          return <td className="empty-group-cell" colSpan="4" aria-hidden="true" key={`${team.team}-average-empty`} />;
+        }
         const batterClass = averageBand(team.averages?.batter, batterValues);
         const pitcherClass = averageBand(team.averages?.pitcher, pitcherValues);
         return (
@@ -421,16 +524,25 @@ function AverageRow({ teams }) {
           </Fragment>
         );
       })}
+      {trailingEmptySpan > 0 ? <td className="empty-group-cell trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
     </tr>
   );
 }
 
-function EstimatedStrengthRow({ teams }) {
+function EstimatedStrengthRow({ teams, activeTeamKeys = null }) {
   if (!teams.length || teams[0].league !== "1군") return null;
+  const lastActiveIndex = activeTeamKeys
+    ? teams.reduce((lastIndex, team, index) => activeTeamKeys.has(ratingTeamKey(team.team)) ? index : lastIndex, -1)
+    : teams.length - 1;
+  const visibleTeams = teams.slice(0, lastActiveIndex + 1);
+  const trailingEmptySpan = (teams.length - lastActiveIndex - 1) * 4;
 
   return (
     <tr className="strength-row">
-      {teams.map((team) => {
+      {visibleTeams.map((team) => {
+        if (activeTeamKeys && !activeTeamKeys.has(ratingTeamKey(team.team))) {
+          return <td className="empty-group-cell" colSpan="4" aria-hidden="true" key={`${team.team}-strength-empty`} />;
+        }
         const rank = team.estimatedStrengthRank;
         return (
           <td className="team-strength-cell" colSpan="4" key={`${team.team}-strength`}>
@@ -438,79 +550,141 @@ function EstimatedStrengthRow({ teams }) {
           </td>
         );
       })}
+      {trailingEmptySpan > 0 ? <td className="empty-group-cell trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
     </tr>
   );
 }
 
-function TeamRatingTable({ section, isSecondary = false }) {
-  const teams = [...(section.teams ?? [])].sort((a, b) => {
-    const orderDifference = teamOrderIndex(a.team) - teamOrderIndex(b.team);
+function ratingTeamKey(value) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (["고양", "고양 히어로즈", "goyang", "goyang heroes"].includes(normalized)) return "키움";
+  return canonicalTeamLabel(value);
+}
+
+function sortedRatingTeams(teams) {
+  return [...(teams ?? [])].sort((a, b) => {
+    const orderDifference = teamOrderIndex(ratingTeamKey(a.team)) - teamOrderIndex(ratingTeamKey(b.team));
     return orderDifference || String(a.team ?? "").localeCompare(String(b.team ?? ""), "ko");
   });
-  const rowCount = Math.max(1, ...teams.map((team) => Math.max(team.batters?.length || 0, team.pitchers?.length || 0)));
-  const sectionLabel = sectionDisplayName(section.league);
+}
+
+function ratingSectionOrder(section) {
+  const order = ["KBO 리그", "퓨쳐스리그", "잔류군", "소속 말소"];
+  const index = order.indexOf(sectionDisplayName(section?.league));
+  return index === -1 ? order.length : index;
+}
+
+function CombinedTeamRatingTable({ sections }) {
+  const orderedSections = [...(sections ?? [])].sort((a, b) => ratingSectionOrder(a) - ratingSectionOrder(b));
+  const teamMap = new Map();
+
+  orderedSections.forEach((section) => {
+    sortedRatingTeams(section.teams).forEach((team) => {
+      const key = ratingTeamKey(team.team);
+      if (key && !teamMap.has(key)) teamMap.set(key, { key, label: team.team });
+    });
+  });
+
+  const teams = [...teamMap.values()].sort((a, b) => {
+    const orderDifference = teamOrderIndex(a.key) - teamOrderIndex(b.key);
+    return orderDifference || String(a.label ?? "").localeCompare(String(b.label ?? ""), "ko");
+  });
+  const columnCount = teams.length * 4;
+
+  if (!teams.length) return null;
 
   return (
-    <section className={`rating-section${isSecondary ? " is-secondary" : ""}`} aria-labelledby={`section-title-${section.league}`}>
-      <div className="section-heading">
-        <h3 id={`section-title-${section.league}`}>{sectionLabel}</h3>
-        <span>{teams.length}개 구단</span>
-      </div>
-      <div className="matrix-scroller">
-        <table className="rating-matrix" aria-describedby={`section-title-${section.league}`}>
-          <colgroup>
-            {teams.map((team) => (
-              <Fragment key={`${team.team}-columns`}>
-                <col className="name-column" />
-                <col className="rating-column" />
-                <col className="name-column" />
-                <col className="rating-column" />
+    <MatrixScroller className="team-rating-matrix-scroller">
+      <table className="rating-matrix" aria-label="구단별 Rating">
+        <colgroup>
+          {teams.map((team) => (
+            <Fragment key={`${team.key}-columns`}>
+              <col className="name-column" />
+              <col className="rating-column" />
+              <col className="name-column" />
+              <col className="rating-column" />
+            </Fragment>
+          ))}
+        </colgroup>
+        <tbody>
+          {orderedSections.map((section) => {
+            const sectionTeams = sortedRatingTeams(section.teams);
+            const sectionTeamMap = new Map(sectionTeams.map((team) => [ratingTeamKey(team.team), team]));
+            const rowTeams = teams.map((team) => sectionTeamMap.get(team.key) ?? {
+              team: team.label,
+              league: section.league,
+              batters: [],
+              pitchers: []
+            });
+            const rowCount = Math.max(1, ...rowTeams.map((team) => Math.max(team.batters?.length || 0, team.pitchers?.length || 0)));
+            const sectionLabel = sectionDisplayName(section.league);
+            const lastActiveTeamIndex = teams.reduce((lastIndex, team, index) => sectionTeamMap.has(team.key) ? index : lastIndex, -1);
+            const visibleTeams = teams.slice(0, lastActiveTeamIndex + 1);
+            const trailingEmptySpan = (teams.length - lastActiveTeamIndex - 1) * 4;
+
+            return (
+              <Fragment key={`rating-section-${section.league}`}>
+                <tr className="rating-section-row">
+                  <th colSpan={columnCount} scope="rowgroup">
+                    <span className="rating-section-label">{sectionLabel}</span>
+                  </th>
+                </tr>
+                <tr className="team-row">
+                  {visibleTeams.map((team, teamIndex) => sectionTeamMap.has(team.key)
+                    ? <th key={`${section.league}-${team.key}-team`} className={teamIndex === lastActiveTeamIndex ? "active-group-boundary" : ""} colSpan="4" scope="colgroup">{team.label}</th>
+                    : <th key={`${section.league}-${team.key}-team-empty`} className="empty-group-header" colSpan="4" scope="colgroup" aria-hidden="true" />)}
+                  {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} scope="colgroup" aria-hidden="true" /> : null}
+                </tr>
+                <tr className="role-row">
+                  {visibleTeams.map((team) => sectionTeamMap.has(team.key)
+                    ? (
+                      <Fragment key={`${section.league}-${team.key}-roles`}>
+                        <th colSpan="2">타자</th>
+                        <th colSpan="2">투수</th>
+                      </Fragment>
+                    )
+                    : <th key={`${section.league}-${team.key}-roles-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
+                  {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                </tr>
+                <tr className="field-row">
+                  {visibleTeams.map((team) => sectionTeamMap.has(team.key)
+                    ? (
+                      <Fragment key={`${section.league}-${team.key}-fields`}>
+                        <th>이름</th><th>Rating</th><th>이름</th><th>Rating</th>
+                      </Fragment>
+                    )
+                    : <th key={`${section.league}-${team.key}-fields-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
+                  {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                </tr>
+                {Array.from({ length: rowCount }, (_, rowIndex) => (
+                  <tr key={`${section.league}-row-${rowIndex}`}>
+                    {rowTeams.slice(0, lastActiveTeamIndex + 1).map((team, teamIndex) => {
+                      const isActiveTeam = sectionTeamMap.has(teams[teamIndex].key);
+                      if (!isActiveTeam) {
+                        return <td className="empty-group-cell" colSpan="4" aria-hidden="true" key={`${section.league}-${teams[teamIndex].key}-${rowIndex}-empty`} />;
+                      }
+                      const batter = team.batters?.[rowIndex] ?? null;
+                      const pitcher = team.pitchers?.[rowIndex] ?? null;
+                      return (
+                        <Fragment key={`${section.league}-${team.team}-${rowIndex}`}>
+                          <PlayerLink player={batter} />
+                          <PlayerRating player={batter} />
+                          <PlayerLink player={pitcher} />
+                          <PlayerRating player={pitcher} />
+                        </Fragment>
+                      );
+                    })}
+                    {trailingEmptySpan > 0 ? <td className="empty-group-cell trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                  </tr>
+                ))}
+                <AverageRow teams={rowTeams} activeTeamKeys={sectionTeamMap} />
+                <EstimatedStrengthRow teams={rowTeams} activeTeamKeys={sectionTeamMap} />
               </Fragment>
-            ))}
-          </colgroup>
-          <thead>
-            <tr className="team-row">
-              {teams.map((team) => <th key={`${team.team}-team`} colSpan="4" scope="colgroup">{team.team}</th>)}
-            </tr>
-            <tr className="role-row">
-              {teams.map((team) => (
-                <Fragment key={`${team.team}-roles`}>
-                  <th colSpan="2">타자</th>
-                  <th colSpan="2">투수</th>
-                </Fragment>
-              ))}
-            </tr>
-            <tr className="field-row">
-              {teams.map((team) => (
-                <Fragment key={`${team.team}-fields`}>
-                  <th>이름</th><th>Rating</th><th>이름</th><th>Rating</th>
-                </Fragment>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: rowCount }, (_, rowIndex) => (
-              <tr key={`${section.league}-row-${rowIndex}`}>
-                {teams.map((team) => {
-                  const batter = team.batters?.[rowIndex] ?? null;
-                  const pitcher = team.pitchers?.[rowIndex] ?? null;
-                  return (
-                    <Fragment key={`${team.team}-${rowIndex}`}>
-                      <PlayerLink player={batter} />
-                      <PlayerRating player={batter} />
-                      <PlayerLink player={pitcher} />
-                      <PlayerRating player={pitcher} />
-                    </Fragment>
-                  );
-                })}
-              </tr>
-            ))}
-            <AverageRow teams={teams} />
-            <EstimatedStrengthRow teams={teams} />
-          </tbody>
-        </table>
-      </div>
-    </section>
+            );
+          })}
+        </tbody>
+      </table>
+    </MatrixScroller>
   );
 }
 
@@ -523,7 +697,7 @@ function diffDeltaClass(value) {
 function formatDiffDelta(value) {
   const number = toNumber(value);
   if (number === null || number === 0) return "—";
-  return `${number > 0 ? "▲" : "▼"}${Math.abs(number).toFixed(1)}`;
+  return `${number > 0 ? "+" : "-"}${Math.abs(number).toFixed(1)}`;
 }
 
 function floatingDiffTooltipPosition(rect) {
@@ -636,9 +810,8 @@ function DiffTeamTable({ section, isSecondary = false }) {
     <section className={`rating-section${isSecondary ? " is-secondary" : ""}`} aria-labelledby={`diff-section-title-${section.league}`}>
       <div className="section-heading">
         <h3 id={`diff-section-title-${section.league}`}>{sectionLabel}</h3>
-        <span>{teams.length}개 구단 · 출전 선수만 표시</span>
       </div>
-      <div className="matrix-scroller">
+      <MatrixScroller>
         <table className="rating-matrix diff-matrix" aria-describedby={`diff-section-title-${section.league}`}>
           <colgroup>
             {teams.map((team) => (
@@ -683,7 +856,7 @@ function DiffTeamTable({ section, isSecondary = false }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixScroller>
     </section>
   );
 }
@@ -753,8 +926,8 @@ function DiffPage() {
             <span className="legend-item"><i className="legend-swatch band-good" />65 이상</span>
             <span className="legend-item"><i className="legend-swatch band-mid" />50 이상</span>
             <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
-            <span className="diff-legend-delta is-up">▲ 상승</span>
-            <span className="diff-legend-delta is-down">▼ 하락</span>
+            <span className="diff-legend-delta is-up">+ 상승</span>
+            <span className="diff-legend-delta is-down">- 하락</span>
           </div>
           <div className="rating-sections" aria-busy={!data && !error}>
             {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.map((section, index) => <DiffTeamTable key={`${section.league}-${index}`} section={section} isSecondary={index > 0} />) : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
@@ -786,7 +959,7 @@ function HomePage() {
       <main className="page-content">
         <section className="sheet-card" aria-label="구단별 Rating">
           <div className="rating-sections">
-            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? sections.map((section, index) => <TeamRatingTable key={`${section.league}-${index}`} section={section} isSecondary={index > 0} />) : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
+            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? <CombinedTeamRatingTable sections={sections} /> : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
           {!isUnavailable ? (
             <div className="legend team-rating-legend" aria-label="Rating 색상 기준">

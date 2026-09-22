@@ -400,7 +400,18 @@ h2 {
   overflow-x: auto;
   border: 1px solid var(--line-strong);
   background: #ffffff;
+  cursor: grab;
+  touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
+}
+
+.matrix-scroller.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.matrix-scroller.is-dragging * {
+  user-select: none;
 }
 
 .rating-matrix {
@@ -459,6 +470,36 @@ h2 {
   color: var(--text);
   background: var(--header-gray);
   font-weight: 400;
+}
+
+.rating-section-row th {
+  height: 28px;
+  padding: 5px 8px;
+  color: var(--brown-dark);
+  background: #f3ebe3;
+  border-top: 2px solid var(--line-strong);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.rating-section-label {
+  font-weight: 700;
+}
+
+.rating-matrix .empty-group-header,
+.rating-matrix .empty-group-cell {
+  color: transparent;
+  background: #f3ebe3;
+  border: hidden !important;
+}
+
+.rating-matrix .active-group-boundary {
+  border-right: 2px solid var(--line-strong) !important;
+}
+
+.rating-matrix .trailing-empty-group {
+  border-left: 2px solid var(--line-strong) !important;
 }
 
 .rating-matrix tbody tr:hover td {
