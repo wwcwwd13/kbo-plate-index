@@ -7,6 +7,13 @@
   --line-strong: #777777;
   --brown-dark: #5b3516;
   --brown-mid: #774f1e;
+  --brand-brown-light: #f3ebe3;
+  --brand-blue-dark: #315f7d;
+  --brand-blue-mid: #5686a4;
+  --brand-blue-light: #e2edf4;
+  --brand-gray-dark: #5c5c5c;
+  --brand-gray-mid: #808080;
+  --brand-gray-light: #ebebeb;
   --header-gray: #eeeeee;
   --blue: #d9e2f3;
   --green: #e2f0d9;
@@ -128,11 +135,6 @@ h1 {
   width: 29px;
   height: 32px;
   flex-shrink: 0;
-}
-
-.section-heading span {
-  color: var(--muted);
-  font-size: 11px;
 }
 
 .source-divider {
@@ -373,27 +375,14 @@ h2 {
   padding: 0 12px 14px;
 }
 
-.rating-section {
-  padding-top: 12px;
-}
-
-.rating-section.is-secondary {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 8px solid var(--page-bg);
-}
-
-.section-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 2px 6px;
-}
-
-.section-heading h3 {
-  color: var(--brown-dark);
-  font-size: 14px;
+.rating-disclaimer {
+  margin: 10px 0 8px;
+  padding: 8px 10px;
+  border-left: 3px solid #b98a54;
+  color: #6a4b2c;
+  background: #fff8ec;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .matrix-scroller {
@@ -454,29 +443,29 @@ h2 {
 .team-row th {
   height: 23px;
   color: #ffffff;
-  background: var(--brown-dark);
+  background: var(--group-color-dark, var(--brown-dark));
   font-weight: 700;
 }
 
 .role-row th {
   height: 23px;
   color: #ffffff;
-  background: var(--brown-mid);
+  background: var(--group-color-mid, var(--brown-mid));
   font-weight: 700;
 }
 
 .field-row th {
   height: 23px;
-  color: var(--text);
-  background: var(--header-gray);
+  color: var(--group-color-dark, var(--text));
+  background: var(--group-color-light, var(--header-gray));
   font-weight: 400;
 }
 
 .rating-section-row th {
   height: 28px;
   padding: 5px 8px;
-  color: var(--brown-dark);
-  background: #f3ebe3;
+  color: var(--group-color-dark, var(--brown-dark));
+  background: var(--group-color-light, var(--brand-brown-light));
   border-top: 2px solid var(--line-strong);
   font-size: 14px;
   font-weight: 700;
@@ -490,7 +479,7 @@ h2 {
 .rating-matrix .empty-group-header,
 .rating-matrix .empty-group-cell {
   color: transparent;
-  background: #f3ebe3;
+  background: var(--group-color-light, var(--brand-brown-light));
   border: hidden !important;
 }
 
@@ -503,8 +492,29 @@ h2 {
 }
 
 .rating-matrix tbody tr:hover td {
-  outline: 1px solid rgba(91, 53, 22, 0.18);
+  outline: 1px solid var(--group-color-hover, rgba(91, 53, 22, 0.18));
   outline-offset: -1px;
+}
+
+.palette-brand-blue {
+  --group-color-dark: var(--brand-blue-dark);
+  --group-color-mid: var(--brand-blue-mid);
+  --group-color-light: var(--brand-blue-light);
+  --group-color-hover: rgba(49, 95, 125, 0.18);
+}
+
+.palette-brand-brown {
+  --group-color-dark: var(--brown-dark);
+  --group-color-mid: var(--brown-mid);
+  --group-color-light: var(--brand-brown-light);
+  --group-color-hover: rgba(91, 53, 22, 0.18);
+}
+
+.palette-brand-gray {
+  --group-color-dark: var(--brand-gray-dark);
+  --group-color-mid: var(--brand-gray-mid);
+  --group-color-light: var(--brand-gray-light);
+  --group-color-hover: rgba(92, 92, 92, 0.18);
 }
 
 .name-cell,
@@ -674,8 +684,13 @@ h2 {
   border-right: 0;
 }
 
-.diff-card-header {
+.diff-toolbar {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 12px;
 }
 
 .diff-date-control {
@@ -706,37 +721,12 @@ h2 {
   outline-offset: 1px;
 }
 
-.diff-summary-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 16px;
-  border-bottom: 1px solid #d7dade;
-  color: var(--muted);
-  background: #f8fafc;
-  font-size: 10px;
-}
-
-.diff-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  padding: 9px 16px 8px;
-  color: #555555;
-  font-size: 10px;
-}
-
 .diff-legend-delta {
   font-weight: 700;
 }
 
 .diff-matrix .diff-name-column {
   width: 62px;
-}
-
-.diff-matrix .diff-rating-column {
-  width: 54px;
 }
 
 .diff-name-cell {
@@ -751,21 +741,6 @@ h2 {
 .diff-rating-cell {
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
-}
-
-.diff-matrix .team-row th {
-  color: #ffffff;
-  background: #315f7d;
-}
-
-.diff-matrix .role-row th {
-  color: #ffffff;
-  background: #5686a4;
-}
-
-.diff-matrix .field-row th {
-  color: #29485e;
-  background: #e2edf4;
 }
 
 .diff-rating-value,
@@ -925,8 +900,8 @@ h2 {
     white-space: normal;
   }
 
-  .diff-card-header {
-    gap: 12px;
+  .diff-toolbar {
+    padding: 8px;
   }
 
   .diff-date-control {
@@ -936,12 +911,6 @@ h2 {
   .diff-date-control select {
     flex: 1;
     min-width: 0;
-  }
-
-  .diff-summary-bar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
   }
 
   .rating-sections {
@@ -1551,9 +1520,18 @@ h2 {
 .record-league {
   display: inline-block;
   min-width: 2.4em;
-  color: var(--brown-dark);
   font-size: 10px;
   font-weight: 700;
+}
+
+.record-league-cell.is-major {
+  color: var(--brand-blue-dark);
+  background: var(--brand-blue-light);
+}
+
+.record-league-cell.is-minor {
+  color: var(--brown-dark);
+  background: var(--brand-brown-light);
 }
 
 .detail-table thead tr:first-child th[colspan] {
@@ -1567,7 +1545,6 @@ h2 {
   display: inline-flex;
   align-items: baseline;
   gap: 8px;
-  min-width: 190px;
   text-align: left;
   white-space: nowrap;
 }
