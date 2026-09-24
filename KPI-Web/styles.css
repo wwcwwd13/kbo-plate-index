@@ -621,6 +621,7 @@ h2 {
   display: block;
   overflow: hidden;
   color: inherit;
+  cursor: pointer;
   text-decoration: none;
   text-overflow: ellipsis;
 }
