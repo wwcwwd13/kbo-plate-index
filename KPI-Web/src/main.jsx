@@ -497,6 +497,7 @@ function PlayerRating({ player }) {
 }
 
 function AverageRow({ teams, activeTeamKeys = null, paletteClass }) {
+function AverageRow({ teams, activeTeamKeys = null, paletteClass }) {
   if (!teams.length || teams[0].league !== "1군") return null;
   const batterValues = teams.map((team) => team.averages?.batter);
   const pitcherValues = teams.map((team) => team.averages?.pitcher);
@@ -507,6 +508,7 @@ function AverageRow({ teams, activeTeamKeys = null, paletteClass }) {
   const trailingEmptySpan = (teams.length - lastActiveIndex - 1) * 4;
 
   return (
+    <tr className={`average-row ${paletteClass}`}>
     <tr className={`average-row ${paletteClass}`}>
       {visibleTeams.map((team, index) => {
         if (activeTeamKeys && !activeTeamKeys.has(ratingTeamKey(team.team))) {
@@ -529,6 +531,7 @@ function AverageRow({ teams, activeTeamKeys = null, paletteClass }) {
 }
 
 function EstimatedStrengthRow({ teams, activeTeamKeys = null, paletteClass }) {
+function EstimatedStrengthRow({ teams, activeTeamKeys = null, paletteClass }) {
   if (!teams.length || teams[0].league !== "1군") return null;
   const lastActiveIndex = activeTeamKeys
     ? teams.reduce((lastIndex, team, index) => activeTeamKeys.has(ratingTeamKey(team.team)) ? index : lastIndex, -1)
@@ -537,6 +540,7 @@ function EstimatedStrengthRow({ teams, activeTeamKeys = null, paletteClass }) {
   const trailingEmptySpan = (teams.length - lastActiveIndex - 1) * 4;
 
   return (
+    <tr className={`strength-row ${paletteClass}`}>
     <tr className={`strength-row ${paletteClass}`}>
       {visibleTeams.map((team) => {
         if (activeTeamKeys && !activeTeamKeys.has(ratingTeamKey(team.team))) {
@@ -630,6 +634,7 @@ function CombinedTeamRatingTable({ sections }) {
             const rowCount = Math.max(1, ...rowTeams.map((team) => Math.max(team.batters?.length || 0, team.pitchers?.length || 0)));
             const sectionLabel = sectionDisplayName(section.league);
             const paletteClass = ratingSectionThemeClass(section.league);
+            const paletteClass = ratingSectionThemeClass(section.league);
             const lastActiveTeamIndex = teams.reduce((lastIndex, team, index) => sectionTeamMap.has(team.key) ? index : lastIndex, -1);
             const visibleTeams = teams.slice(0, lastActiveTeamIndex + 1);
             const trailingEmptySpan = (teams.length - lastActiveTeamIndex - 1) * 4;
@@ -637,16 +642,19 @@ function CombinedTeamRatingTable({ sections }) {
             return (
               <Fragment key={`rating-section-${section.league}`}>
                 <tr className={`rating-section-row ${paletteClass}`}>
+                <tr className={`rating-section-row ${paletteClass}`}>
                   <th colSpan={columnCount} scope="rowgroup">
                     <span className="rating-section-label">{sectionLabel}</span>
                   </th>
                 </tr>
+                <tr className={`team-row ${paletteClass}`}>
                 <tr className={`team-row ${paletteClass}`}>
                   {visibleTeams.map((team, teamIndex) => sectionTeamMap.has(team.key)
                     ? <th key={`${section.league}-${team.key}-team`} className={teamIndex === lastActiveTeamIndex ? "active-group-boundary" : ""} colSpan="4" scope="colgroup">{team.label}</th>
                     : <th key={`${section.league}-${team.key}-team-empty`} className="empty-group-header" colSpan="4" scope="colgroup" aria-hidden="true" />)}
                   {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} scope="colgroup" aria-hidden="true" /> : null}
                 </tr>
+                <tr className={`role-row ${paletteClass}`}>
                 <tr className={`role-row ${paletteClass}`}>
                   {visibleTeams.map((team) => sectionTeamMap.has(team.key)
                     ? (
@@ -659,6 +667,7 @@ function CombinedTeamRatingTable({ sections }) {
                   {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
                 </tr>
                 <tr className={`field-row ${paletteClass}`}>
+                <tr className={`field-row ${paletteClass}`}>
                   {visibleTeams.map((team) => sectionTeamMap.has(team.key)
                     ? (
                       <Fragment key={`${section.league}-${team.key}-fields`}>
@@ -669,6 +678,7 @@ function CombinedTeamRatingTable({ sections }) {
                   {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
                 </tr>
                 {Array.from({ length: rowCount }, (_, rowIndex) => (
+                  <tr key={`${section.league}-row-${rowIndex}`} className={paletteClass}>
                   <tr key={`${section.league}-row-${rowIndex}`} className={paletteClass}>
                     {rowTeams.slice(0, lastActiveTeamIndex + 1).map((team, teamIndex) => {
                       const isActiveTeam = sectionTeamMap.has(teams[teamIndex].key);
@@ -689,6 +699,8 @@ function CombinedTeamRatingTable({ sections }) {
                     {trailingEmptySpan > 0 ? <td className="empty-group-cell trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
                   </tr>
                 ))}
+                <AverageRow teams={rowTeams} activeTeamKeys={sectionTeamMap} paletteClass={paletteClass} />
+                <EstimatedStrengthRow teams={rowTeams} activeTeamKeys={sectionTeamMap} paletteClass={paletteClass} />
                 <AverageRow teams={rowTeams} activeTeamKeys={sectionTeamMap} paletteClass={paletteClass} />
                 <EstimatedStrengthRow teams={rowTeams} activeTeamKeys={sectionTeamMap} paletteClass={paletteClass} />
               </Fragment>
@@ -824,7 +836,24 @@ function CombinedDiffRatingTable({ sections }) {
   const teams = [...teamMap.values()].sort((a, b) => {
     const orderDifference = teamOrderIndex(a.key) - teamOrderIndex(b.key);
     return orderDifference || String(a.label ?? "").localeCompare(String(b.label ?? ""), "ko");
+function CombinedDiffRatingTable({ sections }) {
+  const orderedSections = [...(sections ?? [])].sort((a, b) => ratingSectionOrder(a) - ratingSectionOrder(b));
+  const teamMap = new Map();
+
+  orderedSections.forEach((section) => {
+    sortedRatingTeams(section.teams).forEach((team) => {
+      const key = ratingTeamKey(team.team);
+      if (key && !teamMap.has(key)) teamMap.set(key, { key, label: team.team });
+    });
   });
+
+  const teams = [...teamMap.values()].sort((a, b) => {
+    const orderDifference = teamOrderIndex(a.key) - teamOrderIndex(b.key);
+    return orderDifference || String(a.label ?? "").localeCompare(String(b.label ?? ""), "ko");
+  });
+  const columnCount = teams.length * 4;
+
+  if (!teams.length) return null;
   const columnCount = teams.length * 4;
 
   if (!teams.length) return null;
@@ -832,12 +861,17 @@ function CombinedDiffRatingTable({ sections }) {
   return (
     <MatrixScroller className="team-rating-matrix-scroller">
         <table className="rating-matrix diff-matrix" aria-label="경기일별 KPI 변동">
+    <MatrixScroller className="team-rating-matrix-scroller">
+        <table className="rating-matrix diff-matrix" aria-label="경기일별 KPI 변동">
           <colgroup>
             {teams.map((team) => (
               <Fragment key={`${team.key}-diff-columns`}>
+              <Fragment key={`${team.key}-diff-columns`}>
                 <col className="name-column diff-name-column" />
                 <col className="rating-column" />
+                <col className="rating-column" />
                 <col className="name-column diff-name-column" />
+                <col className="rating-column" />
                 <col className="rating-column" />
               </Fragment>
             ))}
@@ -889,8 +923,56 @@ function CombinedDiffRatingTable({ sections }) {
                 </Fragment>
               );
             })}
+          <tbody>
+            {orderedSections.map((section) => {
+              const sectionTeams = sortedRatingTeams(section.teams);
+              const sectionTeamMap = new Map(sectionTeams.map((team) => [ratingTeamKey(team.team), team]));
+              const rowTeams = teams.map((team) => sectionTeamMap.get(team.key) ?? { batters: [], pitchers: [] });
+              const rowCount = Math.max(1, ...rowTeams.map((team) => Math.max(team.batters?.length || 0, team.pitchers?.length || 0)));
+              const paletteClass = ratingSectionThemeClass(section.league);
+              const lastActiveTeamIndex = teams.reduce((lastIndex, team, index) => sectionTeamMap.has(team.key) ? index : lastIndex, -1);
+              const visibleTeams = teams.slice(0, lastActiveTeamIndex + 1);
+              const trailingEmptySpan = (teams.length - lastActiveTeamIndex - 1) * 4;
+
+              return (
+                <Fragment key={`diff-section-${section.league}`}>
+                  <tr className={`rating-section-row ${paletteClass}`}>
+                    <th colSpan={columnCount} scope="rowgroup">
+                      <span className="rating-section-label">{sectionDisplayName(section.league)}</span>
+                    </th>
+                  </tr>
+                  <tr className={`team-row ${paletteClass}`}>
+                    {visibleTeams.map((team, teamIndex) => sectionTeamMap.has(team.key)
+                      ? <th key={`${section.league}-${team.key}-team`} className={teamIndex === lastActiveTeamIndex ? "active-group-boundary" : ""} colSpan="4" scope="colgroup">{team.label}</th>
+                      : <th key={`${section.league}-${team.key}-team-empty`} className="empty-group-header" colSpan="4" scope="colgroup" aria-hidden="true" />)}
+                    {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} scope="colgroup" aria-hidden="true" /> : null}
+                  </tr>
+                  <tr className={`role-row ${paletteClass}`}>
+                    {visibleTeams.map((team) => sectionTeamMap.has(team.key)
+                      ? <Fragment key={`${section.league}-${team.key}-roles`}><th colSpan="2">타자</th><th colSpan="2">투수</th></Fragment>
+                      : <th key={`${section.league}-${team.key}-roles-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
+                    {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                  </tr>
+                  <tr className={`field-row ${paletteClass}`}>
+                    {visibleTeams.map((team) => sectionTeamMap.has(team.key)
+                      ? <Fragment key={`${section.league}-${team.key}-fields`}><th>이름</th><th>Rating<br />변동</th><th>이름</th><th>Rating<br />변동</th></Fragment>
+                      : <th key={`${section.league}-${team.key}-fields-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
+                    {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                  </tr>
+                  {Array.from({ length: rowCount }, (_, rowIndex) => (
+                    <tr key={`${section.league}-diff-row-${rowIndex}`} className={paletteClass}>
+                      {rowTeams.slice(0, lastActiveTeamIndex + 1).map((team, teamIndex) => sectionTeamMap.has(teams[teamIndex].key)
+                        ? <Fragment key={`${section.league}-${teams[teamIndex].key}-${rowIndex}`}><DiffPlayerCells player={team.batters?.[rowIndex] ?? null} role="batter" /><DiffPlayerCells player={team.pitchers?.[rowIndex] ?? null} role="pitcher" /></Fragment>
+                        : <td key={`${section.league}-${teams[teamIndex].key}-${rowIndex}-empty`} className="empty-group-cell" colSpan="4" aria-hidden="true" />)}
+                      {trailingEmptySpan > 0 ? <td className="empty-group-cell trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
+                    </tr>
+                  ))}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
+    </MatrixScroller>
     </MatrixScroller>
   );
 }
@@ -934,6 +1016,8 @@ function DiffPage() {
         <section className="sheet-card" aria-labelledby="diff-title">
           <div className="diff-toolbar">
             <h2 id="diff-title">오늘의 폼 변동</h2>
+          <div className="diff-toolbar">
+            <h2 id="diff-title">오늘의 폼 변동</h2>
             <label className="diff-date-control">
               <span>경기일</span>
               <select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} disabled={!dates.length}>
@@ -947,7 +1031,20 @@ function DiffPage() {
           </div>
           <div className="rating-sections" aria-busy={!data && !error}>
             {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState>해당 날짜 출전 기록이 없습니다.</EmptyDataState> : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
+          <div className="rating-sections" aria-busy={!data && !error}>
+            {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState>해당 날짜 출전 기록이 없습니다.</EmptyDataState> : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
           </div>
+          {!error && sections.length > 0 ? (
+            <div className="legend team-rating-legend diff-legend" aria-label="변동표 안내">
+              <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
+              <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
+              <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
+              <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
+              <span className="legend-item"><span className="legend-name-sample">회색</span><span>출전수 적음</span></span>
+              <span className="diff-legend-delta is-up">+ 상승</span>
+              <span className="diff-legend-delta is-down">- 하락</span>
+            </div>
+          ) : null}
           {!error && sections.length > 0 ? (
             <div className="legend team-rating-legend diff-legend" aria-label="변동표 안내">
               <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
@@ -986,6 +1083,7 @@ function HomePage() {
       <main className="page-content">
         <section className="sheet-card" aria-label="구단별 Rating">
           <div className="rating-sections">
+            <p className="rating-disclaimer" role="note">추석 연휴로 인해 최근 경기 결과 반영이 다소 늦어지고 있습니다.</p>
             <p className="rating-disclaimer" role="note">추석 연휴로 인해 최근 경기 결과 반영이 다소 늦어지고 있습니다.</p>
             {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? <CombinedTeamRatingTable sections={sections} /> : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
