@@ -352,7 +352,6 @@ function PageHeader() {
           <h1>오늘의 폼</h1>
         </a>
         <nav className="top-nav" aria-label="주요 메뉴">
-          <a className={!isDiffPage && !isAboutPage ? "is-active" : ""} href={homeHref()}>전체</a>
           <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>폼 변동</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
@@ -385,11 +384,11 @@ function LoadError({ children }) {
   );
 }
 
-function EmptyDataState({ children }) {
+function EmptyDataState({ title = "구단 데이터가 없습니다.", children }) {
   return (
     <div className="empty-data-state" role="status">
-      <strong>표시할 구단 Rating 데이터가 없습니다.</strong>
-      <span>{children}</span>
+      <strong>{title}</strong>
+      {children ? <span>{children}</span> : null}
     </div>
   );
 }
@@ -475,7 +474,7 @@ function PlayerLink({ player }) {
 }
 
 function PlayerRating({ player }) {
-  if (!player) return <td className="rating-cell empty-cell" aria-label="Rating 없음" />;
+  if (!player) return <td className="rating-cell empty-cell" aria-label="폼 없음" />;
   const href = playerPageHref(player);
   return (
     <td className={`rating-cell ${ratingBand(player.rating)}`}>
@@ -594,7 +593,7 @@ function CombinedTeamRatingTable({ sections }) {
 
   return (
     <MatrixScroller className="team-rating-matrix-scroller">
-      <table className="rating-matrix" aria-label="구단별 Rating">
+      <table className="rating-matrix" aria-label="구단별 폼">
         <colgroup>
           {teams.map((team) => (
             <Fragment key={`${team.key}-columns`}>
@@ -650,7 +649,7 @@ function CombinedTeamRatingTable({ sections }) {
                   {visibleTeams.map((team) => sectionTeamMap.has(team.key)
                     ? (
                       <Fragment key={`${section.league}-${team.key}-fields`}>
-                        <th>이름</th><th>Rating</th><th>이름</th><th>Rating</th>
+                        <th>이름</th><th>폼</th><th>이름</th><th>폼</th>
                       </Fragment>
                     )
                     : <th key={`${section.league}-${team.key}-fields-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
@@ -740,7 +739,7 @@ function DiffPlayerCells({ player, role }) {
     return (
       <>
         <td className="diff-name-cell empty-cell" aria-label="출전 선수 없음" />
-        <td className="diff-rating-cell empty-cell" aria-label="Rating 없음" />
+        <td className="diff-rating-cell empty-cell" aria-label="폼 없음" />
       </>
     );
   }
@@ -862,7 +861,7 @@ function CombinedDiffRatingTable({ sections }) {
                   </tr>
                   <tr className={`field-row ${paletteClass}`}>
                     {visibleTeams.map((team) => sectionTeamMap.has(team.key)
-                      ? <Fragment key={`${section.league}-${team.key}-fields`}><th>이름</th><th>Rating<br />변동</th><th>이름</th><th>Rating<br />변동</th></Fragment>
+                      ? <Fragment key={`${section.league}-${team.key}-fields`}><th>이름</th><th>폼</th><th>이름</th><th>폼</th></Fragment>
                       : <th key={`${section.league}-${team.key}-fields-empty`} className="empty-group-header" colSpan="4" aria-hidden="true" />)}
                     {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} aria-hidden="true" /> : null}
                   </tr>
@@ -934,7 +933,7 @@ function DiffPage() {
             </label>
           </div>
           <div className="rating-sections" aria-busy={!data && !error}>
-            {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState>해당 날짜 출전 기록이 없습니다.</EmptyDataState> : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
+            {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState title="해당 날짜 출전 기록이 없습니다." /> : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
           </div>
           {!error && sections.length > 0 ? (
             <div className="legend team-rating-legend diff-legend" aria-label="변동표 안내">
@@ -972,13 +971,12 @@ function HomePage() {
     <div className="page-shell">
       <PageHeader />
       <main className="page-content">
-        <section className="sheet-card" aria-label="구단별 Rating">
+        <section className="sheet-card" aria-label="구단별 폼">
           <div className="rating-sections">
-            <p className="rating-disclaimer" role="note">추석 연휴로 인해 최근 경기 결과 반영이 다소 늦어지고 있습니다.</p>
-            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? <CombinedTeamRatingTable sections={sections} /> : <LoadingState>구단 Rating 데이터를 불러오는 중입니다.</LoadingState>}
+            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? <CombinedTeamRatingTable sections={sections} /> : <LoadingState>전체 선수 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
           {!isUnavailable ? (
-            <div className="legend team-rating-legend" aria-label="Rating 색상 기준">
+            <div className="legend team-rating-legend" aria-label="폼 색상 기준">
               <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
               <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
               <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
@@ -1139,6 +1137,36 @@ function relatedPlayerIdForRole(player, targetRole) {
     ?? relationPlayerId(player?.[targetRole === "pitcher" ? "pitcher_player_id" : "batter_player_id"]);
 }
 
+function kboOfficialPlayerId(player) {
+  const candidate = String(
+    player?.kboPlayerId
+      ?? player?.officialPlayerId
+      ?? player?.profile?.kboPlayerId
+      ?? player?.playerId
+      ?? ""
+  ).trim();
+  const match = candidate.match(/^(?:player:kbo:)?(\d+)(?::(?:batter|pitcher))?$/i);
+  return match?.[1] ?? null;
+}
+
+function officialKboRecordUrls(player) {
+  const playerId = kboOfficialPlayerId(player);
+  if (!playerId) return null;
+
+  const query = new URLSearchParams({ playerId }).toString();
+  const paths = isPitcherPlayer(player)
+    ? [
+        "/Record/Player/PitcherDetail/Basic.aspx",
+        "/Futures/Player/PitcherDetail.aspx"
+      ]
+    : [
+        "/Record/Player/HitterDetail/Daily.aspx",
+        "/Futures/Player/HitterDetail.aspx"
+      ];
+
+  return paths.map((path) => `https://www.koreabaseball.com${path}?${query}`);
+}
+
 function opponentPlayerIdForAppearance(appearance) {
   const opponent = appearance?.opponentPlayer;
   const nestedOpponent = opponent && typeof opponent === "object" ? opponent : null;
@@ -1168,6 +1196,34 @@ function PlayerRoleLinks({ player }) {
       <span><span className="profile-label">현재 기록</span><strong>{roleLabel(player.role)} 기록</strong></span>
       <a href={playerPageHref({ playerId: targetPlayerId })}>{roleLabel(targetRole)} 기록 보기 <span aria-hidden="true">→</span></a>
     </div>
+  );
+}
+
+function OfficialKboRecordLinks({ player }) {
+  const urls = officialKboRecordUrls(player);
+  if (!urls) return null;
+  const role = isPitcherPlayer(player) ? "투수" : "타자";
+
+  return (
+    <nav className="official-record-links" aria-label="KBO 공식 선수 기록">
+      <span className="profile-label">KBO 공식 기록</span>
+      <div className="official-record-actions">
+        {urls.map((url, index) => {
+          const league = index === 0 ? "1군" : "2군";
+          return (
+            <a
+              key={league}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`KBO 공식 ${league} ${role} 기록, 새 탭에서 열기`}
+            >
+              {league} 기록 <span aria-hidden="true">↗</span>
+            </a>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
@@ -1210,9 +1266,10 @@ function PlayerProfile({ player, ratings }) {
               ))}
             </div>
             <PlayerRoleLinks player={player} />
+            <OfficialKboRecordLinks player={player} />
           </div>
           <div className={`current-rating ${ratingBand(latest?.rating)}`}>
-            <span className="current-rating-label">현재 Rating</span>
+            <span className="current-rating-label">오늘의 폼</span>
             <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
           </div>
         </div>
@@ -1590,19 +1647,19 @@ function chartTooltipHtml(entry, delta) {
           : `${entry.paCount ?? 0}타석`,
         `성적 ${entry.summary || "기록 없음"}`,
         ...(entry.results?.length ? [`결과 ${entry.results.slice(0, 6).join(" · ")}${entry.results.length > 6 ? " · …" : ""}`] : []),
-        `Rating 변화 ${chartDeltaHtml(delta)}`
+        `폼 변화 ${chartDeltaHtml(delta)}`
       ]
     : [
         `vs. ${gameContext}`,
         `${entry.plateAppearanceNumber ? `${entry.plateAppearanceNumber}번째 타석` : "타석 번호 없음"}`,
         `결과 ${entry.result || "—"}`,
-        `Rating 변화 ${chartDeltaHtml(delta)}`
+        `폼 변화 ${chartDeltaHtml(delta)}`
       ];
 
   return `<div class="echarts-tooltip-content">
     <span class="echarts-tooltip-kicker">${escapeChartHtml(entry.granularityLabel)}</span>
-    <strong>${escapeChartHtml(formatDate(entry.date))} · Rating ${escapeChartHtml(formatRating(entry.rating))}</strong>
-    <div class="echarts-tooltip-lines">${lines.map((line) => `<span>${line.includes("Rating 변화") ? line : escapeChartHtml(line)}</span>`).join("")}</div>
+    <strong>${escapeChartHtml(formatDate(entry.date))} · 폼 ${escapeChartHtml(formatRating(entry.rating))}</strong>
+    <div class="echarts-tooltip-lines">${lines.map((line) => `<span>${line.includes("폼 변화") ? line : escapeChartHtml(line)}</span>`).join("")}</div>
   </div>`;
 }
 
@@ -1725,7 +1782,7 @@ function RatingChart({ ratings, player }) {
         }
         lineSeries.push({
           type: "line",
-          name: `${palette.label} Rating 구간 ${runIndex + 1}`,
+          name: `${palette.label} 폼 구간 ${runIndex + 1}`,
           data,
           showSymbol: false,
           connectNulls: false,
@@ -1809,7 +1866,7 @@ function RatingChart({ ratings, player }) {
         textStyle: { color: "#2f3133", fontFamily: "Arial, Noto Sans KR, Malgun Gothic, sans-serif", fontSize: 11 },
         formatter: (params) => {
           const items = Array.isArray(params) ? params : [params];
-          const item = items.find((candidate) => candidate?.seriesName === "Rating" && candidate?.data?.entryIndex !== undefined)
+          const item = items.find((candidate) => candidate?.seriesName === "폼" && candidate?.data?.entryIndex !== undefined)
             ?? items.find((candidate) => candidate?.data?.entryIndex !== undefined)
             ?? items[0];
           const index = Number(item?.data?.entryIndex ?? item?.dataIndex);
@@ -1898,7 +1955,7 @@ function RatingChart({ ratings, player }) {
       ] : [],
       series: [...lineSeries, {
         type: "line",
-        name: "Rating",
+        name: "폼",
         data: chartData,
         showSymbol: true,
         symbol: "circle",
@@ -1991,14 +2048,14 @@ function RatingChart({ ratings, player }) {
     <>
       <div className="detail-card-header rating-chart-header">
         <div className="rating-chart-title-group">
-          <h3 id="rating-chart-title">Rating 변화</h3>
+          <h3 id="rating-chart-title">폼 변화</h3>
           <div className="chart-league-legend" aria-label="그래프 색상 구분">
             <span><i className="chart-league-dot is-major" />1군</span>
             <span><i className="chart-league-dot is-minor" />2군</span>
           </div>
         </div>
         <div className="chart-toolbar">
-          <div className="chart-mode-control" role="group" aria-label="Rating 표시 단위">
+          <div className="chart-mode-control" role="group" aria-label="폼 표시 단위">
             {CHART_MODES.map(([mode, label]) => (
               <button className={viewMode === mode ? "is-active" : ""} key={mode} type="button" onClick={() => setViewMode(mode)}>{label}</button>
             ))}
@@ -2017,7 +2074,7 @@ function RatingChart({ ratings, player }) {
               className="rating-chart"
               ref={chartRef}
               role="img"
-              aria-label={`${CHART_MODES.find(([mode]) => mode === viewMode)?.[1] ?? "경기별"} Rating 변화 그래프`}
+              aria-label={`${CHART_MODES.find(([mode]) => mode === viewMode)?.[1] ?? "경기별"} 폼 변화 그래프`}
             />
           </div>
         </div>
@@ -2113,7 +2170,7 @@ function RatingHistoryTable({ rows, maximumRating, columns, isPitcher, player })
             <th scope="col" rowSpan="2">날짜</th>
             <th scope="col" rowSpan="2">리그</th>
             <th scope="col" rowSpan="2">경기</th>
-            <th scope="col" rowSpan="2">Rating</th>
+            <th scope="col" rowSpan="2">폼</th>
             <th scope="col" rowSpan="2">변화</th>
             <th scope="col" colSpan={columns.length}>{isPitcher ? "투구 성적" : "타격 성적"}</th>
           </tr>
@@ -2182,7 +2239,7 @@ function PlateAppearanceTable({ appearances, maximumRating, player }) {
   return (
     <div className="data-table-scroller">
       <table className="detail-table">
-        <thead><tr><th scope="col">날짜</th><th scope="col">리그</th><th scope="col">경기</th><th scope="col">상대 선수</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">Rating 전후</th><th scope="col">변화</th></tr></thead>
+        <thead><tr><th scope="col">날짜</th><th scope="col">리그</th><th scope="col">경기</th><th scope="col">상대 선수</th><th scope="col">타순</th><th scope="col">타석 번호</th><th scope="col">결과</th><th scope="col">폼 전후</th><th scope="col">변화</th></tr></thead>
         <tbody>
           {displayAppearances.length ? displayAppearances.map((appearance) => {
             const before = toNumber(appearance.ratingBefore);
