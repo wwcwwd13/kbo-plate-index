@@ -396,18 +396,18 @@ h2 {
 .rating-matrix {
   width: max-content;
   min-width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
   border-spacing: 0;
   font-size: 11px;
 }
 
 .name-column {
-  width: 60px;
+  width: 42px;
 }
 
 .rating-column {
-  width: 46px;
+  width: 34px;
 }
 
 .rating-matrix th,
@@ -717,7 +717,11 @@ h2 {
 }
 
 .diff-matrix .diff-name-column {
-  width: 62px;
+  width: 42px;
+}
+
+.diff-matrix .rating-column {
+  width: 44px;
 }
 
 .diff-name-cell {
