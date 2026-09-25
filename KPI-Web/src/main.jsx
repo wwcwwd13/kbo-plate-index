@@ -1192,10 +1192,13 @@ function PlayerRoleLinks({ player }) {
   if (!targetPlayerId) return null;
 
   return (
-    <div className="record-view-links" aria-label="선수 기록 화면 이동">
-      <span><span className="profile-label">현재 기록</span><strong>{roleLabel(player.role)} 기록</strong></span>
-      <a href={playerPageHref({ playerId: targetPlayerId })}>{roleLabel(targetRole)} 기록 보기 <span aria-hidden="true">→</span></a>
-    </div>
+    <a
+      className="related-role-record-link"
+      href={playerPageHref({ playerId: targetPlayerId })}
+      aria-label={`${roleLabel(targetRole)} 기록 보기`}
+    >
+      {roleLabel(targetRole)} 기록 보기 <span aria-hidden="true">→</span>
+    </a>
   );
 }
 
@@ -1253,7 +1256,10 @@ function PlayerProfile({ player, ratings }) {
                   {profile.uniformNumber ? <span className="uniform-number">#{profile.uniformNumber}</span> : null}
                 </h2>
               </div>
-              <OfficialKboRecordLinks player={player} />
+              <div className="player-profile-links" role="group" aria-label="다른 역할 및 KBO 공식 기록">
+                <PlayerRoleLinks player={player} />
+                <OfficialKboRecordLinks player={player} />
+              </div>
             </div>
             <div className="profile-grid" aria-label="선수 기본 정보">
               {items.map(([label, value]) => (
@@ -1263,7 +1269,6 @@ function PlayerProfile({ player, ratings }) {
                 </div>
               ))}
             </div>
-            <PlayerRoleLinks player={player} />
           </div>
           <div className={`current-rating ${ratingBand(latest?.rating)}`}>
             <span className="current-rating-label">오늘의 폼</span>

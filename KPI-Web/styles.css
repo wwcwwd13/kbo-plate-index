@@ -751,9 +751,27 @@ h2 {
   text-align: right;
 }
 
+.diff-rating-cell .diff-delta {
+  display: flex;
+  width: max-content;
+  min-width: 30px;
+  justify-content: center;
+  margin: 2px 0 0 auto;
+  padding: 1px 4px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  line-height: 1;
+  text-align: center;
+}
+
 .diff-delta.is-up,
 .diff-legend-delta.is-up {
   color: #236bb5;
+}
+
+.diff-rating-cell .diff-delta.is-up {
+  border-color: rgba(35, 107, 181, 0.24);
+  background: #eef6ff;
 }
 
 .diff-delta.is-down,
@@ -761,8 +779,18 @@ h2 {
   color: #c23535;
 }
 
+.diff-rating-cell .diff-delta.is-down {
+  border-color: rgba(194, 53, 53, 0.22);
+  background: #fff0f0;
+}
+
 .diff-delta.is-neutral {
   color: var(--muted);
+}
+
+.diff-rating-cell .diff-delta.is-neutral {
+  border-color: #d9dde1;
+  background: #f4f5f6;
 }
 
 .diff-hover-card {
@@ -1070,44 +1098,43 @@ h2 {
   white-space: nowrap;
 }
 
-.record-view-links {
+.player-profile-links {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 0;
-  padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--brown-mid);
-  background: #fafafa;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  margin-left: auto;
 }
 
-.record-view-links > span {
-  display: grid;
-  gap: 3px;
-}
-
-.record-view-links strong {
-  font-size: 11px;
-}
-
-.record-view-links a {
+.related-role-record-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   flex: 0 0 auto;
   padding: 5px 8px;
-  border: 1px solid var(--brown-mid);
+  border: 1px solid #d4b95e;
   border-radius: 3px;
-  color: var(--brown-dark);
-  background: #ffffff;
+  color: #6d5514;
+  background: #fff7cf;
   font-size: 10px;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.record-view-links a:hover,
-.record-view-links a:focus-visible {
-  color: #ffffff;
-  background: var(--brown-dark);
-  outline: none;
+.related-role-record-link:hover,
+.related-role-record-link:focus-visible {
+  border-color: #b79b3f;
+  background: #ffefaa;
+  outline: 2px solid rgba(183, 155, 63, 0.22);
+  outline-offset: 1px;
+}
+
+.player-profile-links .official-record-links {
+  margin-left: 0;
 }
 
 .official-record-links {
@@ -1759,11 +1786,6 @@ h2 {
 
   .chart-zoom-control {
     align-self: flex-end;
-  }
-
-  .record-view-links {
-    align-items: flex-start;
-    flex-direction: column;
   }
 
 }
