@@ -2,7 +2,7 @@
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
-import { buildOtherStats, rankTeamsByMetric } from "./otherStats";
+import { buildLineupPools, buildOtherStats, lineupWeightedRating, rankTeamsByMetric } from "./otherStats";
 import aboutContent from "./content/about.json";
 import releaseNotes from "./content/release_notes.json";
 import "../styles.css";
@@ -1168,6 +1168,67 @@ function OtherPlayerLink({ player }) {
   return href ? <a href={href}>{player.name}</a> : <span>{player.name}</span>;
 }
 
+function LineupTeam({ side, pools }) {
+  const [selection, setSelection] = useState({ team: "", batters: Array(9).fill(""), pitcher: "" });
+  const pool = pools.find((entry) => entry.team === selection.team);
+  const batters = pool?.batters ?? [];
+  const pitchers = pool?.pitchers ?? [];
+  const batterById = new Map(batters.map((player) => [player.playerId, player]));
+  const pitcherById = new Map(pitchers.map((player) => [player.playerId, player]));
+  const selectedBatters = selection.batters.map((id) => batterById.get(id));
+  const selectedPitcher = pitcherById.get(selection.pitcher);
+  const weightedRating = selection.batters.every(Boolean) && selection.pitcher
+    ? lineupWeightedRating(selectedBatters.map((player) => player?.rating), selectedPitcher?.rating)
+    : null;
+
+  const selectBatter = (index, playerId) => setSelection((current) => ({
+    ...current,
+    batters: current.batters.map((id, position) => position === index ? playerId : id)
+  }));
+  const optionLabel = (player) => `${player.name} · ${formatRating(player.rating)}${player.league === "1군" ? "" : ` · ${player.league}`}`;
+
+  return <div className="lineup-team">
+    <div className="lineup-team-heading">
+      <label htmlFor={`lineup-team-${side}`}>{side === 1 ? "왼쪽 팀" : "오른쪽 팀"}</label>
+      <select id={`lineup-team-${side}`} value={selection.team} onChange={(event) => setSelection({ team: event.target.value, batters: Array(9).fill(""), pitcher: "" })}>
+        <option value="">구단 선택</option>
+        {pools.map((entry) => <option key={entry.team} value={entry.team}>{entry.team}</option>)}
+      </select>
+    </div>
+    <div className="lineup-score" aria-live="polite">
+      <span>라인업 가중평균</span>
+      <strong className={weightedRating == null ? "" : ratingBand(weightedRating)}>{weightedRating == null ? "—" : formatRating(weightedRating)}</strong>
+    </div>
+    <div className="lineup-list">
+      {selection.batters.map((playerId, index) => <div className="lineup-row" key={index}>
+        <label htmlFor={`lineup-${side}-batter-${index}`}>{index + 1}번 타자</label>
+        <select id={`lineup-${side}-batter-${index}`} value={playerId} disabled={!pool} onChange={(event) => selectBatter(index, event.target.value)}>
+          <option value="">선수 선택</option>
+          {batters.map((player) => <option key={player.playerId} value={player.playerId} disabled={selection.batters.some((id, position) => position !== index && id === player.playerId)}>{optionLabel(player)}</option>)}
+        </select>
+        <span className={selectedBatters[index] ? ratingBand(selectedBatters[index].rating) : ""}>{selectedBatters[index] ? formatRating(selectedBatters[index].rating) : "—"}</span>
+      </div>)}
+      <div className="lineup-row lineup-pitcher-row">
+        <label htmlFor={`lineup-${side}-pitcher`}>선발투수</label>
+        <select id={`lineup-${side}-pitcher`} value={selection.pitcher} disabled={!pool} onChange={(event) => setSelection((current) => ({ ...current, pitcher: event.target.value }))}>
+          <option value="">선수 선택</option>
+          {pitchers.map((player) => <option key={player.playerId} value={player.playerId}>{optionLabel(player)}</option>)}
+        </select>
+        <span className={selectedPitcher ? ratingBand(selectedPitcher.rating) : ""}>{selectedPitcher ? formatRating(selectedPitcher.rating) : "—"}</span>
+      </div>
+    </div>
+    <p className="lineup-progress">타자 {selection.batters.filter(Boolean).length}/9명 · 선발투수 {selection.pitcher ? "선택됨" : "미선택"}</p>
+  </div>;
+}
+
+function LineupComparison({ pools, asOf }) {
+  return <section className="sheet-card other-card" aria-labelledby="lineup-title">
+    <div className="sheet-card-header"><div><p className="kicker">LINEUP COMPARISON</p><h2 id="lineup-title">라인업 폼 비교</h2></div></div>
+    <p className="lineup-description">두 팀의 타순과 선발투수를 직접 선택하세요. 타자 9명과 투수 1명을 모두 고르면 (타자 폼 합계 + 선발투수 폼 × 6) ÷ 15로 계산합니다.{asOf ? ` · ${asOf} 폼 기준` : ""}</p>
+    <div className="lineup-grid"><LineupTeam side={1} pools={pools} /><LineupTeam side={2} pools={pools} /></div>
+  </section>;
+}
+
 function OtherPage() {
   const [payload, setPayload] = useState(null);
   const [error, setError] = useState(null);
@@ -1183,6 +1244,7 @@ function OtherPage() {
   }, []);
 
   const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff) : null, [payload]);
+  const lineupPools = useMemo(() => payload ? buildLineupPools(payload.ratings) : [], [payload]);
   const strengthRanks = useMemo(() => stats ? Object.fromEntries(
     ["teamStrength", "batterStrength", "pitcherStrength"].map((key) => [key, rankTeamsByMetric(stats.teams, key)])
   ) : {}, [stats]);
@@ -1209,6 +1271,7 @@ function OtherPage() {
           <p>여러 통계를 테스트 중입니다.</p>
         </div>
         {error ? <section className="sheet-card"><LoadError>통계 데이터를 불러오지 못했습니다. API와 순위 데이터를 확인해 주세요.</LoadError></section> : !stats ? <section className="sheet-card"><LoadingState>기타 통계를 불러오는 중입니다.</LoadingState></section> : <>
+          <LineupComparison pools={lineupPools} asOf={payload?.ratings?.meta?.asOf} />
           <section className="sheet-card other-card" aria-labelledby="other-team-title">
             <div className="sheet-card-header"><div><p className="kicker">CLUB STRENGTH</p><h2 id="other-team-title">팀 통계</h2></div></div>
             <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>{OTHER_TEAM_COLUMNS.map(([key, label]) => <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}><button type="button" onClick={() => changeSort(key)}>{label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span></button></th>)}</tr></thead><tbody>{teams.map((team) => <tr key={team.team}><th scope="row">{team.team}</th><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>

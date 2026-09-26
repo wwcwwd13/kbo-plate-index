@@ -76,3 +76,36 @@ export function buildOtherStats(data, standings, latestDiff) {
     pitchers: byRole("pitcher").slice(0, 50)
   };
 }
+
+export function buildLineupPools(data) {
+  const sections = Array.isArray(data?.sections) ? data.sections : [];
+  const major = sections.find((section) => section.league === "1군");
+  const pools = new Map((major?.teams ?? []).map((team) => [teamKey(team.team), {
+    team: teamKey(team.team), batters: new Map(), pitchers: new Map()
+  }]));
+
+  for (const section of sections) {
+    for (const team of section.teams ?? []) {
+      const pool = pools.get(teamKey(team.team));
+      if (!pool) continue;
+      for (const [source, target] of [["batters", pool.batters], ["pitchers", pool.pitchers]]) {
+        for (const player of team[source] ?? []) {
+          if (!player.playerId || target.has(player.playerId)) continue;
+          target.set(player.playerId, { ...player, league: section.league });
+        }
+      }
+    }
+  }
+
+  return [...pools.values()].map((pool) => ({
+    team: pool.team,
+    batters: [...pool.batters.values()].sort((a, b) => a.name.localeCompare(b.name, "ko")),
+    pitchers: [...pool.pitchers.values()].sort((a, b) => a.name.localeCompare(b.name, "ko"))
+  }));
+}
+
+export function lineupWeightedRating(batterRatings, pitcherRating) {
+  if (batterRatings.length !== 9 || batterRatings.some((rating) => rating == null || !Number.isFinite(Number(rating)))
+    || pitcherRating == null || !Number.isFinite(Number(pitcherRating))) return null;
+  return (batterRatings.reduce((sum, rating) => sum + Number(rating), 0) + 6 * Number(pitcherRating)) / 15;
+}
