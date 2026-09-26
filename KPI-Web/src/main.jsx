@@ -2,7 +2,7 @@
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
-import { buildLineupPools, buildOtherStats, lineupWeightedRating, rankTeamsByMetric } from "./otherStats";
+import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
 import aboutContent from "./content/about.json";
 import releaseNotes from "./content/release_notes.json";
 import "../styles.css";
@@ -1169,7 +1169,11 @@ function OtherPlayerLink({ player }) {
 }
 
 function LineupTeam({ side, pools }) {
-  const [selection, setSelection] = useState({ team: "", batters: Array(9).fill(""), pitcher: "" });
+  const [selection, setSelection] = useState({ team: "", batters: [], pitcher: "" });
+  const [search, setSearch] = useState("");
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const draggedIndex = useRef(null);
+  const dropIndex = useRef(null);
   const pool = pools.find((entry) => entry.team === selection.team);
   const batters = pool?.batters ?? [];
   const pitchers = pool?.pitchers ?? [];
@@ -1177,20 +1181,46 @@ function LineupTeam({ side, pools }) {
   const pitcherById = new Map(pitchers.map((player) => [player.playerId, player]));
   const selectedBatters = selection.batters.map((id) => batterById.get(id));
   const selectedPitcher = pitcherById.get(selection.pitcher);
-  const weightedRating = selection.batters.every(Boolean) && selection.pitcher
+  const weightedRating = selection.batters.length === 9 && selection.pitcher
     ? lineupWeightedRating(selectedBatters.map((player) => player?.rating), selectedPitcher?.rating)
     : null;
+  const filteredBatters = batters.filter((player) => player.name.includes(search.trim()));
 
-  const selectBatter = (index, playerId) => setSelection((current) => ({
+  const toggleBatter = (playerId) => setSelection((current) => ({
     ...current,
-    batters: current.batters.map((id, position) => position === index ? playerId : id)
+    batters: current.batters.includes(playerId)
+      ? current.batters.filter((id) => id !== playerId)
+      : current.batters.length < 9 ? [...current.batters, playerId] : current.batters
   }));
+  const moveBatter = (fromIndex, toIndex) => setSelection((current) => ({
+    ...current,
+    batters: moveLineupBatter(current.batters, fromIndex, toIndex)
+  }));
+  const finishDrag = (event, shouldMove) => {
+    if (draggedIndex.current == null) return;
+    if (shouldMove && dropIndex.current != null) moveBatter(draggedIndex.current, dropIndex.current);
+    draggedIndex.current = null;
+    dropIndex.current = null;
+    setDragOverIndex(null);
+    event.currentTarget.releasePointerCapture(event.pointerId);
+  };
+  const dragBatter = (event) => {
+    if (draggedIndex.current == null) return;
+    const rows = event.currentTarget.closest(".lineup-list")?.querySelectorAll(".lineup-order-row") ?? [];
+    const targetIndex = [...rows].findIndex((row) => {
+      const bounds = row.getBoundingClientRect();
+      return event.clientY >= bounds.top && event.clientY < bounds.bottom;
+    });
+    if (targetIndex < 0 || targetIndex >= selection.batters.length) return;
+    dropIndex.current = targetIndex;
+    setDragOverIndex(targetIndex);
+  };
   const optionLabel = (player) => `${player.name}${player.league === "1군" ? "" : ` · ${player.league}`}`;
 
   return <div className="lineup-team">
     <div className="lineup-team-heading">
       <label htmlFor={`lineup-team-${side}`}>{side === 1 ? "왼쪽 팀" : "오른쪽 팀"}</label>
-      <select id={`lineup-team-${side}`} value={selection.team} onChange={(event) => setSelection({ team: event.target.value, batters: Array(9).fill(""), pitcher: "" })}>
+      <select id={`lineup-team-${side}`} value={selection.team} onChange={(event) => { setSelection({ team: event.target.value, batters: [], pitcher: "" }); setSearch(""); }}>
         <option value="">구단 선택</option>
         {pools.map((entry) => <option key={entry.team} value={entry.team}>{entry.team}</option>)}
       </select>
@@ -1199,15 +1229,38 @@ function LineupTeam({ side, pools }) {
       <span>라인업 가중평균</span>
       <strong className={weightedRating == null ? "" : ratingBand(weightedRating)}>{weightedRating == null ? "—" : formatRating(weightedRating)}</strong>
     </div>
-    <div className="lineup-list">
-      {selection.batters.map((playerId, index) => <div className="lineup-row" key={index}>
-        <label htmlFor={`lineup-${side}-batter-${index}`}>{index + 1}번 타자</label>
-        <select id={`lineup-${side}-batter-${index}`} value={playerId} disabled={!pool} onChange={(event) => selectBatter(index, event.target.value)}>
-          <option value="">선수 선택</option>
-          {batters.map((player) => <option key={player.playerId} value={player.playerId} disabled={selection.batters.some((id, position) => position !== index && id === player.playerId)}>{optionLabel(player)}</option>)}
-        </select>
-        <span className={selectedBatters[index] ? ratingBand(selectedBatters[index].rating) : ""}>{selectedBatters[index] ? formatRating(selectedBatters[index].rating) : "—"}</span>
-      </div>)}
+    <div className="lineup-picker">
+      <label htmlFor={`lineup-search-${side}`}>타자 선택 <span>{selection.batters.length}/9</span></label>
+      <input id={`lineup-search-${side}`} type="search" placeholder="선수 이름 검색" value={search} disabled={!pool} onChange={(event) => setSearch(event.target.value)} />
+      <div className="lineup-picker-options" aria-label={`${side === 1 ? "왼쪽" : "오른쪽"} 팀 타자 목록`}>
+        {filteredBatters.map((player) => {
+          const checked = selection.batters.includes(player.playerId);
+          return <label className={checked ? "lineup-picker-option is-selected" : "lineup-picker-option"} key={player.playerId}>
+            <input type="checkbox" checked={checked} disabled={!checked && selection.batters.length >= 9} onChange={() => toggleBatter(player.playerId)} />
+            <span>{player.name}</span>{player.league !== "1군" && <small>{player.league}</small>}
+          </label>;
+        })}
+        {pool && !filteredBatters.length && <p className="lineup-picker-empty">검색 결과가 없습니다.</p>}
+      </div>
+    </div>
+    <div className="lineup-list" aria-label={`${side === 1 ? "왼쪽" : "오른쪽"} 팀 타순`}>
+      <p className="lineup-order-hint">선택한 타자를 드래그하거나 화살표로 타순을 바꿀 수 있습니다.</p>
+      {Array.from({ length: 9 }, (_, index) => {
+        const player = selectedBatters[index];
+        return <div className={`lineup-order-row${player ? " is-filled" : ""}${dragOverIndex === index ? " is-drag-over" : ""}`} key={player?.playerId ?? `empty-${index}`}>
+          <span className="lineup-order-number">{index + 1}</span>
+          <span className="lineup-order-name">{player ? <><span className="lineup-drag-handle" aria-hidden="true"
+            onPointerDown={(event) => { if (event.button !== 0) return; draggedIndex.current = index; dropIndex.current = index; event.currentTarget.setPointerCapture(event.pointerId); event.preventDefault(); }}
+            onPointerMove={dragBatter}
+            onPointerUp={(event) => finishDrag(event, true)}
+            onPointerCancel={(event) => finishDrag(event, false)}>⠿</span> {player.name}</> : "선수 미선택"}</span>
+          <span className={player ? ratingBand(player.rating) : ""}>{player ? formatRating(player.rating) : "—"}</span>
+          {player && <span className="lineup-order-actions">
+            <button type="button" disabled={index === 0} aria-label={`${player.name} 타순 올리기`} onClick={() => moveBatter(index, index - 1)}>▲</button>
+            <button type="button" disabled={index === selection.batters.length - 1} aria-label={`${player.name} 타순 내리기`} onClick={() => moveBatter(index, index + 1)}>▼</button>
+          </span>}
+        </div>;
+      })}
       <div className="lineup-row lineup-pitcher-row">
         <label htmlFor={`lineup-${side}-pitcher`}>선발투수</label>
         <select id={`lineup-${side}-pitcher`} value={selection.pitcher} disabled={!pool} onChange={(event) => setSelection((current) => ({ ...current, pitcher: event.target.value }))}>
@@ -1217,14 +1270,14 @@ function LineupTeam({ side, pools }) {
         <span className={selectedPitcher ? ratingBand(selectedPitcher.rating) : ""}>{selectedPitcher ? formatRating(selectedPitcher.rating) : "—"}</span>
       </div>
     </div>
-    <p className="lineup-progress">타자 {selection.batters.filter(Boolean).length}/9명 · 선발투수 {selection.pitcher ? "선택됨" : "미선택"}</p>
+    <p className="lineup-progress">타자 {selection.batters.length}/9명 · 선발투수 {selection.pitcher ? "선택됨" : "미선택"}</p>
   </div>;
 }
 
 function LineupComparison({ pools, asOf }) {
   return <section className="sheet-card other-card" aria-labelledby="lineup-title">
     <div className="sheet-card-header"><div><p className="kicker">LINEUP COMPARISON</p><h2 id="lineup-title">라인업 폼 비교</h2></div></div>
-    <p className="lineup-description">두 팀의 타순과 선발투수를 직접 선택하세요. 타자 9명과 투수 1명을 모두 고르면 (타자 폼 합계 + 선발투수 폼 × 6) ÷ 15로 계산합니다.{asOf ? ` · ${asOf} 폼 기준` : ""}</p>
+    <p className="lineup-description">각 팀의 타자 9명을 목록에서 선택하고 드래그로 타순을 정한 뒤 선발투수를 고르세요. 모두 선택하면 (타자 폼 합계 + 선발투수 폼 × 6) ÷ 15로 계산합니다.{asOf ? ` · ${asOf} 폼 기준` : ""}</p>
     <div className="lineup-grid"><LineupTeam side={1} pools={pools} /><LineupTeam side={2} pools={pools} /></div>
   </section>;
 }

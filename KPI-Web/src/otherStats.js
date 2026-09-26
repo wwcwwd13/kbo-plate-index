@@ -99,8 +99,8 @@ export function buildLineupPools(data) {
 
   return [...pools.values()].map((pool) => ({
     team: pool.team,
-    batters: [...pool.batters.values()].sort((a, b) => a.name.localeCompare(b.name, "ko")),
-    pitchers: [...pool.pitchers.values()].sort((a, b) => a.name.localeCompare(b.name, "ko"))
+    batters: [...pool.batters.values()].sort((a, b) => (a.league === "1군" ? 0 : 1) - (b.league === "1군" ? 0 : 1) || a.name.localeCompare(b.name, "ko")),
+    pitchers: [...pool.pitchers.values()].sort((a, b) => (a.league === "1군" ? 0 : 1) - (b.league === "1군" ? 0 : 1) || a.name.localeCompare(b.name, "ko"))
   }));
 }
 
@@ -108,4 +108,11 @@ export function lineupWeightedRating(batterRatings, pitcherRating) {
   if (batterRatings.length !== 9 || batterRatings.some((rating) => rating == null || !Number.isFinite(Number(rating)))
     || pitcherRating == null || !Number.isFinite(Number(pitcherRating))) return null;
   return (batterRatings.reduce((sum, rating) => sum + Number(rating), 0) + 6 * Number(pitcherRating)) / 15;
+}
+
+export function moveLineupBatter(batters, fromIndex, toIndex) {
+  if (fromIndex < 0 || fromIndex >= batters.length || toIndex < 0 || toIndex >= batters.length || fromIndex === toIndex) return batters;
+  const reordered = [...batters];
+  reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
+  return reordered;
 }
