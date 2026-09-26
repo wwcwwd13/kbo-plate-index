@@ -1,7 +1,8 @@
 ﻿import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { buildOtherStats, rankTeamsByMetric } from "./otherStats";
 import aboutContent from "./content/about.json";
 import releaseNotes from "./content/release_notes.json";
 import "../styles.css";
@@ -16,7 +17,7 @@ function isPagePath(pageName) {
 }
 
 function siteRelativePrefix() {
-  return /\/(?:player|diff|about|release-note)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
+  return /\/(?:player|diff|other|about|release-note)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
 }
 
 function homeHref() {
@@ -339,6 +340,7 @@ function Delta({ value }) {
 
 function PageHeader() {
   const isDiffPage = isPagePath("diff");
+  const isOtherPage = isPagePath("other");
   const isAboutPage = isPagePath("about") || isPagePath("release-note");
   return (
     <header className="page-header">
@@ -353,6 +355,7 @@ function PageHeader() {
         </a>
         <nav className="top-nav" aria-label="주요 메뉴">
           <a className={isDiffPage ? "is-active" : ""} href={pageHref("diff")}>폼 변동</a>
+          <a className={isOtherPage ? "is-active" : ""} href={pageHref("other")}>기타</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
       </div>
@@ -1137,6 +1140,104 @@ function relatedPlayerIdForRole(player, targetRole) {
     ?? relationPlayerId(player?.[targetRole === "pitcher" ? "pitcher_player_id" : "batter_player_id"]);
 }
 
+const OTHER_TEAM_COLUMNS = [
+  ["team", "팀명"], ["leagueRank", "현재 리그 순위"], ["teamStrength", "팀 전력"],
+  ["batterStrength", "타자 전력"], ["pitcherStrength", "투수 전력"]
+];
+
+function rankTone(rank) {
+  if (rank === 1) return "rank-first";
+  if (rank >= 2 && rank <= 5) return "rank-upper";
+  if (rank >= 6 && rank <= 9) return "rank-lower";
+  if (rank === 10) return "rank-last";
+  return "";
+}
+
+function formatStrengthWithRank(value, rank) {
+  return rank == null ? formatRating(value) : `${formatRating(value)} (${rank}위)`;
+}
+
+function OtherPlayerLink({ player }) {
+  if (!player) return <span className="other-empty">—</span>;
+  const href = playerPageHref(player);
+  return href ? <a href={href}>{player.name}</a> : <span>{player.name}</span>;
+}
+
+function OtherPage() {
+  const [payload, setPayload] = useState(null);
+  const [error, setError] = useState(null);
+  const [sort, setSort] = useState({ key: "leagueRank", direction: 1 });
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchOtherStats()
+      .then((result) => { if (!cancelled) setPayload(result); })
+      .catch((reason) => { if (!cancelled) setError(reason); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff) : null, [payload]);
+  const strengthRanks = useMemo(() => stats ? Object.fromEntries(
+    ["teamStrength", "batterStrength", "pitcherStrength"].map((key) => [key, rankTeamsByMetric(stats.teams, key)])
+  ) : {}, [stats]);
+  const teams = useMemo(() => [...(stats?.teams ?? [])].sort((a, b) => {
+    const av = a[sort.key];
+    const bv = b[sort.key];
+    if (av == null) return bv == null ? 0 : 1;
+    if (bv == null) return -1;
+    return (typeof av === "string" ? av.localeCompare(bv, "ko") : av - bv) * sort.direction
+      || a.team.localeCompare(b.team, "ko");
+  }), [stats, sort]);
+  const changeSort = (key) => setSort((current) => ({
+    key,
+    direction: current.key === key ? -current.direction : key === "team" || key === "leagueRank" ? 1 : -1
+  }));
+  const count = expanded ? 50 : 10;
+
+  return (
+    <div className="page-shell">
+      <PageHeader />
+      <main className="page-content other-page-content">
+        <div className="other-page-heading">
+          <h2>기타 통계</h2>
+          <p>여러 통계를 테스트 중입니다.</p>
+        </div>
+        {error ? <section className="sheet-card"><LoadError>통계 데이터를 불러오지 못했습니다. API와 순위 데이터를 확인해 주세요.</LoadError></section> : !stats ? <section className="sheet-card"><LoadingState>기타 통계를 불러오는 중입니다.</LoadingState></section> : <>
+          <section className="sheet-card other-card" aria-labelledby="other-team-title">
+            <div className="sheet-card-header"><div><p className="kicker">CLUB STRENGTH</p><h2 id="other-team-title">팀 통계</h2></div></div>
+            <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>{OTHER_TEAM_COLUMNS.map(([key, label]) => <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}><button type="button" onClick={() => changeSort(key)}>{label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span></button></th>)}</tr></thead><tbody>{teams.map((team) => <tr key={team.team}><th scope="row">{team.team}</th><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
+          </section>
+          <section className="sheet-card other-card" aria-labelledby="asian-title">
+            <div className="sheet-card-header"><div><p className="kicker">ASIAN GAMES</p><h2 id="asian-title">아시안 게임 대표팀 명단</h2></div></div>
+            <div className="other-table-scroll"><table className="other-table other-asian-table">
+              <colgroup><col className="other-name-col" /><col className="other-team-col" /><col className="other-form-col" /><col className="other-name-col" /><col className="other-team-col" /><col className="other-form-col" /></colgroup>
+              <thead><tr><th scope="col">타자 이름</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">투수 이름</th><th scope="col">소속팀</th><th scope="col">폼</th></tr></thead>
+              <tbody>{Array.from({ length: Math.max(stats.asianBatters.length, stats.asianPitchers.length) }, (_, index) => <tr key={index}>
+                <td><OtherPlayerLink player={stats.asianBatters[index]} /></td><td>{stats.asianBatters[index]?.team ?? "—"}</td><td className={ratingBand(stats.asianBatters[index]?.rating)}>{formatRating(stats.asianBatters[index]?.rating)}</td>
+                <td><OtherPlayerLink player={stats.asianPitchers[index]} /></td><td>{stats.asianPitchers[index]?.team ?? "—"}</td><td className={ratingBand(stats.asianPitchers[index]?.rating)}>{formatRating(stats.asianPitchers[index]?.rating)}</td>
+              </tr>)}</tbody>
+            </table>{!stats.asianBatters.length && !stats.asianPitchers.length ? <p className="other-empty-state">현재 아시안게임 출전으로 분류된 선수가 없습니다.</p> : null}</div>
+          </section>
+          <section className="sheet-card other-card" aria-labelledby="ranking-title">
+            <div className="sheet-card-header"><div><p className="kicker">PLAYER RANKINGS</p><h2 id="ranking-title">전체 선수 폼 순위</h2></div></div>
+            <div className="other-table-scroll"><table className="other-table other-ranking-table">
+              <thead><tr><th scope="col">순위</th><th scope="col">타자명</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">변동량</th><th scope="col">투수명</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">변동량</th></tr></thead>
+              <tbody>{Array.from({ length: Math.max(Math.min(stats.batters.length, count), Math.min(stats.pitchers.length, count)) }, (_, index) => <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td><OtherPlayerLink player={stats.batters[index]} /></td><td>{stats.batters[index]?.team ?? "—"}</td><td className={ratingBand(stats.batters[index]?.rating)}>{formatRating(stats.batters[index]?.rating)}</td><td><Delta value={stats.batters[index]?.latestDateDelta} /></td>
+                <td><OtherPlayerLink player={stats.pitchers[index]} /></td><td>{stats.pitchers[index]?.team ?? "—"}</td><td className={ratingBand(stats.pitchers[index]?.rating)}>{formatRating(stats.pitchers[index]?.rating)}</td><td><Delta value={stats.pitchers[index]?.latestDateDelta} /></td>
+              </tr>)}</tbody>
+            </table></div>
+            <div className="other-more-row"><button type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "접기 · 상위 10명" : "더보기 · 상위 50명"}</button></div>
+          </section>
+        </>}
+      </main>
+      <SiteFooter status={payload?.ratings?.meta?.asOf ? `${payload.ratings.meta.asOf} 폼 기준` : undefined} />
+    </div>
+  );
+}
+
 function kboOfficialPlayerId(player) {
   const candidate = String(
     player?.kboPlayerId
@@ -1685,7 +1786,15 @@ function ratingLeaguePalette(league) {
 function RatingChart({ ratings, player }) {
   const [viewMode, setViewMode] = useState("game");
   const [showAllGames, setShowAllGames] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(null);
   const entries = useMemo(() => buildChartEntries(viewMode, ratings, player), [viewMode, ratings, player]);
+  const selectedAppearances = useMemo(() => selectedDate
+    ? sortAppearances(player).filter((appearance) => appearance.date === selectedDate)
+    : [], [player, selectedDate]);
+  const selectedAppearanceRatings = selectedAppearances
+    .map((appearance) => toNumber(appearance.ratingAfter) ?? toNumber(appearance.ratingBefore))
+    .filter((value) => value !== null);
+  const selectedMaximumRating = selectedAppearanceRatings.length ? Math.max(...selectedAppearanceRatings) : null;
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const chartOptionRef = useRef({});
@@ -1698,20 +1807,23 @@ function RatingChart({ ratings, player }) {
     const useTimeScale = isZoomable && validTimes.length === entries.length && validTimes.length > 1;
     const earliest = validTimes.length ? Math.min(...validTimes) : 0;
     const latest = validTimes.length ? Math.max(...validTimes) : 0;
+    const baselineTime = earliest - Math.max(dayMilliseconds, (latest - earliest) * 0.035);
     const recentStartTime = Math.max(earliest, latest - 30 * dayMilliseconds);
     const recentStartIndexCandidate = times.findIndex((time) => Number.isFinite(time) && time >= recentStartTime);
     const recentStartIndex = recentStartIndexCandidate >= 0
       ? recentStartIndexCandidate
       : Math.max(0, entries.length - Math.min(entries.length, 30));
 
-    // Give every plate appearance one X-axis unit so a 100-unit window is exactly 100 PA.
-    const plateAppearanceXValues = entries.map((_, index) => index + 0.5);
-    const recentPlateAppearanceStartValue = Math.max(0, entries.length - 100);
+    // Leave a visible gap from the 50.0 starting point even when there are hundreds of appearances.
+    const plateAppearanceBaselineGap = Math.max(1, entries.length * 0.035);
+    const plateAppearanceXValues = entries.map((_, index) => index + plateAppearanceBaselineGap);
+    const plateAppearanceMaxValue = plateAppearanceBaselineGap + entries.length;
+    const recentPlateAppearanceStartValue = entries.length > 100
+      ? plateAppearanceBaselineGap + entries.length - 100
+      : 0;
     const fullRange = useTimeScale
-      ? latest - earliest
-      : isZoomable
-        ? Math.max(entries.length - 1, 0)
-        : entries.length;
+      ? latest - baselineTime
+      : entries.length;
     const minimumZoomSpan = useTimeScale
       ? Math.min(30 * dayMilliseconds, Math.max(fullRange, 1))
       : isZoomable
@@ -1723,17 +1835,20 @@ function RatingChart({ ratings, player }) {
       useTimeScale,
       earliest,
       latest,
+      baselineTime,
       recentStartTime,
       recentStartIndex,
       plateAppearanceXValues,
+      plateAppearanceBaselineGap,
+      plateAppearanceMaxValue,
       recentPlateAppearanceStartValue,
       minimumZoomSpan
     };
   }, [entries, isZoomable]);
 
   const values = entries.map((entry) => entry.rating);
-  const observedMin = entries.length ? Math.min(...values) : 0;
-  const observedMax = entries.length ? Math.max(...values) : 100;
+  const observedMin = entries.length ? Math.min(50, ...values) : 0;
+  const observedMax = entries.length ? Math.max(50, ...values) : 100;
   const observedRange = Math.max(observedMax - observedMin, 1);
   const bottomMargin = entries.length ? Math.max(observedRange * 0.05, 0.5) : 0;
   const topMargin = entries.length ? observedRange * 0.1 : 0;
@@ -1760,8 +1875,9 @@ function RatingChart({ ratings, player }) {
     const xValues = timelineInfo.useTimeScale
       ? timelineInfo.times
       : isZoomable
-        ? entries.map((_, index) => index)
+        ? entries.map((_, index) => index + 1)
         : timelineInfo.plateAppearanceXValues;
+    const baselineX = timelineInfo.useTimeScale ? timelineInfo.baselineTime : 0;
     const chartData = entries.map((entry, index) => {
       const maximum = isSameRating(entry.rating, maximumRating);
       const palette = ratingLeaguePalette(entry.league);
@@ -1775,7 +1891,20 @@ function RatingChart({ ratings, player }) {
         }
       };
     });
-    const lineSeries = [];
+    const initialPalette = ratingLeaguePalette(entries[0].league);
+    const lineSeries = [{
+      type: "line",
+      name: "시작 폼",
+      data: [{ value: [baselineX, 50], isBaseline: true }, [xValues[0], entries[0].rating]],
+      showSymbol: true,
+      symbol: "circle",
+      symbolSize: (_, params) => params.dataIndex === 0 ? 8 : 0,
+      silent: true,
+      tooltip: { show: false },
+      itemStyle: { color: initialPalette.fill, borderColor: initialPalette.border, borderWidth: 1.6 },
+      lineStyle: { color: initialPalette.line, width: 2.5 },
+      z: 3
+    }];
     if (entries.length > 1) {
       const addLeagueRun = (startEdge, endPoint, palette, runIndex) => {
         const data = [];
@@ -1829,13 +1958,13 @@ function RatingChart({ ratings, player }) {
       ]);
 
     const startValue = showAllGames
-      ? (isZoomable ? (timelineInfo.useTimeScale ? timelineInfo.earliest : 0) : 0)
+      ? (isZoomable ? (timelineInfo.useTimeScale ? timelineInfo.baselineTime : 0) : 0)
       : (isZoomable
-        ? (timelineInfo.useTimeScale ? timelineInfo.recentStartTime : timelineInfo.recentStartIndex)
+        ? (timelineInfo.useTimeScale ? timelineInfo.recentStartTime : timelineInfo.recentStartIndex + 1)
         : timelineInfo.recentPlateAppearanceStartValue);
     const endValue = isZoomable
-      ? (timelineInfo.useTimeScale ? timelineInfo.latest : entries.length - 1)
-      : entries.length;
+      ? (timelineInfo.useTimeScale ? timelineInfo.latest : entries.length)
+      : timelineInfo.plateAppearanceMaxValue;
     const deltaForIndex = (index) => {
       const entry = entries[index];
       const prior = index > 0 ? entries[index - 1] : null;
@@ -1871,18 +2000,18 @@ function RatingChart({ ratings, player }) {
           const item = items.find((candidate) => candidate?.seriesName === "폼" && candidate?.data?.entryIndex !== undefined)
             ?? items.find((candidate) => candidate?.data?.entryIndex !== undefined)
             ?? items[0];
-          const index = Number(item?.data?.entryIndex ?? item?.dataIndex);
+          const index = Number(item?.data?.entryIndex);
           return Number.isInteger(index) && entries[index]
             ? chartTooltipHtml(entries[index], deltaForIndex(index))
-            : "";
+            : items.some((candidate) => candidate?.data?.isBaseline) ? "시작 폼 50.0" : "";
         }
       },
       xAxis: {
         type: timelineInfo.useTimeScale ? "time" : isZoomable ? "category" : "value",
         boundaryGap: false,
         min: isZoomable ? undefined : 0,
-        max: isZoomable ? undefined : entries.length,
-        data: timelineInfo.useTimeScale || !isZoomable ? undefined : entries.map((entry) => entry.date),
+        max: isZoomable ? undefined : timelineInfo.plateAppearanceMaxValue,
+        data: timelineInfo.useTimeScale || !isZoomable ? undefined : ["시작", ...entries.map((entry) => entry.date)],
         axisLine: { lineStyle: { color: "#c9ced2" } },
         axisTick: { alignWithLabel: true, lineStyle: { color: "#c9ced2" } },
         axisLabel: {
@@ -1892,11 +2021,13 @@ function RatingChart({ ratings, player }) {
           formatter: timelineInfo.useTimeScale
             ? chartDateFromAxisValue
             : isZoomable
-              ? (value) => formatShortDate(value)
+              ? (value) => value === "시작" ? value : formatShortDate(value)
               : (value) => {
                   const numericValue = Number(value);
                   if (!Number.isFinite(numericValue) || !entries.length) return "";
-                  const entryIndex = Math.min(entries.length - 1, Math.max(0, Math.floor(numericValue)));
+                  if (numericValue === 0) return "시작";
+                  if (numericValue < timelineInfo.plateAppearanceBaselineGap) return "";
+                  const entryIndex = Math.min(entries.length - 1, Math.max(0, Math.floor(numericValue - timelineInfo.plateAppearanceBaselineGap)));
                   return formatShortDate(entries[entryIndex]?.date);
                 }
         },
@@ -1962,6 +2093,7 @@ function RatingChart({ ratings, player }) {
         showSymbol: true,
         symbol: "circle",
         symbolSize: 8,
+        cursor: "pointer",
         connectNulls: false,
         smooth: false,
         lineStyle: { color: "rgba(0, 0, 0, 0)", opacity: 0, width: 0 },
@@ -2013,6 +2145,28 @@ function RatingChart({ ratings, player }) {
         chart = echarts.init(element, null, { renderer: "canvas", useDirtyRect: false });
         chartInstanceRef.current = chart;
         chart.setOption(chartOptionRef.current, true);
+        chart.getZr().on("click", (event) => {
+          const grid = chart.getModel().getComponent("grid")?.coordinateSystem?.getRect();
+          if (!grid || event.offsetX < grid.x || event.offsetX > grid.x + grid.width) return;
+          if (event.offsetY < grid.y || event.offsetY > grid.y + grid.height + 28) return;
+
+          const axisValue = chart.convertFromPixel({ xAxisIndex: 0 }, event.offsetX);
+          if (timelineInfo.useTimeScale) {
+            if (Number(axisValue) < (timelineInfo.baselineTime + timelineInfo.times[0]) / 2) return;
+            const nearest = entries.reduce((best, entry) => {
+              const distance = Math.abs(Date.parse(`${entry.date}T00:00:00`) - Number(axisValue));
+              return distance < best.distance ? { date: entry.date, distance } : best;
+            }, { date: null, distance: Number.POSITIVE_INFINITY });
+            if (nearest.date) setSelectedDate(nearest.date);
+          } else {
+            if (!isZoomable && Number(axisValue) < timelineInfo.plateAppearanceBaselineGap / 2) return;
+            const index = entries.findIndex((entry) => entry.date === axisValue);
+            const nearestIndex = index >= 0 ? index : isZoomable
+              ? Math.round(Number(axisValue)) - 1
+              : Math.round(Number(axisValue) - timelineInfo.plateAppearanceBaselineGap);
+            if (entries[nearestIndex]?.date) setSelectedDate(entries[nearestIndex].date);
+          }
+        });
 
         const resize = () => chart.resize();
         let observer = null;
@@ -2038,7 +2192,7 @@ function RatingChart({ ratings, player }) {
       disposed = true;
       cleanupChart();
     };
-  }, [entries.length, viewMode]);
+  }, [entries, isZoomable, timelineInfo.useTimeScale, viewMode]);
 
   useEffect(() => {
     chartOptionRef.current = chartOption;
@@ -2084,6 +2238,16 @@ function RatingChart({ ratings, player }) {
         <LoadingState>{CHART_MODES.find(([mode]) => mode === viewMode)?.[1] ?? "선택한"} 기록이 없습니다.</LoadingState>
       )}
       </div>
+      <p className="chart-selection-hint">그래프에서 날짜를 클릭하면 해당 날짜의 타석 기록을 볼 수 있습니다.</p>
+      {selectedDate && (
+        <div className="chart-date-appearances">
+          <div className="chart-date-appearances-header">
+            <h4>{formatDate(selectedDate)} {isPitcherPlayer(player) ? "상대 타석" : "타석"} 기록 <span>{selectedAppearances.length}건</span></h4>
+            <button type="button" onClick={() => setSelectedDate(null)} aria-label="선택한 날짜 닫기">닫기</button>
+          </div>
+          <PlateAppearanceTable appearances={selectedAppearances} maximumRating={selectedMaximumRating} player={player} />
+        </div>
+      )}
     </>
   );
 }
@@ -2495,6 +2659,7 @@ function PlayerPage() {
 function App() {
   if (isPagePath("player")) return <PlayerPage />;
   if (isPagePath("diff")) return <DiffPage />;
+  if (isPagePath("other")) return <OtherPage />;
   if (isPagePath("about") || isPagePath("release-note")) return <AboutPage />;
   return <HomePage />;
 }

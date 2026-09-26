@@ -1,6 +1,6 @@
 function isDirectoryPagePath() {
   const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
-  return /\/(?:player|diff)\/(?:index\.html)?$/.test(pathname);
+  return /\/(?:player|diff|other)\/(?:index\.html)?$/.test(pathname);
 }
 
 function staticDataPath(fileName) {
@@ -69,6 +69,15 @@ export async function fetchTeamRatings() {
     // Keep the static table available when the API is not running yet.
     return data;
   }
+}
+
+export async function fetchOtherStats() {
+  const [ratings, standings, latestDiff] = await Promise.all([
+    fetchTeamRatings(),
+    fetchJson(staticDataPath("standings.json")),
+    fetchRatingDiff()
+  ]);
+  return { ratings, standings, latestDiff };
 }
 
 export async function fetchRatingDiffDates() {

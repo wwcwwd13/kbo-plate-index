@@ -32,6 +32,7 @@ export default defineConfig({
         resolve(process.cwd(), "index.html"),
         resolve(process.cwd(), "player/index.html"),
         resolve(process.cwd(), "diff/index.html"),
+        resolve(process.cwd(), "other/index.html"),
         resolve(process.cwd(), "about/index.html"),
         resolve(process.cwd(), "release-note/index.html"),
         // Keep the old entrypoints available for existing bookmarks.

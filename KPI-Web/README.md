@@ -52,3 +52,14 @@ GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 �
 초기 목표는 외부 사용자에게 타석 전체 로그를 보여주는 것이 아니라, 구단별 KPI를 직관적으로 보여주는 것입니다. 타석 단위 before/after와 내부 변수는 검증용 원자료로 유지하고 기본 화면에는 노출하지 않습니다.
 
 현재 화면과 로컬 실행 방법은 이 README와 `LOCAL_USAGE.md`를 참조합니다. 데이터 수집부터 배포까지의 운영 절차는 백엔드 `ops/DAILY_UPDATE.md`를 참조합니다.
+
+## 기타 통계 데이터 갱신
+
+`/other/`의 팀 전력과 선수 순위는 `/api/team-ratings` 현재 스냅샷을 사용합니다. 타자·투수 전력은 각 상위 9명 평균, 팀 전력은 해당 선수 최대 18명의 산술평균인 기존 API `averages` 값입니다. 2026 아시안게임 명단 표는 별도 프런트 고정 목록이 아니라 API의 DB `rosterStatusReason=asian_games_assignment` 분류에서 구성합니다. 명단과 배정 기준은 백엔드 `ops/asian_games_roster_2026.py`에 있으며, 선수 상세의 등록·말소·부상 기록은 `/api/player`의 `rosterEvents`를 표시합니다. KBO 원본 이벤트와 사용자 확인 배정 이벤트는 출처 유형을 구분해 보존합니다. 순위표의 변동량은 `/api/rating-diffs`가 반환한 가장 최근 경기일의 `ratingDelta`입니다. 그날 출전하지 않은 선수는 `—`로 표시합니다. API의 모델 버전과 기준일이 일치하지 않으면 변동량도 `—`로 표시합니다.
+
+리그 순위는 타석 DB의 경기 결과로 계산하지 않습니다. 현재 DB에는 시즌 전체 1군 경기의 팀별 점수 행이 없으므로 승률 계산이 부정확합니다. 대신 KBO [일자별 팀 순위](https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx)를 `data/standings.json`에 보관합니다. **일일 폼 갱신 후 프런트엔드 빌드·배포 전에** 아래 명령을 실행하고, JSON의 `asOf`를 폼 기준일과 대조합니다. 날짜가 다르면 그 사이 1군 경기가 없었는지 확인합니다. KBO 응답에서 기준일과 10개 구단을 확인할 수 없거나 순위가 run보다 미래 날짜이면 스크립트가 실패하며 기존 파일은 유지됩니다.
+
+```powershell
+python scripts/update-standings.py --run-manifest "../../KPI-Backend/database/daily-runs/<run-id>/manifest.json"
+npm.cmd run build
+```

@@ -199,6 +199,50 @@ h2 {
   font-size: 11px;
 }
 
+.other-page-content {
+  max-width: 1080px;
+  display: grid;
+  gap: 14px;
+}
+
+.other-page-heading { padding: 12px 4px 2px; }
+.other-page-heading h2 { font-size: 24px; }
+.other-page-heading > p:last-child { margin-top: 5px; color: var(--muted); font-size: 12px; }
+.other-card { min-width: 0; }
+.other-table-scroll { overflow-x: auto; }
+.other-table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.other-table th, .other-table td { padding: 9px 13px; border-bottom: 1px solid #e4e6e8; text-align: right; white-space: nowrap; }
+.other-table thead th { background: #f4f5f6; color: #5b5b5b; font-size: 11px; font-weight: 700; }
+.other-table tbody tr:last-child > * { border-bottom: 0; }
+.other-table tbody tr:hover > * { box-shadow: inset 0 0 0 999px rgba(255,255,255,.2); }
+.other-table th:first-child, .other-table td:first-child { text-align: left; }
+.other-table a { color: var(--brown-dark); font-weight: 700; text-decoration: none; }
+.other-table a:hover, .other-table a:focus-visible { text-decoration: underline; }
+.other-table td.rank-first { background: var(--blue); }
+.other-table td.rank-upper { background: var(--green); }
+.other-table td.rank-lower { background: var(--yellow); }
+.other-table td.rank-last { background: var(--red); }
+.other-team-table thead button { width: 100%; border: 0; padding: 0; color: inherit; background: transparent; font: inherit; text-align: inherit; cursor: pointer; }
+.other-team-table thead button:hover, .other-team-table thead button:focus-visible { color: var(--brown-dark); text-decoration: underline; }
+.sort-indicator { margin-left: 6px; color: #92775b; font-size: 9px; }
+.other-asian-table { table-layout: fixed; }
+.other-asian-table .other-name-col { width: 25%; }
+.other-asian-table .other-team-col { width: 12%; }
+.other-asian-table .other-form-col { width: 13%; }
+.other-asian-table th:nth-child(4), .other-asian-table td:nth-child(4) { border-left: 1px solid #d5d8db; text-align: left; }
+.other-asian-table th:nth-child(2), .other-asian-table td:nth-child(2),
+.other-asian-table th:nth-child(5), .other-asian-table td:nth-child(5) { text-align: center; }
+.other-empty { color: #a2a2a2; }
+.other-empty-state { padding: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+.other-ranking-table { min-width: 760px; }
+.other-ranking-table th:first-child, .other-ranking-table td:first-child { width: 58px; text-align: center; }
+.other-ranking-table th:nth-child(3), .other-ranking-table td:nth-child(3),
+.other-ranking-table th:nth-child(7), .other-ranking-table td:nth-child(7) { text-align: center; }
+.other-ranking-table td:nth-child(2), .other-ranking-table td:nth-child(6) { text-align: left; }
+.other-more-row { padding: 12px; border-top: 1px solid #e4e6e8; text-align: center; }
+.other-more-row button { padding: 8px 20px; border: 1px solid #a98a68; border-radius: 4px; color: var(--brown-dark); background: #fffaf2; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.other-more-row button:hover, .other-more-row button:focus-visible { background: #f4e8d7; }
+
 .release-note-page-content {
   max-width: 920px;
 }
@@ -1509,6 +1553,52 @@ h2 {
   height: 320px;
 }
 
+.chart-selection-hint {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.chart-date-appearances {
+  margin-top: 12px;
+}
+
+.chart-date-appearances-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-date-appearances-header h4 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.chart-date-appearances-header h4 span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.chart-date-appearances-header button {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 4px 9px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.chart-date-appearances-header button:hover,
+.chart-date-appearances-header button:focus-visible {
+  border-color: var(--brown-mid);
+  background: var(--yellow);
+}
+
 .echarts-chart-tooltip {
   z-index: 10;
 }
@@ -1614,6 +1704,10 @@ h2 {
 
 .detail-table tr.rating-history-max-row td {
   background: #fff6c9;
+}
+
+.chart-date-appearances .detail-table tr.rating-history-max-row td:not(.rating-history-max-rating) {
+  background: #fffae4;
 }
 
 .detail-table td.rating-history-max-rating {
