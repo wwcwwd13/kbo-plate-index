@@ -172,6 +172,11 @@ function canonicalTeamLabel(value) {
   if (["lt", "롯데", "롯데 자이언츠"].includes(normalized)) return "롯데";
   if (["kia", "ht", "기아", "kia 타이거즈"].includes(normalized)) return "KIA";
   if (["wo", "키움", "키움 히어로즈", "고양", "goyang"].includes(normalized)) return "키움";
+  if (["sm", "상무", "상무 피닉스"].includes(normalized)) return "상무";
+  if (["ul", "울산"].includes(normalized)) return "울산";
+  if (["so", "소프트"].includes(normalized)) return "소프트";
+  if (["fn", "북부"].includes(normalized)) return "북부";
+  if (["fs", "남부"].includes(normalized)) return "남부";
   return String(value ?? "").trim();
 }
 
@@ -1439,12 +1444,17 @@ function gameTeamsFromId(gameId) {
   return { away: match[1], home: match[2] };
 }
 
-function gameHomeAway(gameId, playerTeam) {
+function gameHomeAway(gameId, playerTeam, opponentTeam) {
   const teams = gameTeamsFromId(gameId);
-  if (!teams || !playerTeam) return null;
+  if (!teams) return null;
+  const home = canonicalTeamLabel(teams.home);
+  const away = canonicalTeamLabel(teams.away);
+  const opponentLabel = canonicalTeamLabel(opponentTeam);
+  if (opponentLabel && opponentLabel === away && opponentLabel !== home) return "홈";
+  if (opponentLabel && opponentLabel === home && opponentLabel !== away) return "원정";
   const playerLabel = canonicalTeamLabel(playerTeam);
-  if (playerLabel && playerLabel === canonicalTeamLabel(teams.home)) return "홈";
-  if (playerLabel && playerLabel === canonicalTeamLabel(teams.away)) return "원정";
+  if (playerLabel && playerLabel === home) return "홈";
+  if (playerLabel && playerLabel === away) return "원정";
   return null;
 }
 
@@ -1468,7 +1478,7 @@ function gameOpponentName(appearance, playerTeam) {
 function gameContextText(entry, player) {
   const opponentValue = entry.opponentDisplay || gameOpponentName(entry, player?.profile?.team);
   const opponent = opponentValue ? gameOpponentDisplayName(opponentValue, entry.league) : "구단 미상";
-  const homeAway = entry.homeAway || gameHomeAway(entry.gameId, player?.profile?.team);
+  const homeAway = entry.homeAway || gameHomeAway(entry.gameId, null, entry.opponent);
   return { opponent, homeAway };
 }
 
@@ -1648,7 +1658,7 @@ function buildGameEntries(ratings, appearances, player) {
       gameId: first?.gameId,
       opponent: stat?.opponent || first?.opponent,
       opponentDisplay,
-      homeAway: gameHomeAway(first?.gameId, player?.profile?.team),
+      homeAway: gameHomeAway(first?.gameId, stat?.team, stat?.opponent || first?.opponent),
       appearances: group,
       paCount: stat?.battersFaced ?? group.length,
       results: resultValues,
@@ -1676,7 +1686,7 @@ function buildPlateAppearanceEntries(ratings, appearances, player) {
     gameId: appearance.gameId,
     opponent: appearance.opponent,
     opponentDisplay: gameOpponentName(appearance, player?.profile?.team),
-    homeAway: gameHomeAway(appearance.gameId, player?.profile?.team),
+    homeAway: gameHomeAway(appearance.gameId, null, appearance.opponent),
     result: normalizePlateAppearanceResult(appearance.result),
     plateAppearanceNumber: appearance.plateAppearanceNumber,
     paId: appearance.paId,
@@ -2284,7 +2294,7 @@ function GameContextCell({ entry, player }) {
   return (
     <span className="game-context">
       <strong>vs. {context.opponent}</strong>
-      <span>{context.homeAway || "홈·원정 미상"}</span>
+      {context.homeAway && <span>{context.homeAway}</span>}
     </span>
   );
 }
