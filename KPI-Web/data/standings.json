@@ -1,7 +1,7 @@
 {
   "source": "https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx",
   "checkedAt": "2026-09-26",
-  "asOf": "2026-09-25",
+  "asOf": "2026-09-26",
   "season": 2026,
   "teams": [
     { "rank": 1, "team": "KT" },
