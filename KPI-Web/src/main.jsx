@@ -1185,7 +1185,7 @@ function LineupTeam({ side, pools }) {
     ...current,
     batters: current.batters.map((id, position) => position === index ? playerId : id)
   }));
-  const optionLabel = (player) => `${player.name} · ${formatRating(player.rating)}${player.league === "1군" ? "" : ` · ${player.league}`}`;
+  const optionLabel = (player) => `${player.name}${player.league === "1군" ? "" : ` · ${player.league}`}`;
 
   return <div className="lineup-team">
     <div className="lineup-team-heading">
