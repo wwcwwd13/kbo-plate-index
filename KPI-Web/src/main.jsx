@@ -1329,17 +1329,6 @@ function OtherPage() {
             <div className="sheet-card-header"><div><p className="kicker">CLUB STRENGTH</p><h2 id="other-team-title">팀 통계</h2></div></div>
             <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>{OTHER_TEAM_COLUMNS.map(([key, label]) => <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}><button type="button" onClick={() => changeSort(key)}>{label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span></button></th>)}</tr></thead><tbody>{teams.map((team) => <tr key={team.team}><th scope="row">{team.team}</th><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
           </section>
-          <section className="sheet-card other-card" aria-labelledby="asian-title">
-            <div className="sheet-card-header"><div><p className="kicker">ASIAN GAMES</p><h2 id="asian-title">아시안 게임 대표팀 명단</h2></div></div>
-            <div className="other-table-scroll"><table className="other-table other-asian-table">
-              <colgroup><col className="other-name-col" /><col className="other-team-col" /><col className="other-form-col" /><col className="other-name-col" /><col className="other-team-col" /><col className="other-form-col" /></colgroup>
-              <thead><tr><th scope="col">타자 이름</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">투수 이름</th><th scope="col">소속팀</th><th scope="col">폼</th></tr></thead>
-              <tbody>{Array.from({ length: Math.max(stats.asianBatters.length, stats.asianPitchers.length) }, (_, index) => <tr key={index}>
-                <td><OtherPlayerLink player={stats.asianBatters[index]} /></td><td>{stats.asianBatters[index]?.team ?? "—"}</td><td className={ratingBand(stats.asianBatters[index]?.rating)}>{formatRating(stats.asianBatters[index]?.rating)}</td>
-                <td><OtherPlayerLink player={stats.asianPitchers[index]} /></td><td>{stats.asianPitchers[index]?.team ?? "—"}</td><td className={ratingBand(stats.asianPitchers[index]?.rating)}>{formatRating(stats.asianPitchers[index]?.rating)}</td>
-              </tr>)}</tbody>
-            </table>{!stats.asianBatters.length && !stats.asianPitchers.length ? <p className="other-empty-state">현재 아시안게임 출전으로 분류된 선수가 없습니다.</p> : null}</div>
-          </section>
           <section className="sheet-card other-card" aria-labelledby="ranking-title">
             <div className="sheet-card-header"><div><p className="kicker">PLAYER RANKINGS</p><h2 id="ranking-title">전체 선수 폼 순위</h2></div></div>
             <div className="other-table-scroll"><table className="other-table other-ranking-table">

@@ -20,11 +20,6 @@ export function rankTeamsByMetric(teams, key) {
     .map((team, index) => [team.team, index + 1]));
 }
 
-function isAsianGamesAssignment(player) {
-  const reason = String(player?.rosterStatusReason ?? "").trim().toLowerCase().replace(/\s+/g, "");
-  return ["아시안게임출전", "asian_games_assignment"].includes(reason);
-}
-
 export function buildOtherStats(data, standings, latestDiff) {
   const sections = Array.isArray(data?.sections) ? data.sections : [];
   const major = sections.find((section) => section.league === "1군");
@@ -70,8 +65,6 @@ export function buildOtherStats(data, standings, latestDiff) {
   const byRole = (role, filter = () => true) => all.filter((player) => player.role === role && filter(player)).sort(ratingOrder);
   return {
     teams,
-    asianBatters: byRole("batter", isAsianGamesAssignment),
-    asianPitchers: byRole("pitcher", isAsianGamesAssignment),
     batters: byRole("batter").slice(0, 50),
     pitchers: byRole("pitcher").slice(0, 50)
   };
