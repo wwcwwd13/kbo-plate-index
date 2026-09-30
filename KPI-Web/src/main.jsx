@@ -54,6 +54,14 @@ function formatShortDate(value) {
   return date.length >= 10 ? date.slice(5).replace("-", "/") : date;
 }
 
+function formatDateWithWeekday(value) {
+  const date = String(value ?? "");
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return date;
+  const weekday = ["일", "월", "화", "수", "목", "금", "토"][new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))).getUTCDay()];
+  return `${date} (${weekday})`;
+}
+
 function normalizePlateAppearanceResult(value) {
   const result = String(value ?? "").trim();
   if (result === "\ubcfc\ub128" || result === "\ubcfc\ub12c") return "\ubcfc\ub137";
@@ -907,9 +915,12 @@ function DiffPage() {
     fetchRatingDiffDates()
       .then((result) => {
         if (cancelled) return;
-        const nextDates = Array.isArray(result?.dates) ? result.dates : [];
+        const nextDates = (Array.isArray(result?.dates) ? result.dates : [])
+          .filter((option) => Number(option.gameCount) > 0);
         setDates(nextDates);
-        const latest = result?.latest || nextDates[nextDates.length - 1]?.date || "";
+        const latest = nextDates.some((option) => option.date === result?.latest)
+          ? result.latest
+          : nextDates[nextDates.length - 1]?.date ?? "";
         setSelectedDate(latest);
       })
       .catch((nextError) => { if (!cancelled) setError(nextError); });
@@ -940,7 +951,7 @@ function DiffPage() {
               <select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} disabled={!dates.length}>
                 {!dates.length ? <option value="">날짜를 불러오는 중</option> : dates.map((option) => (
                   <option key={option.date} value={option.date}>
-                    {option.date}{option.gameCount ? ` · ${option.gameCount}경기` : " · 경기 없음"}
+                    {formatDateWithWeekday(option.date)} · {option.gameCount}경기
                   </option>
                 ))}
               </select>
