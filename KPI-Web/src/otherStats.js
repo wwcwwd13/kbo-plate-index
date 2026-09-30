@@ -36,12 +36,12 @@ export function buildOtherStats(data, standings, latestDiff) {
   const latestDate = latestDiff?.meta?.date ?? null;
   const matchingDiff = latestDate === data?.meta?.asOf
     && latestDiff?.meta?.modelVersion === data?.meta?.modelVersion;
-  const deltas = new Map();
+  const dailyPlayers = new Map();
   if (matchingDiff) {
     for (const section of latestDiff.sections ?? []) {
       for (const team of section.teams ?? []) {
         for (const player of [...(team.batters ?? []), ...(team.pitchers ?? [])]) {
-          if (player.playerId) deltas.set(player.playerId, player.ratingDelta);
+          if (player.playerId) dailyPlayers.set(player.playerId, player);
         }
       }
     }
@@ -55,7 +55,8 @@ export function buildOtherStats(data, standings, latestDiff) {
             ...player,
             role,
             team: teamKey(team.team ?? team.teamName),
-            latestDateDelta: deltas.has(player.playerId) ? deltas.get(player.playerId) : null
+            latestDateDelta: dailyPlayers.get(player.playerId)?.ratingDelta ?? null,
+            latestDateDiff: dailyPlayers.get(player.playerId) ?? null
           });
         }
       }

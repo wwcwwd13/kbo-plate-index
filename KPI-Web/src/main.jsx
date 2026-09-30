@@ -73,6 +73,7 @@ function useHorizontalDragScroll() {
 
   const handlePointerDown = useCallback((event) => {
     dragRef.current = null;
+    if (event.pointerType === "touch") return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if (event.target instanceof Element && event.target.closest("a, button, input, select, textarea, [role='button']")) return;
     const container = event.currentTarget;
@@ -742,6 +743,35 @@ function DiffHoverCard({ player, role, position }) {
   );
 }
 
+function useDiffHover() {
+  const anchorRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [position, setPosition] = useState(null);
+
+  const updatePosition = useCallback(() => {
+    if (anchorRef.current) setPosition(floatingDiffTooltipPosition(anchorRef.current.getBoundingClientRect()));
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return undefined;
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [visible, updatePosition]);
+
+  const show = (event) => {
+    anchorRef.current = event.currentTarget;
+    setPosition(floatingDiffTooltipPosition(event.currentTarget.getBoundingClientRect()));
+    setVisible(true);
+  };
+  const hide = () => setVisible(false);
+
+  return { visible, position, show, hide };
+}
+
 function DiffPlayerCells({ player, role }) {
   if (!player) {
     return (
@@ -758,49 +788,25 @@ function DiffPlayerCells({ player, role }) {
 function DiffPlayerCellsWithTooltip({ player, role }) {
   const grayClass = player.gray ? " is-gray" : "";
   const href = playerPageHref(player);
-  const nameCellRef = useRef(null);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState(null);
-
-  const updateTooltipPosition = useCallback(() => {
-    if (!nameCellRef.current) return;
-    setTooltipPosition(floatingDiffTooltipPosition(nameCellRef.current.getBoundingClientRect()));
-  }, []);
-
-  useEffect(() => {
-    if (!tooltipVisible) return undefined;
-    updateTooltipPosition();
-    window.addEventListener("resize", updateTooltipPosition);
-    window.addEventListener("scroll", updateTooltipPosition, true);
-    return () => {
-      window.removeEventListener("resize", updateTooltipPosition);
-      window.removeEventListener("scroll", updateTooltipPosition, true);
-    };
-  }, [tooltipVisible, updateTooltipPosition]);
-
-  const showTooltip = () => {
-    updateTooltipPosition();
-    setTooltipVisible(true);
-  };
-  const hideTooltip = () => setTooltipVisible(false);
+  const tooltip = useDiffHover();
 
   return (
     <>
       <td
-        ref={nameCellRef}
         className={`diff-name-cell${grayClass}`}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        onFocus={showTooltip}
-        onBlur={hideTooltip}
+        onMouseEnter={tooltip.show}
+        onMouseLeave={tooltip.hide}
+        onFocus={tooltip.show}
+        onBlur={tooltip.hide}
       >
         {href ? <a className="player-link" href={href}>{player.name}</a> : <span className="player-link player-link--unresolved">{player.name}</span>}
       </td>
-      <td className={`diff-rating-cell ${ratingBand(player.rating)}`}>
+      <td className={`diff-rating-cell ${ratingBand(player.rating)}`}
+        onMouseEnter={tooltip.show} onMouseLeave={tooltip.hide} onFocus={tooltip.show} onBlur={tooltip.hide}>
         {href ? <a className="player-link diff-rating-value" href={href}>{formatRating(player.rating)}</a> : <span className="diff-rating-value">{formatRating(player.rating)}</span>}
         <span className={`diff-delta ${diffDeltaClass(player.ratingDelta)}`}>{formatDiffDelta(player.ratingDelta)}</span>
       </td>
-      {tooltipVisible && tooltipPosition ? <DiffHoverCard player={player} role={role} position={tooltipPosition} /> : null}
+      {tooltip.visible && tooltip.position ? <DiffHoverCard player={player} role={role} position={tooltip.position} /> : null}
     </>
   );
 }
@@ -1168,6 +1174,17 @@ function OtherPlayerLink({ player }) {
   return href ? <a href={href}>{player.name}</a> : <span>{player.name}</span>;
 }
 
+function OtherDeltaWithTooltip({ player, role }) {
+  const tooltip = useDiffHover();
+  if (!player?.latestDateDiff) return <Delta value={player?.latestDateDelta} />;
+
+  return <span className="other-delta-hover" tabIndex={0}
+    onMouseEnter={tooltip.show} onMouseLeave={tooltip.hide} onFocus={tooltip.show} onBlur={tooltip.hide}>
+    <Delta value={player.latestDateDelta} />
+    {tooltip.visible && tooltip.position ? <DiffHoverCard player={player.latestDateDiff} role={role} position={tooltip.position} /> : null}
+  </span>;
+}
+
 function LineupTeam({ side, pools }) {
   const [selection, setSelection] = useState({ team: "", batters: [], pitcher: "" });
   const [search, setSearch] = useState("");
@@ -1324,7 +1341,6 @@ function OtherPage() {
           <p>여러 통계를 테스트 중입니다.</p>
         </div>
         {error ? <section className="sheet-card"><LoadError>통계 데이터를 불러오지 못했습니다. API와 순위 데이터를 확인해 주세요.</LoadError></section> : !stats ? <section className="sheet-card"><LoadingState>기타 통계를 불러오는 중입니다.</LoadingState></section> : <>
-          <LineupComparison pools={lineupPools} asOf={payload?.ratings?.meta?.asOf} />
           <section className="sheet-card other-card" aria-labelledby="other-team-title">
             <div className="sheet-card-header"><div><p className="kicker">CLUB STRENGTH</p><h2 id="other-team-title">팀 통계</h2></div></div>
             <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>{OTHER_TEAM_COLUMNS.map(([key, label]) => <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}><button type="button" onClick={() => changeSort(key)}>{label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span></button></th>)}</tr></thead><tbody>{teams.map((team) => <tr key={team.team}><th scope="row">{team.team}</th><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
@@ -1335,12 +1351,13 @@ function OtherPage() {
               <thead><tr><th scope="col">순위</th><th scope="col">타자명</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">변동량</th><th scope="col">투수명</th><th scope="col">소속팀</th><th scope="col">폼</th><th scope="col">변동량</th></tr></thead>
               <tbody>{Array.from({ length: Math.max(Math.min(stats.batters.length, count), Math.min(stats.pitchers.length, count)) }, (_, index) => <tr key={index}>
                 <th scope="row">{index + 1}</th>
-                <td><OtherPlayerLink player={stats.batters[index]} /></td><td>{stats.batters[index]?.team ?? "—"}</td><td className={ratingBand(stats.batters[index]?.rating)}>{formatRating(stats.batters[index]?.rating)}</td><td><Delta value={stats.batters[index]?.latestDateDelta} /></td>
-                <td><OtherPlayerLink player={stats.pitchers[index]} /></td><td>{stats.pitchers[index]?.team ?? "—"}</td><td className={ratingBand(stats.pitchers[index]?.rating)}>{formatRating(stats.pitchers[index]?.rating)}</td><td><Delta value={stats.pitchers[index]?.latestDateDelta} /></td>
+                <td><OtherPlayerLink player={stats.batters[index]} /></td><td>{stats.batters[index]?.team ?? "—"}</td><td className={ratingBand(stats.batters[index]?.rating)}>{formatRating(stats.batters[index]?.rating)}</td><td><OtherDeltaWithTooltip player={stats.batters[index]} role="batter" /></td>
+                <td><OtherPlayerLink player={stats.pitchers[index]} /></td><td>{stats.pitchers[index]?.team ?? "—"}</td><td className={ratingBand(stats.pitchers[index]?.rating)}>{formatRating(stats.pitchers[index]?.rating)}</td><td><OtherDeltaWithTooltip player={stats.pitchers[index]} role="pitcher" /></td>
               </tr>)}</tbody>
             </table></div>
             <div className="other-more-row"><button type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "접기 · 상위 10명" : "더보기 · 상위 50명"}</button></div>
           </section>
+          <LineupComparison pools={lineupPools} asOf={payload?.ratings?.meta?.asOf} />
         </>}
       </main>
       <SiteFooter status={payload?.ratings?.meta?.asOf ? `${payload.ratings.meta.asOf} 폼 기준` : undefined} />

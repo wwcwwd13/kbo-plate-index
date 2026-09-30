@@ -461,7 +461,7 @@ h2 {
   border: 1px solid var(--line-strong);
   background: #ffffff;
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: pan-x pan-y;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -901,6 +901,9 @@ h2 {
   display: grid;
   gap: 4px;
 }
+
+.other-delta-hover { display: inline-block; padding: 2px 4px; border-bottom: 1px dotted currentColor; cursor: help; }
+.other-delta-hover:focus-visible { outline: 2px solid var(--brand-blue-dark); outline-offset: 2px; }
 
 .diff-hover-card strong {
   font-size: 10px;
