@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
 import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
 import aboutContent from "./content/about.json";
-import releaseNotes from "./content/release_notes.json";
 import "../styles.css";
 
 const DEFAULT_PLAYER_ID = "player:demo:noname:batter";
@@ -17,7 +16,7 @@ function isPagePath(pageName) {
 }
 
 function siteRelativePrefix() {
-  return /\/(?:player|diff|other|about|release-note)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
+  return /\/(?:player|diff|other|about)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
 }
 
 function homeHref() {
@@ -355,7 +354,7 @@ function Delta({ value }) {
 function PageHeader() {
   const isDiffPage = isPagePath("diff");
   const isOtherPage = isPagePath("other");
-  const isAboutPage = isPagePath("about") || isPagePath("release-note");
+  const isAboutPage = isPagePath("about");
   return (
     <header className="page-header">
       <div className="header-main">
@@ -1020,38 +1019,12 @@ function HomePage() {
 
 function AboutPage() {
   const about = aboutContent && typeof aboutContent === "object" ? aboutContent : {};
-  const notes = Array.isArray(releaseNotes) ? releaseNotes : [];
-  const [activeTab, setActiveTab] = useState("about");
-  const sortedNotes = [...notes].sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? "")));
 
   return (
     <div className="page-shell">
       <PageHeader />
-      <main className="page-content release-note-page-content">
-        <div className="about-tabs" role="tablist" aria-label="About 하위 메뉴">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === "about"}
-            aria-controls="about-panel"
-            className={`about-tab${activeTab === "about" ? " is-active" : ""}`}
-            onClick={() => setActiveTab("about")}
-          >
-            About
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === "release-notes"}
-            aria-controls="release-notes-panel"
-            className={`about-tab${activeTab === "release-notes" ? " is-active" : ""}`}
-            onClick={() => setActiveTab("release-notes")}
-          >
-            Release Notes
-          </button>
-        </div>
-        {activeTab === "about" ? (
-        <section id="about-panel" className="sheet-card about-card" aria-labelledby="about-title">
+      <main className="page-content about-page-content">
+        <section className="sheet-card about-card" aria-labelledby="about-title">
           <div className="sheet-card-header">
             <div>
               <p className="kicker">ABOUT</p>
@@ -1076,39 +1049,6 @@ function AboutPage() {
             </ol>
           </div>
         </section>
-        ) : (
-        <section id="release-notes-panel" className="sheet-card release-note-card" aria-labelledby="release-note-title">
-          <div className="sheet-card-header">
-            <div>
-              <p className="kicker">RELEASE NOTE</p>
-              <h2 id="release-note-title">변경 기록</h2>
-              <p className="sheet-description">오늘의 폼의 주요 업데이트와 개발 기록입니다.</p>
-            </div>
-          </div>
-          <div className="release-note-list">
-            {sortedNotes.length ? sortedNotes.map((note, index) => {
-              const items = Array.isArray(note.items) ? note.items : [];
-              return (
-                <article className="release-note-entry" key={`${note.date ?? "note"}-${note.version ?? index}`}>
-                  <div className="release-note-entry-header">
-                    <div>
-                      <p className="release-note-version">{note.version || "Release Note"}</p>
-                      <h3>{note.title || "변경 사항"}</h3>
-                    </div>
-                    <time dateTime={note.date || undefined}>{note.date || "날짜 미상"}</time>
-                  </div>
-                  {note.summary ? <p className="release-note-summary">{note.summary}</p> : null}
-                  {items.length ? (
-                    <ul>
-                      {items.map((item, itemIndex) => <li key={`${item}-${itemIndex}`}>{item}</li>)}
-                    </ul>
-                  ) : <p className="release-note-empty">세부 변경 내용이 없습니다.</p>}
-                </article>
-              );
-            }) : <p className="release-note-empty">기록된 Release Note가 없습니다.</p>}
-          </div>
-        </section>
-        )}
       </main>
       <SiteFooter />
     </div>
@@ -2803,7 +2743,7 @@ function App() {
   if (isPagePath("player")) return <PlayerPage />;
   if (isPagePath("diff")) return <DiffPage />;
   if (isPagePath("other")) return <OtherPage />;
-  if (isPagePath("about") || isPagePath("release-note")) return <AboutPage />;
+  if (isPagePath("about")) return <AboutPage />;
   return <HomePage />;
 }
 

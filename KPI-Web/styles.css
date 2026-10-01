@@ -280,40 +280,8 @@ h2 {
 .other-more-row button { padding: 8px 20px; border: 1px solid #a98a68; border-radius: 4px; color: var(--brown-dark); background: #fffaf2; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
 .other-more-row button:hover, .other-more-row button:focus-visible { background: #f4e8d7; }
 
-.release-note-page-content {
+.about-page-content {
   max-width: 920px;
-}
-
-.about-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 12px;
-  border-bottom: 1px solid #d7dade;
-}
-
-.about-tab {
-  padding: 9px 15px 8px;
-  border: 1px solid transparent;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  background: transparent;
-  font: inherit;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.about-tab:hover,
-.about-tab:focus-visible {
-  color: var(--brown-dark);
-  background: #fafafa;
-}
-
-.about-tab.is-active {
-  border-color: #d7dade;
-  border-bottom-color: var(--brown-mid);
-  color: var(--brown-dark);
-  background: #ffffff;
-  font-weight: 700;
 }
 
 .about-card {
@@ -352,72 +320,6 @@ h2 {
 
 .about-rules li strong {
   color: var(--brown-dark);
-}
-
-.release-note-list {
-  display: grid;
-  gap: 12px;
-  padding: 14px 16px 18px;
-}
-
-.release-note-entry {
-  padding: 14px 16px;
-  border: 1px solid #d7dade;
-  border-left: 3px solid var(--brown-mid);
-  background: #ffffff;
-}
-
-.release-note-entry-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.release-note-version {
-  margin-bottom: 3px;
-  color: var(--brown-mid);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.release-note-entry h3 {
-  color: var(--brown-dark);
-  font-size: 15px;
-}
-
-.release-note-entry time {
-  flex: 0 0 auto;
-  color: var(--muted);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-}
-
-.release-note-summary {
-  margin-top: 10px;
-  color: #4d5257;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.release-note-entry ul {
-  display: grid;
-  gap: 5px;
-  margin: 11px 0 0;
-  padding-left: 18px;
-  color: #4d5257;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.release-note-empty {
-  margin: 0;
-  padding: 20px 4px;
-  color: var(--muted);
-  font-size: 11px;
-  text-align: center;
 }
 
 .legend {
