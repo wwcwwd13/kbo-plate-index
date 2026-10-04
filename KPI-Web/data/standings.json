@@ -1,7 +1,7 @@
 {
   "source": "https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx",
-  "checkedAt": "2026-09-30",
-  "asOf": "2026-09-30",
+  "checkedAt": "2026-10-04",
+  "asOf": "2026-10-04",
   "season": 2026,
   "teams": [
     {
@@ -14,11 +14,11 @@
     },
     {
       "rank": 3,
-      "team": "LG"
+      "team": "KIA"
     },
     {
       "rank": 4,
-      "team": "KIA"
+      "team": "LG"
     },
     {
       "rank": 5,
@@ -26,15 +26,15 @@
     },
     {
       "rank": 6,
-      "team": "NC"
+      "team": "SSG"
     },
     {
       "rank": 7,
-      "team": "롯데"
+      "team": "NC"
     },
     {
       "rank": 8,
-      "team": "SSG"
+      "team": "롯데"
     },
     {
       "rank": 9,

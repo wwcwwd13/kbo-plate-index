@@ -163,7 +163,7 @@ function gameLeagueLabel(value) {
   return String(value ?? "").trim() || "—";
 }
 
-const TEAM_ORDER_2025 = ["LG", "한화", "삼성", "SSG", "NC", "KT", "두산", "롯데", "KIA", "키움"];
+const TEAM_ORDER_2025 = ["LG", "한화", "삼성", "SSG", "NC", "KT", "롯데", "KIA", "두산", "키움"];
 
 function canonicalTeamLabel(value) {
   const normalized = String(value ?? "").trim().toLowerCase();
@@ -1849,6 +1849,24 @@ function chartTooltipHtml(entry, delta) {
   </div>`;
 }
 
+function chartInitialTooltipHtml(initial) {
+  const rating = toNumber(initial?.rating) ?? 50;
+  const reference = toNumber(initial?.referenceRating);
+  const lines = reference === null
+    ? ["초기 계산 근거가 없습니다."]
+    : [
+        `${initial?.pitcherIsStarter === null ? "2군 기준" : "2군·구원 기준"} ${formatRating(reference)}점`,
+        ...(initial?.firstLeague === "1군" ? [`1군 +${formatRating(initial.leagueBonus)}점`] : ["첫 등장 2군"]),
+        ...(initial?.pitcherIsStarter === true ? [`선발 +${formatRating(initial.starterBonus)}점`]
+          : initial?.pitcherIsStarter === false ? ["첫 등판 구원"] : [])
+      ];
+  return `<div class="echarts-tooltip-content">
+    <span class="echarts-tooltip-kicker">초기값</span>
+    <strong>폼 ${escapeChartHtml(formatRating(rating))}</strong>
+    <div class="echarts-tooltip-lines">${lines.map((line) => `<span>${escapeChartHtml(line)}</span>`).join("")}</div>
+  </div>`;
+}
+
 function chartDateFromAxisValue(value) {
   const date = new Date(Number(value));
   if (!Number.isFinite(date.getTime())) return String(value ?? "");
@@ -1871,6 +1889,7 @@ function RatingChart({ ratings, player }) {
   const [showAllGames, setShowAllGames] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const entries = useMemo(() => buildChartEntries(viewMode, ratings, player), [viewMode, ratings, player]);
+  const initialRating = toNumber(player?.initialRating?.rating) ?? 50;
   const selectedAppearances = useMemo(() => selectedDate
     ? sortAppearances(player).filter((appearance) => appearance.date === selectedDate)
     : [], [player, selectedDate]);
@@ -1897,7 +1916,7 @@ function RatingChart({ ratings, player }) {
       ? recentStartIndexCandidate
       : Math.max(0, entries.length - Math.min(entries.length, 30));
 
-    // Leave a visible gap from the 50.0 starting point even when there are hundreds of appearances.
+    // Leave a visible gap from the initial rating even with hundreds of appearances.
     const plateAppearanceBaselineGap = Math.max(1, entries.length * 0.035);
     const plateAppearanceXValues = entries.map((_, index) => index + plateAppearanceBaselineGap);
     const plateAppearanceMaxValue = plateAppearanceBaselineGap + entries.length;
@@ -1930,8 +1949,8 @@ function RatingChart({ ratings, player }) {
   }, [entries, isZoomable]);
 
   const values = entries.map((entry) => entry.rating);
-  const observedMin = entries.length ? Math.min(50, ...values) : 0;
-  const observedMax = entries.length ? Math.max(50, ...values) : 100;
+  const observedMin = entries.length ? Math.min(initialRating, ...values) : 0;
+  const observedMax = entries.length ? Math.max(initialRating, ...values) : 100;
   const observedRange = Math.max(observedMax - observedMin, 1);
   const bottomMargin = entries.length ? Math.max(observedRange * 0.05, 0.5) : 0;
   const topMargin = entries.length ? observedRange * 0.1 : 0;
@@ -1978,12 +1997,12 @@ function RatingChart({ ratings, player }) {
     const lineSeries = [{
       type: "line",
       name: "시작 폼",
-      data: [{ value: [baselineX, 50], isBaseline: true }, [xValues[0], entries[0].rating]],
+      data: [{ value: [baselineX, initialRating], isBaseline: true }, [xValues[0], entries[0].rating]],
       showSymbol: true,
       symbol: "circle",
       symbolSize: (_, params) => params.dataIndex === 0 ? 8 : 0,
-      silent: true,
-      tooltip: { show: false },
+      silent: false,
+      emphasis: { disabled: true },
       itemStyle: { color: initialPalette.fill, borderColor: initialPalette.border, borderWidth: 1.6 },
       lineStyle: { color: initialPalette.line, width: 2.5 },
       z: 3
@@ -2080,13 +2099,16 @@ function RatingChart({ ratings, player }) {
         textStyle: { color: "#2f3133", fontFamily: "Arial, Noto Sans KR, Malgun Gothic, sans-serif", fontSize: 11 },
         formatter: (params) => {
           const items = Array.isArray(params) ? params : [params];
+          if (items.some((candidate) => candidate?.data?.isBaseline)) {
+            return chartInitialTooltipHtml(player?.initialRating);
+          }
           const item = items.find((candidate) => candidate?.seriesName === "폼" && candidate?.data?.entryIndex !== undefined)
             ?? items.find((candidate) => candidate?.data?.entryIndex !== undefined)
             ?? items[0];
           const index = Number(item?.data?.entryIndex);
           return Number.isInteger(index) && entries[index]
             ? chartTooltipHtml(entries[index], deltaForIndex(index))
-            : items.some((candidate) => candidate?.data?.isBaseline) ? "시작 폼 50.0" : "";
+            : "";
         }
       },
       xAxis: {
@@ -2207,7 +2229,7 @@ function RatingChart({ ratings, player }) {
         } : undefined
       }]
     };
-  }, [axisMax, axisMin, entries, isZoomable, maximumRating, showAllGames, timelineInfo, yAxisLabelValues]);
+  }, [axisMax, axisMin, entries, initialRating, isZoomable, maximumRating, player?.initialRating, showAllGames, timelineInfo, yAxisLabelValues]);
 
   useEffect(() => {
     const element = chartRef.current;
