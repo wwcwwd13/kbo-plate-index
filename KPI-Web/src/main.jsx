@@ -1,7 +1,8 @@
 ﻿import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings, fetchRatingModels } from "./data";
+import { ratingModelHref, selectedRatingModel, switchRatingModel } from "./ratingModel";
 import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
 import { initialRatingLines } from "./initialRating";
 import aboutContent from "./content/about.json";
@@ -21,12 +22,12 @@ function siteRelativePrefix() {
 }
 
 function homeHref() {
-  return siteRelativePrefix();
+  return ratingModelHref(siteRelativePrefix());
 }
 
 function pageHref(pageName, query = "") {
   const suffix = query ? (query.startsWith("?") ? query : `?${query}`) : "";
-  return `${siteRelativePrefix()}${pageName}/${suffix}`;
+  return ratingModelHref(`${siteRelativePrefix()}${pageName}/${suffix}`);
 }
 
 function playerPageHref(player) {
@@ -353,6 +354,15 @@ function Delta({ value }) {
 }
 
 function PageHeader() {
+  const model = selectedRatingModel();
+  const [availableModels, setAvailableModels] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetchRatingModels().then((catalog) => {
+      if (!cancelled) setAvailableModels(catalog.models.map((item) => item.family));
+    }).catch(() => { if (!cancelled) setAvailableModels([]); });
+    return () => { cancelled = true; };
+  }, []);
   const isDiffPage = isPagePath("diff");
   const isOtherPage = isPagePath("other");
   const isAboutPage = isPagePath("about");
@@ -372,6 +382,13 @@ function PageHeader() {
           <a className={isOtherPage ? "is-active" : ""} href={pageHref("other")}>기타</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
+        <div className="rating-model-switch" role="group" aria-label="Rating 모델 보기">
+          {["v3", "v4"].map((family) => <button key={family} type="button"
+            aria-pressed={model === family} disabled={availableModels !== null && !availableModels.includes(family)}
+            onClick={() => { if (model !== family) switchRatingModel(family); }}>
+            {family.toUpperCase()}{family === "v3" ? " 비교" : ""}
+          </button>)}
+        </div>
       </div>
     </header>
   );
@@ -921,7 +938,8 @@ function DiffPage() {
         const latest = nextDates.some((option) => option.date === result?.latest)
           ? result.latest
           : nextDates[nextDates.length - 1]?.date ?? "";
-        setSelectedDate(latest);
+        const requestedDate = new URLSearchParams(window.location.search).get("date");
+        setSelectedDate(nextDates.some((option) => option.date === requestedDate) ? requestedDate : latest);
       })
       .catch((nextError) => { if (!cancelled) setError(nextError); });
     return () => { cancelled = true; };
@@ -948,7 +966,12 @@ function DiffPage() {
             <h2 id="diff-title">오늘의 폼 변동</h2>
             <label className="diff-date-control">
               <span>경기일</span>
-              <select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} disabled={!dates.length}>
+              <select value={selectedDate} onChange={(event) => {
+                const url = new URL(window.location.href);
+                url.searchParams.set("date", event.target.value);
+                window.history.replaceState(null, "", url);
+                setSelectedDate(event.target.value);
+              }} disabled={!dates.length}>
                 {!dates.length ? <option value="">날짜를 불러오는 중</option> : dates.map((option) => (
                   <option key={option.date} value={option.date}>
                     {formatDateWithWeekday(option.date)} · {option.gameCount}경기

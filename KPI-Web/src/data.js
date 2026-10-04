@@ -1,3 +1,13 @@
+import { selectedRatingModel } from "./ratingModel";
+
+function apiPath(route, params = {}) {
+  return `${configuredApiBase()}${route}?${new URLSearchParams({ ...params, rating_model: selectedRatingModel() })}`;
+}
+
+export async function fetchRatingModels() {
+  return fetchJson(`${configuredApiBase()}/api/rating-models`);
+}
+
 function isDirectoryPagePath() {
   const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
   return /\/(?:player|diff|other)\/(?:index\.html)?$/.test(pathname);
@@ -53,10 +63,10 @@ export async function fetchTeamRatings() {
 
   if (isLocalHost() || apiBase) {
     try {
-      return await fetchJson(`${apiBase}/api/team-ratings`);
+      return await fetchJson(apiPath("/api/team-ratings"));
     } catch (error) {
       // Local development can continue with the reference table while the API starts.
-      if (!isLocalHost()) throw error;
+      if (!isLocalHost() || selectedRatingModel() === "v3") throw error;
     }
   }
 
@@ -83,14 +93,13 @@ export async function fetchOtherStats() {
 export async function fetchRatingDiffDates() {
   const apiBase = configuredApiBase();
   if (!isLocalHost() && !apiBase) throw new Error("KPI API is not configured");
-  return fetchJson(`${apiBase}/api/rating-diff-dates`);
+  return fetchJson(apiPath("/api/rating-diff-dates"));
 }
 
 export async function fetchRatingDiff(date) {
   const apiBase = configuredApiBase();
   if (!isLocalHost() && !apiBase) throw new Error("KPI API is not configured");
-  const query = date ? `?date=${encodeURIComponent(date)}` : "";
-  return fetchJson(`${apiBase}/api/rating-diffs${query}`);
+  return fetchJson(apiPath("/api/rating-diffs", date ? { date } : {}));
 }
 
 function normalize(value) {
@@ -157,11 +166,11 @@ export async function fetchPlayerDetail(playerId) {
   const canUseApi = isLocalHost() || apiBase;
   if (!canUseApi) return fetchJson(DATA_PATHS.playerDetail);
 
-  const query = new URLSearchParams({ player_id: playerId }).toString();
   try {
-    const data = await fetchJson(`${apiBase}/api/player?${query}`);
+    const data = await fetchJson(apiPath("/api/player", { player_id: playerId }));
     return attachApiAssetUrls(data, apiBase);
   } catch (error) {
+    if (!isLocalHost() || selectedRatingModel() === "v3") throw error;
     // Keep the static fixture available when the API is not running yet.
     return fetchJson(DATA_PATHS.playerDetail);
   }
