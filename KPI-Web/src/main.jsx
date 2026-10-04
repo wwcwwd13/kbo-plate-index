@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
 import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
+import { initialRatingLines } from "./initialRating";
 import aboutContent from "./content/about.json";
 import "../styles.css";
 
@@ -1851,15 +1852,7 @@ function chartTooltipHtml(entry, delta) {
 
 function chartInitialTooltipHtml(initial) {
   const rating = toNumber(initial?.rating) ?? 50;
-  const reference = toNumber(initial?.referenceRating);
-  const lines = reference === null
-    ? ["초기 계산 근거가 없습니다."]
-    : [
-        `${initial?.pitcherIsStarter === null ? "2군 기준" : "2군·구원 기준"} ${formatRating(reference)}점`,
-        ...(initial?.firstLeague === "1군" ? [`1군 +${formatRating(initial.leagueBonus)}점`] : ["첫 등장 2군"]),
-        ...(initial?.pitcherIsStarter === true ? [`선발 +${formatRating(initial.starterBonus)}점`]
-          : initial?.pitcherIsStarter === false ? ["첫 등판 구원"] : [])
-      ];
+  const lines = initialRatingLines(initial);
   return `<div class="echarts-tooltip-content">
     <span class="echarts-tooltip-kicker">초기값</span>
     <strong>폼 ${escapeChartHtml(formatRating(rating))}</strong>
