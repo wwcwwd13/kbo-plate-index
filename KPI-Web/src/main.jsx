@@ -386,10 +386,10 @@ function PageHeader() {
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
         <div className="rating-model-switch" role="group" aria-label="Rating 모델 보기">
-          {["v3", "v4", "v4.1"].map((family) => <button key={family} type="button"
+          {["v3", "v4.2"].map((family) => <button key={family} type="button"
             aria-pressed={model === family} disabled={availableModels !== null && !availableModels.includes(family)}
             onClick={() => {
-              if (model !== family || (family === "v4.1" && new URLSearchParams(window.location.search).has("rating_model"))) {
+              if (model !== family || (family === "v4.2" && new URLSearchParams(window.location.search).has("rating_model"))) {
                 switchRatingModel(family);
               }
             }}>
@@ -928,6 +928,42 @@ function CombinedDiffRatingTable({ sections }) {
   );
 }
 
+function DiffMovementRankings({ sections }) {
+  const rankings = useMemo(() => {
+    const players = sections.flatMap((section) => (section.teams ?? []).flatMap((team) =>
+      ["batter", "pitcher"].flatMap((role) => (team[role === "batter" ? "batters" : "pitchers"] ?? [])
+        .map((player) => ({ ...player, role, team: team.team, league: section.league, delta: toNumber(player.ratingDelta) })))));
+    const tieBreak = (a, b) => String(a.name ?? "").localeCompare(String(b.name ?? ""), "ko")
+      || String(a.playerId ?? "").localeCompare(String(b.playerId ?? ""));
+    return [
+      players.filter((player) => player.delta > 0).sort((a, b) => b.delta - a.delta || tieBreak(a, b)).slice(0, 10),
+      players.filter((player) => player.delta !== null && player.delta < 0).sort((a, b) => a.delta - b.delta || tieBreak(a, b)).slice(0, 10)
+    ];
+  }, [sections]);
+
+  return <div className="diff-movement-grid">
+    {rankings.map((players, direction) => {
+      const title = `폼 변동 ${direction === 0 ? "상승" : "하강"} 순위 Top 10`;
+      return <section className="sheet-card diff-movement-card" key={direction} aria-labelledby={`diff-movement-${direction}`}>
+        <h2 id={`diff-movement-${direction}`}>{title}</h2>
+        <div className="other-table-scroll">
+          <table className="other-table diff-movement-table" aria-label={title}>
+            <thead><tr><th scope="col">순위</th><th scope="col">선수</th><th scope="col">구단</th><th scope="col">리그</th><th scope="col">역할</th><th scope="col">폼</th><th scope="col">변동</th></tr></thead>
+            <tbody>{players.length ? players.map((player, index) =>
+              <tr key={`${player.playerId ?? player.name}-${player.role}-${player.league}-${player.team}`}>
+                <td>{index + 1}</td><td><OtherPlayerLink player={player} /></td><td>{player.team}</td>
+                <td>{sectionDisplayName(player.league)}</td><td>{player.role === "batter" ? "타자" : "투수"}</td>
+                <td className={ratingBand(player.rating)}>{formatRating(player.rating)}</td>
+                <td><DailyDeltaWithTooltip value={player.delta} diff={player} role={player.role} /></td>
+              </tr>) : <tr><td colSpan="7" className="diff-movement-empty">{direction === 0 ? "상승" : "하강"}한 선수가 없습니다.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </section>;
+    })}
+  </div>;
+}
+
 function DiffPage() {
   const [dates, setDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
@@ -1002,6 +1038,7 @@ function DiffPage() {
             </div>
           ) : null}
         </section>
+        {!error && data && sections.length > 0 ? <DiffMovementRankings sections={sections} /> : null}
       </main>
       <SiteFooter status={meta?.date ? `${meta.date} 기준` : "기준일 확인 중"} />
     </div>
@@ -1113,7 +1150,7 @@ function AboutPage() {
   if (model === "v3") {
     about.modelSections = [{ title: "점수를 구하는 방식", paragraphs: [
       "타석을 시간순으로 읽으며 타자와 투수의 능력을 함께 갱신합니다. 초기 능력은 공통 기준에서 시작하고, 정상 볼넷은 1군의 주자·아웃 상황별 관측값을 사용합니다.",
-      "v3 비교에는 기존 계산·표시 환산을 유지합니다. v4와 v4.1의 구장·좌우 상성·등판 내 피로 보정 및 적응 Q는 적용하지 않습니다."
+      "v3 비교에는 기존 계산·표시 환산을 유지합니다. v4.2의 구장·좌우 상성·등판 내 피로 보정 및 적응 Q는 적용하지 않습니다."
     ] }];
     about.limitations = { intro: "v3는 이전 계산 결과와 비교하기 위한 모델입니다.", items: [
       { title: "경기 조건", detail: "구장·좌우 상성·등판 내 피로를 별도 보정하지 않습니다." },
@@ -1129,7 +1166,7 @@ function AboutPage() {
     about.modelSections = about.modelSections.map((section) => ({ ...section }));
     about.modelSections[0] = { ...about.modelSections[0], paragraphs: [
       ...about.modelSections[0].paragraphs,
-      ...(model === "v4.1" ? ["v4.1은 경기 조건에 따른 예측 계수를 갱신식에도 반영합니다. 같은 방향의 예측 오차가 이어지면 해당 선수의 다음 참여 타석부터 갱신 폭을 키웁니다. 좋은 결과와 나쁜 결과 양쪽에 반응합니다."] : [])
+      ...(model === "v4.2" ? ["v4.2는 주자·아웃 상황에 따른 계수를 예측에만 사용하고 갱신 폭에는 직접 곱하지 않습니다. 기본 과정 분산(Q)은 0이며, 같은 방향의 예측 오차가 이어지면 해당 선수의 다음 참여 타석부터 추가 분산을 반영합니다. 좋은 결과와 나쁜 결과 양쪽에 반응하며, 기본 Q가 0이어도 남아 있는 추정 불확실성에 따라 점수는 계속 갱신됩니다.", "점수 갱신에는 결과군별 관측값을 사용합니다. 검증에 사용하는 실제 득점·주자 상태 변화와는 다른 값이며, 갱신식은 경험적 규칙을 포함합니다."] : [])
     ] };
     about.modelSections[1] = { ...about.modelSections[1], body: `${about.modelSections[1].body} 수치는 ${native.asOf}의 ${model} 표시 눈금 기준입니다.` };
   }
@@ -1265,13 +1302,17 @@ function OtherPlayerLink({ player }) {
 }
 
 function OtherDeltaWithTooltip({ player, role }) {
+  return <DailyDeltaWithTooltip value={player?.latestDateDelta} diff={player?.latestDateDiff} role={role} />;
+}
+
+function DailyDeltaWithTooltip({ value, diff, role }) {
   const tooltip = useDiffHover();
-  if (!player?.latestDateDiff) return <Delta value={player?.latestDateDelta} />;
+  if (!diff) return <Delta value={value} />;
 
   return <span className="other-delta-hover" tabIndex={0}
     onMouseEnter={tooltip.show} onMouseLeave={tooltip.hide} onFocus={tooltip.show} onBlur={tooltip.hide}>
-    <Delta value={player.latestDateDelta} />
-    {tooltip.visible && tooltip.position ? <DiffHoverCard player={player.latestDateDiff} role={role} position={tooltip.position} /> : null}
+    <Delta value={value} />
+    {tooltip.visible && tooltip.position ? <DiffHoverCard player={diff} role={role} position={tooltip.position} /> : null}
   </span>;
 }
 
@@ -1956,8 +1997,7 @@ function chartDeltaHtml(value) {
   const number = toNumber(value);
   if (number === null || number === 0) return "—";
   const color = number > 0 ? "#236bb5" : "#c23535";
-  const arrow = number > 0 ? "▲" : "▼";
-  return `<span style="color:${color};font-weight:700">${arrow}${Math.abs(number).toFixed(1)}</span>`;
+  return `<span style="color:${color};font-weight:700">${formatDiffDelta(number)}</span>`;
 }
 
 function chartTooltipHtml(entry, delta) {

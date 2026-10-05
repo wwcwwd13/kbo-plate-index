@@ -873,6 +873,17 @@ h2 {
   border-right: 0;
 }
 
+.diff-movement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
+.diff-movement-card { min-width: 0; }
+.diff-movement-card h2 { margin: 0; padding: 15px 18px; font-size: 16px; color: var(--brown-dark); }
+.diff-movement-table { min-width: 480px; }
+.diff-movement-table th, .diff-movement-table td { padding: 9px 10px; text-align: center; }
+.diff-movement-table th:nth-child(2), .diff-movement-table td:nth-child(2) { text-align: left; }
+.diff-movement-table .delta-positive,
+.diff-movement-table .delta-negative { font-size: 14px; padding: 4px 10px; }
+.diff-movement-table td.diff-movement-empty { padding: 24px 10px; text-align: center; color: var(--muted); }
+@media (max-width: 1000px) { .diff-movement-grid { grid-template-columns: 1fr; } }
+
 .diff-toolbar {
   display: flex;
   align-items: center;

@@ -11,7 +11,7 @@ read = lambda path: json.loads(path.read_text(encoding='utf-8-sig'))
 manifest = read(args.run_manifest)
 if read(run/'validation.json')['errors']:
     raise ValueError('Calculation must pass validation before export')
-families = {'v4.1': ('config.json','rating')} if manifest['base_model'].startswith('kpi-v4.1-') else {'v4':('config.json','rating')}
+families = {manifest['base_model'].split('-')[1]: ('config.json','rating')}
 if manifest.get('comparison_v4_model_version'): families['v4'] = ('config-v4.json','rating-v4')
 out = {}
 for family,(config_file,folder) in families.items():
