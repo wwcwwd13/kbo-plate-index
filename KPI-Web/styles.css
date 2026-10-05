@@ -291,10 +291,225 @@ h2 {
 .about-copy {
   display: grid;
   gap: 8px;
-  padding: 14px 16px 18px;
+  padding: 16px 18px;
+  color: #4d5257;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.about-model {
+  display: grid;
+  margin: 0 18px 22px;
+  border-top: 1px solid #d7dade;
+}
+
+.about-model-section {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 3fr;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e4e6e8;
+}
+
+.about-model-section h3 {
+  color: var(--brown-dark);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.about-model-body {
+  display: grid;
+  gap: 9px;
+}
+
+.about-model-section p {
+  color: #4d5257;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.about-effects {
+  display: grid;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.about-context-effect {
+  display: grid;
+  gap: 3px;
+  padding: 7px 9px;
+  border: 1px solid #e6e9eb;
+  background: #fafbfc;
+}
+
+.about-context-effect strong {
+  color: #5d6369;
+  font-size: 11px;
+}
+
+.about-model-section .about-context-effect p {
+  color: #5d6369;
+  font-size: 11px;
+}
+
+.about-effect-highlights {
+  display: grid;
+  gap: 9px;
+}
+
+.about-effect-highlight {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e0e4e7;
+  background: #f8fafb;
+}
+
+.about-effect-highlight h4,
+.about-park-heading h4 {
+  margin: 0;
+  color: var(--brown-dark);
+  font-size: 11px;
+}
+
+.about-effect-highlight > strong {
+  display: block;
+  margin: 5px 0;
+  color: #254f69;
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+.about-effect-highlight p {
+  font-size: 11px;
+}
+
+.about-fatigue-table {
+  width: 100%;
+  margin-top: 9px;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.about-fatigue-table th,
+.about-fatigue-table td {
+  padding: 5px 9px;
+  border-bottom: 1px solid #e0e4e7;
+}
+
+.about-fatigue-table th { text-align: left; }
+.about-fatigue-table td { color: #254f69; font-weight: 700; text-align: right; }
+.about-fatigue-table thead th { background: #eef2f4; color: #4d5257; font-weight: 700; }
+.about-fatigue-table thead th:last-child { text-align: right; }
+
+.about-park-effects {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e0e4e7;
+  background: #f8fafb;
+}
+
+.about-park-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 9px;
+  margin-bottom: 7px;
+}
+
+.about-park-heading span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.about-park-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.about-park {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid #e0e4e7;
+  background: #fff;
+  font-size: 10px;
+}
+
+.about-park strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.about-park .effect-batter { color: #a74b37; }
+.about-park .effect-pitcher { color: #315f7d; }
+
+.about-model-section .about-effects-footnote {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+@media (max-width: 580px) {
+  .about-model-section {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .about-park-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.about-limitations {
+  margin: 0 18px 22px;
+  padding-top: 15px;
+  border-top: 1px solid #d7dade;
+}
+
+.about-limitations h3 {
+  color: var(--brown-dark);
+  font-size: 15px;
+}
+
+.about-limitations-intro {
+  margin-top: 7px;
   color: #4d5257;
   font-size: 11px;
   line-height: 1.6;
+}
+
+.about-limitations ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 13px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-limitations li {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #e4e6e8;
+  background: #fafbfc;
+  color: #4d5257;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.about-limitations li strong {
+  color: var(--brown-dark);
+  font-size: 12px;
+}
+
+@media (max-width: 580px) {
+  .about-limitations ul { grid-template-columns: 1fr; }
 }
 
 .about-rules {

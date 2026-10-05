@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings, fetchRatingModels } from "./data";
 import { ratingModelHref, selectedRatingModel, switchRatingModel } from "./ratingModel";
 import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
+import { ratingAxisScale, visibleLineRatings } from "./ratingChartAxis";
 import { initialRatingLines } from "./initialRating";
 import aboutContent from "./content/about.json";
 import "../styles.css";
@@ -1041,6 +1042,64 @@ function HomePage() {
   );
 }
 
+function AboutEffects({ effects }) {
+  if (!effects || typeof effects !== "object") return null;
+  const parks = (Array.isArray(effects.parks) ? effects.parks : []).slice().sort((a, b) => a.points - b.points);
+  const fatigue = effects.fatigue ?? {};
+  const fatigueInnings = Array.from({ length: fatigue.innings ?? 0 }, (_, index) => ({
+    inning: index + 1,
+    points: fatigue.coefficient * Math.pow(index * fatigue.battersPerInning, fatigue.exponent)
+  }));
+
+  return (
+    <div className="about-effects">
+      <div className="about-effect-highlights">
+        <div className="about-effect-highlight">
+          <h4>좌우 상성</h4>
+          <strong>{effects.hand?.value}</strong>
+          <p>{effects.hand?.detail}</p>
+        </div>
+        <div className="about-effect-highlight">
+          <h4>투수 피로</h4>
+          <p>{fatigue.detail}</p>
+          <table className="about-fatigue-table" aria-label="이닝 시작 시점별 예상 투수 피로 감점">
+            <thead><tr><th scope="col">이닝 시작</th><th scope="col">예상 감점</th></tr></thead>
+            <tbody>
+              {fatigueInnings.map(({ inning, points }) => (
+                <tr key={inning}>
+                  <th scope="row">{inning}회</th>
+                  <td>{inning === 1 ? "0점" : `−${points.toFixed(2)}점`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="about-park-effects">
+        <div className="about-park-heading">
+          <h4>구장 효과</h4>
+          <span>1군 · 기준 구장 대비 · +는 타자 유리</span>
+        </div>
+        <div className="about-park-grid">
+          {parks.map((park) => (
+            <div className="about-park" key={park.name}>
+              <span>{park.name}</span>
+              <strong className={park.points > 0 ? "effect-batter" : park.points < 0 ? "effect-pitcher" : ""}>
+                {park.points > 0 ? `+${park.points.toFixed(1)}` : park.points < 0 ? `−${Math.abs(park.points).toFixed(1)}` : "≈0.0"}점
+              </strong>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="about-context-effect">
+        <strong>주자·아웃 상황</strong>
+        <p>일정한 점수를 더하는 대신 예측에서 선수 간 능력 차이에 주는 비중을 바꿉니다.</p>
+      </div>
+      <p className="about-effects-footnote">※ 위 값은 회귀 분석을 통해 최적의 값을 찾아서 반영된 결과입니다.</p>
+    </div>
+  );
+}
+
 function AboutPage() {
   const about = aboutContent && typeof aboutContent === "object" ? aboutContent : {};
 
@@ -1061,6 +1120,32 @@ function AboutPage() {
               <p key={`${paragraph}-${index}`}>{paragraph}</p>
             ))}
           </div>
+          <section className="about-model" aria-label="폼 계산 방식">
+            {(Array.isArray(about.modelSections) ? about.modelSections : []).map((section) => (
+              <section className="about-model-section" key={section.title}>
+                <h3>{section.title}</h3>
+                <div className="about-model-body">
+                  {(Array.isArray(section.paragraphs) ? section.paragraphs : [section.body]).filter(Boolean).map((paragraph, index) => (
+                    <p key={`${section.title}-${index}`}>{paragraph}</p>
+                  ))}
+                  {section.showEffects ? <AboutEffects effects={about.effects} /> : null}
+                </div>
+              </section>
+            ))}
+          </section>
+          <section className="about-limitations" aria-labelledby="model-limitations-title">
+            <p className="kicker">MODEL LIMITATIONS</p>
+            <h3 id="model-limitations-title">현재 계산의 한계</h3>
+            <p className="about-limitations-intro">{about.limitations?.intro}</p>
+            <ul>
+              {(Array.isArray(about.limitations?.items) ? about.limitations.items : []).map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}</strong>
+                  <span>{item.detail}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
           <div className="about-rules" aria-labelledby="roster-classification-title">
             <p className="kicker">ROSTER CLASSIFICATION</p>
             <h3 id="roster-classification-title">선수군 이동 분류 규칙</h3>
@@ -1069,7 +1154,6 @@ function AboutPage() {
               <li><strong>2군</strong> 1군 명단에는 없고, 부상·재활 상태가 아니며 최근 30일 이내 경기에 출전한 선수</li>
               <li><strong>잔류군</strong> 부상·재활 중이거나 최근 경기 기록이 30일을 초과한 선수</li>
               <li><strong>소속 말소</strong> 현재 팀 소속으로 계속 뛰기 어려운 것으로 판단되는 선수</li>
-              <li><strong>판정의 한계</strong> 위 규칙을 기준으로 분류하려고 노력하지만 예외가 많고 데이터가 부족해 실제 선수 소속과 다르게 보일 수 있습니다. 현재 계속 수정 중입니다.</li>
             </ol>
           </div>
         </section>
@@ -1900,6 +1984,29 @@ function ratingLeaguePalette(league) {
   return { key: "unknown", label: "기타", fill: "#8a9299", border: "#626970", line: "#737b82" };
 }
 
+function ratingYAxisOption(scale) {
+  return {
+    type: "value",
+    min: scale.min,
+    max: scale.max,
+    interval: scale.interval,
+    axisLine: { show: false },
+    axisTick: { show: false, customValues: scale.labels },
+    axisLabel: {
+      color: "#727980",
+      fontSize: 11,
+      customValues: scale.labels,
+      formatter: (value) => {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return "";
+        const tick = Math.round(number / scale.interval) * scale.interval;
+        return Math.abs(number - tick) < 0.000001 ? String(Number(tick.toFixed(2))) : "";
+      }
+    },
+    splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
+  };
+}
+
 function RatingChart({ ratings, player }) {
   const [viewMode, setViewMode] = useState("game");
   const [showAllGames, setShowAllGames] = useState(true);
@@ -1916,6 +2023,7 @@ function RatingChart({ ratings, player }) {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const chartOptionRef = useRef({});
+  const chartAxisUpdaterRef = useRef(null);
 
   const isZoomable = viewMode === "game";
   const timelineInfo = useMemo(() => {
@@ -1925,15 +2033,15 @@ function RatingChart({ ratings, player }) {
     const useTimeScale = isZoomable && validTimes.length === entries.length && validTimes.length > 1;
     const earliest = validTimes.length ? Math.min(...validTimes) : 0;
     const latest = validTimes.length ? Math.max(...validTimes) : 0;
-    const baselineTime = earliest - Math.max(dayMilliseconds, (latest - earliest) * 0.035);
+    const baselineTime = earliest - dayMilliseconds;
     const recentStartTime = Math.max(earliest, latest - 30 * dayMilliseconds);
     const recentStartIndexCandidate = times.findIndex((time) => Number.isFinite(time) && time >= recentStartTime);
     const recentStartIndex = recentStartIndexCandidate >= 0
       ? recentStartIndexCandidate
       : Math.max(0, entries.length - Math.min(entries.length, 30));
 
-    // Leave a visible gap from the initial rating even with hundreds of appearances.
-    const plateAppearanceBaselineGap = Math.max(1, entries.length * 0.035);
+    // Place the initial rating one appearance before the first record.
+    const plateAppearanceBaselineGap = 1;
     const plateAppearanceXValues = entries.map((_, index) => index + plateAppearanceBaselineGap);
     const plateAppearanceMaxValue = plateAppearanceBaselineGap + entries.length;
     const recentPlateAppearanceStartValue = entries.length > 100
@@ -1965,24 +2073,9 @@ function RatingChart({ ratings, player }) {
   }, [entries, isZoomable]);
 
   const values = entries.map((entry) => entry.rating);
-  const observedMin = entries.length ? Math.min(initialRating, ...values) : 0;
-  const observedMax = entries.length ? Math.max(initialRating, ...values) : 100;
-  const observedRange = Math.max(observedMax - observedMin, 1);
-  const bottomMargin = entries.length ? Math.max(observedRange * 0.05, 0.5) : 0;
-  const topMargin = entries.length ? observedRange * 0.1 : 0;
-  const axisMin = entries.length ? Math.max(0, observedMin - bottomMargin) : 0;
-  // Keep the intended 10% headroom. Rounding this value up to the next
-  // multiple of 10 made the visible upper margin jump from roughly 70 to 80.
-  const axisMax = entries.length ? observedMax + topMargin : 100;
-  const yAxisLabelValues = useMemo(() => {
-    const first = Math.ceil(axisMin / 10) * 10;
-    const last = Math.floor(axisMax / 10) * 10;
-    const values = [];
-    for (let value = first; value <= last; value += 10) {
-      values.push(value);
-    }
-    return values;
-  }, [axisMax, axisMin]);
+  const axisScale = useMemo(() => ratingAxisScale([initialRating, ...entries.map((entry) => entry.rating)]), [entries, initialRating]);
+  const axisMin = axisScale.min;
+  const axisMax = axisScale.max;
   const maximumRating = entries.length ? Math.max(...values) : null;
   const maximumIndex = entries.reduce((lastIndex, entry, index) => (isSameRating(entry.rating, maximumRating) ? index : lastIndex), -1);
   const maximumEntry = maximumIndex >= 0 ? entries[maximumIndex] : null;
@@ -2154,26 +2247,7 @@ function RatingChart({ ratings, player }) {
         },
         splitLine: { show: false }
       },
-      yAxis: {
-        type: "value",
-        min: axisMin,
-        max: axisMax,
-        interval: 10,
-        axisLine: { show: false },
-        axisTick: { show: false, customValues: yAxisLabelValues },
-        axisLabel: {
-          color: "#727980",
-          fontSize: 11,
-          customValues: yAxisLabelValues,
-          formatter: (value) => {
-            const number = Number(value);
-            if (!Number.isFinite(number)) return "";
-            const multiple = Math.round(number / 10) * 10;
-            return Math.abs(number - multiple) < 0.000001 ? String(multiple) : "";
-          }
-        },
-        splitLine: { lineStyle: { color: "#e1e4e7", width: 1 } }
-      },
+      yAxis: ratingYAxisOption(axisScale),
       dataZoom: entries.length > 1 ? [
         {
           type: "inside",
@@ -2245,7 +2319,7 @@ function RatingChart({ ratings, player }) {
         } : undefined
       }]
     };
-  }, [axisMax, axisMin, entries, initialRating, isZoomable, maximumRating, player?.initialRating, showAllGames, timelineInfo, yAxisLabelValues]);
+  }, [axisMax, axisMin, axisScale, entries, initialRating, isZoomable, maximumRating, player?.initialRating, showAllGames, timelineInfo]);
 
   useEffect(() => {
     const element = chartRef.current;
@@ -2266,6 +2340,34 @@ function RatingChart({ ratings, player }) {
         chart = echarts.init(element, null, { renderer: "canvas", useDirtyRect: false });
         chartInstanceRef.current = chart;
         chart.setOption(chartOptionRef.current, true);
+        const chartPoints = [
+          { x: timelineInfo.useTimeScale ? timelineInfo.baselineTime : 0, rating: initialRating },
+          ...entries.map((entry, index) => ({
+            x: timelineInfo.useTimeScale ? timelineInfo.times[index]
+              : isZoomable ? index + 1 : timelineInfo.plateAppearanceXValues[index],
+            rating: entry.rating
+          }))
+        ];
+        const fitVisibleYAxis = () => {
+          const currentOption = chart.getOption();
+          const zoom = currentOption.dataZoom?.[0];
+          const start = Number(zoom?.startValue);
+          const end = Number(zoom?.endValue);
+          const hasRange = zoom?.startValue != null && zoom?.endValue != null
+            && Number.isFinite(start) && Number.isFinite(end);
+          const visibleRatings = hasRange
+            ? visibleLineRatings(chartPoints, start, end)
+            : [];
+          const scale = ratingAxisScale(visibleRatings.length ? visibleRatings : chartPoints.map((point) => point.rating));
+          const currentAxis = currentOption.yAxis?.[0];
+          if (Math.abs(Number(currentAxis?.min) - scale.min) < 0.000001
+            && Math.abs(Number(currentAxis?.max) - scale.max) < 0.000001
+            && Number(currentAxis?.interval) === scale.interval) return;
+          chart.setOption({ yAxis: ratingYAxisOption(scale) }, { silent: true });
+        };
+        chartAxisUpdaterRef.current = fitVisibleYAxis;
+        chart.on("datazoom", fitVisibleYAxis);
+        fitVisibleYAxis();
         chart.getZr().on("click", (event) => {
           const grid = chart.getModel().getComponent("grid")?.coordinateSystem?.getRect();
           if (!grid || event.offsetX < grid.x || event.offsetX > grid.x + grid.width) return;
@@ -2301,8 +2403,10 @@ function RatingChart({ ratings, player }) {
         cleanupChart = () => {
           observer?.disconnect();
           if (!observer) window.removeEventListener("resize", resize);
+          chart.off("datazoom", fitVisibleYAxis);
           chart.dispose();
           if (chartInstanceRef.current === chart) chartInstanceRef.current = null;
+          if (chartAxisUpdaterRef.current === fitVisibleYAxis) chartAxisUpdaterRef.current = null;
         };
       })
       .catch((error) => {
@@ -2313,12 +2417,15 @@ function RatingChart({ ratings, player }) {
       disposed = true;
       cleanupChart();
     };
-  }, [entries, isZoomable, timelineInfo.useTimeScale, viewMode]);
+  }, [entries, initialRating, isZoomable, timelineInfo, viewMode]);
 
   useEffect(() => {
     chartOptionRef.current = chartOption;
     const chart = chartInstanceRef.current;
-    if (chart) chart.setOption(chartOption, true);
+    if (chart) {
+      chart.setOption(chartOption, true);
+      chartAxisUpdaterRef.current?.();
+    }
   }, [chartOption]);
 
   return (
