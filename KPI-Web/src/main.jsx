@@ -349,11 +349,11 @@ function deltaClass(value) {
   return number > 0 ? "delta-positive" : "delta-negative";
 }
 
-function Delta({ value }) {
+function Delta({ value, precision = 1 }) {
   const number = toNumber(value);
   if (number === null) return <span className="delta-neutral">—</span>;
   const sign = number > 0 ? "+" : "";
-  return <span className={deltaClass(number)}>{sign}{number.toFixed(1)}</span>;
+  return <span className={deltaClass(number)}>{sign}{number.toFixed(precision)}</span>;
 }
 
 function PageHeader() {
@@ -734,10 +734,10 @@ function diffDeltaClass(value) {
   return number > 0 ? "is-up" : "is-down";
 }
 
-function formatDiffDelta(value) {
+function formatDiffDelta(value, precision = 1) {
   const number = toNumber(value);
   if (number === null || number === 0) return "—";
-  return `${number > 0 ? "+" : "-"}${Math.abs(number).toFixed(1)}`;
+  return `${number > 0 ? "+" : "-"}${Math.abs(number).toFixed(precision)}`;
 }
 
 function floatingDiffTooltipPosition(rect) {
@@ -767,7 +767,7 @@ function DiffHoverCard({ player, role, position }) {
       <strong>{player.summary || (role === "pitcher" ? "당일 투구 기록 요약 없음" : "당일 타격 기록 요약 없음")}</strong>
       {plateAppearances.length ? plateAppearances.map((appearance, index) => (
         <span className="diff-hover-game" key={`${appearance.opponentName ?? "opponent"}-${appearance.result ?? "result"}-${index}`}>
-          vs. {appearance.opponentName || "—"}, {appearance.result || "결과 없음"}, <span className={diffDeltaClass(appearance.ratingDelta)}>{formatDiffDelta(appearance.ratingDelta)}</span>
+          vs. {appearance.opponentName || "—"}, {appearance.result || "결과 없음"}, <span className={diffDeltaClass(appearance.ratingDelta)}>{formatDiffDelta(appearance.ratingDelta, 2)}</span>
         </span>
       )) : <span className="diff-hover-game">세부 타석 기록이 없습니다.</span>}
     </div>,
@@ -1133,6 +1133,7 @@ function AboutEffects({ effects }) {
             </div>
           ))}
         </div>
+        <p className="about-park-detail">구장의 생김새에 따라서 타자/투수의 유불리가 발생합니다. 선수 능력은 구장 효과에 영향을 받습니다.</p>
       </div>
       <div className="about-context-effect">
         <strong>주자·아웃 상황</strong>
@@ -1164,10 +1165,6 @@ function AboutPage() {
       parks: native.parks.map((park) => ({ ...park, points: Number(park.points.toFixed(1)) }))
     };
     about.modelSections = about.modelSections.map((section) => ({ ...section }));
-    about.modelSections[0] = { ...about.modelSections[0], paragraphs: [
-      ...about.modelSections[0].paragraphs,
-      ...(model === "v4.2" ? ["v4.2는 주자·아웃 상황에 따른 계수를 예측에만 사용하고 갱신 폭에는 직접 곱하지 않습니다. 기본 과정 분산(Q)은 0이며, 같은 방향의 예측 오차가 이어지면 해당 선수의 다음 참여 타석부터 추가 분산을 반영합니다. 좋은 결과와 나쁜 결과 양쪽에 반응하며, 기본 Q가 0이어도 남아 있는 추정 불확실성에 따라 점수는 계속 갱신됩니다.", "점수 갱신에는 결과군별 관측값을 사용합니다. 검증에 사용하는 실제 득점·주자 상태 변화와는 다른 값이며, 갱신식은 경험적 규칙을 포함합니다."] : [])
-    ] };
     about.modelSections[1] = { ...about.modelSections[1], body: `${about.modelSections[1].body} 수치는 ${native.asOf}의 ${model} 표시 눈금 기준입니다.` };
   }
 
@@ -1993,11 +1990,11 @@ function escapeChartHtml(value) {
   }[character]));
 }
 
-function chartDeltaHtml(value) {
+function chartDeltaHtml(value, precision = 1) {
   const number = toNumber(value);
   if (number === null || number === 0) return "—";
   const color = number > 0 ? "#236bb5" : "#c23535";
-  return `<span style="color:${color};font-weight:700">${formatDiffDelta(number)}</span>`;
+  return `<span style="color:${color};font-weight:700">${formatDiffDelta(number, precision)}</span>`;
 }
 
 function chartTooltipHtml(entry, delta) {
@@ -2018,7 +2015,7 @@ function chartTooltipHtml(entry, delta) {
         `vs. ${gameContext}`,
         `${entry.plateAppearanceNumber ? `${entry.plateAppearanceNumber}번째 타석` : "타석 번호 없음"}`,
         `결과 ${entry.result || "—"}`,
-        `폼 변화 ${chartDeltaHtml(delta)}`
+        `폼 변화 ${chartDeltaHtml(delta, 2)}`
       ];
 
   return `<div class="echarts-tooltip-content">
@@ -2722,7 +2719,7 @@ function PlateAppearanceTable({ appearances, maximumRating, player }) {
                 <td>{appearance.plateAppearanceNumber || "—"}</td>
                 <td>{appearance.result || "—"}</td>
                 <td className={`${ratingBand(ratingValue)}${isMaximum ? " rating-history-max-rating" : ""}`}>{before !== null && after !== null ? `${formatRating(before)} → ${formatRating(after)}` : "—"}</td>
-                <td><Delta value={effect} /></td>
+                <td><Delta value={effect} precision={2} /></td>
               </tr>
             );
           }) : <tr><td colSpan="9">표시할 타석 기록이 없습니다.</td></tr>}
