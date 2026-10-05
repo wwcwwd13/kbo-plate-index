@@ -385,7 +385,6 @@ function PageHeader() {
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
         <div className="rating-model-switch" role="group" aria-label="Rating 모델 보기">
-          <span className="rating-model-label">버전</span>
           {["v3", "v4", "v4.1"].map((family) => <button key={family} type="button"
             aria-pressed={model === family} disabled={availableModels !== null && !availableModels.includes(family)}
             onClick={() => { if (model !== family) switchRatingModel(family); }}>
@@ -2891,6 +2890,10 @@ function PlayerPage() {
   }, [playerId]);
 
   const player = data?.player;
+  useEffect(() => {
+    document.title = player?.displayName ? `${player.displayName}의 폼` : "오늘의 폼";
+    return () => { document.title = "오늘의 폼"; };
+  }, [player?.displayName]);
   const ratings = player ? sortRatings(player) : [];
   return (
     <div className="page-shell">
