@@ -10,8 +10,10 @@ export function ratingModelHref(href, model = selectedRatingModel()) {
   const [address, hash] = href.split("#");
   const [path, query = ""] = address.split("?");
   const params = new URLSearchParams(query);
-  params.set("rating_model", model);
-  return `${path}?${params}${hash === undefined ? "" : `#${hash}`}`;
+  if (model === "v4.1") params.delete("rating_model");
+  else params.set("rating_model", model);
+  const search = params.toString();
+  return `${path}${search ? `?${search}` : ""}${hash === undefined ? "" : `#${hash}`}`;
 }
 
 export function switchRatingModel(model) {

@@ -1,4 +1,4 @@
-﻿import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings, fetchRatingModels } from "./data";
@@ -290,6 +290,7 @@ function ratingBand(value) {
   return "band-low";
 }
 
+
 const MEDICAL_STATUS_LABELS = {
   injury_list: "부상자 명단",
   rehab_list: "치료·재활 명단",
@@ -387,7 +388,11 @@ function PageHeader() {
         <div className="rating-model-switch" role="group" aria-label="Rating 모델 보기">
           {["v3", "v4", "v4.1"].map((family) => <button key={family} type="button"
             aria-pressed={model === family} disabled={availableModels !== null && !availableModels.includes(family)}
-            onClick={() => { if (model !== family) switchRatingModel(family); }}>
+            onClick={() => {
+              if (model !== family || (family === "v4.1" && new URLSearchParams(window.location.search).has("rating_model"))) {
+                switchRatingModel(family);
+              }
+            }}>
             {family}
           </button>)}
         </div>
