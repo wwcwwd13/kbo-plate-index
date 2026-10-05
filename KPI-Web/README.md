@@ -67,5 +67,6 @@ GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 �
 
 ```powershell
 python scripts/update-standings.py --run-manifest "../../KPI-Backend/database/daily-runs/<run-id>/manifest.json"
+python scripts/update-model-explanations.py --run-manifest "../../KPI-Backend/database/daily-runs/<run-id>/manifest.json"
 npm.cmd run build
 ```
