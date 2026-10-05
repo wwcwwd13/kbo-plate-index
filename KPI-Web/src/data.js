@@ -66,7 +66,7 @@ export async function fetchTeamRatings() {
       return await fetchJson(apiPath("/api/team-ratings"));
     } catch (error) {
       // Local development can continue with the reference table while the API starts.
-      if (!isLocalHost() || selectedRatingModel() === "v3") throw error;
+      if (!isLocalHost() || selectedRatingModel() !== "v4") throw error;
     }
   }
 
@@ -170,7 +170,7 @@ export async function fetchPlayerDetail(playerId) {
     const data = await fetchJson(apiPath("/api/player", { player_id: playerId }));
     return attachApiAssetUrls(data, apiBase);
   } catch (error) {
-    if (!isLocalHost() || selectedRatingModel() === "v3") throw error;
+    if (!isLocalHost() || selectedRatingModel() !== "v4") throw error;
     // Keep the static fixture available when the API is not running yet.
     return fetchJson(DATA_PATHS.playerDetail);
   }

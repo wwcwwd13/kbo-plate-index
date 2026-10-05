@@ -2049,6 +2049,8 @@ h2 {
 .header-main { width:100%; }
 .rating-model-switch { display:flex; gap:2px; margin-left:auto; padding:3px; border:1px solid #d4c8b8; border-radius:6px; background:#fffdf8; }
 .rating-model-switch button { padding:5px 10px; border:0; border-radius:3px; background:transparent; color:#695746; font:inherit; font-size:12px; cursor:pointer; white-space:nowrap; }
+.rating-model-label { display:flex; align-items:center; padding:0 9px; color:#695746; font-size:12px; border-right:1px solid #d4c8b8; }
+.rating-model-switch button + button { border-left:1px solid #e7ded2; }
 .rating-model-switch button[aria-pressed="true"] { background:#65452b; color:#fffdf8; }
 .rating-model-switch button:disabled { opacity:.45; cursor:default; }
 .rating-model-switch button:focus-visible { outline:2px solid #987143; outline-offset:2px; }
