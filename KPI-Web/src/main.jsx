@@ -440,7 +440,12 @@ function PlayerLink({ player }) {
   const [medicalTooltipCoordinates, setMedicalTooltipCoordinates] = useState(null);
   const medicalText = medicalStatusText(player);
   const asianGamesText = isAsianGamesAssignment(player) ? "아시안 게임 출전" : null;
-  const statusTooltipText = [medicalText, asianGamesText].filter(Boolean).join(" · ");
+  const usage = player?.pitcherUsage;
+  const pitcherMarks = [
+    ...(usage?.isStarter ? [{ label: "선", description: `선발투수 · 최근 1·2군 ${usage.starterWindowPlateAppearances ?? usage.plateAppearances}타석 중 1군 선발 등판에서 ${usage.starterPlateAppearances}타석을 상대했습니다. (50% 이상)` }] : []),
+    ...(usage?.isCloser ? [{ label: "마", description: `마무리투수 · 최근 1·2군 ${usage.plateAppearances}타석 중 1군 경기 9회에 ${usage.ninthInningPlateAppearances}타석을 상대했습니다. (50% 이상)` }] : [])
+  ];
+  const statusTooltipText = [medicalText, asianGamesText, ...pitcherMarks.map((mark) => mark.description)].filter(Boolean).join(" · ");
 
   const updateMedicalTooltipPosition = useCallback(() => {
     if (!medicalTooltipRef.current) return;
@@ -478,9 +483,10 @@ function PlayerLink({ player }) {
   if (!player) return <td className="name-cell empty-cell" aria-label="선수 없음" />;
   const grayClass = player.gray ? " is-gray" : "";
   const medicalClass = medicalText ? " is-medical" : "";
+  const contractClass = player.contractType === "자유선발" ? " is-foreign-player" : player.contractType === "아시아쿼터" ? " is-asia-quota" : "";
   const href = playerPageHref(player);
   return (
-    <td className={`name-cell${grayClass}${medicalClass}`}>
+    <td className={`name-cell${grayClass}${medicalClass}${contractClass}`}>
       <span
         ref={statusTooltipText ? medicalTooltipRef : null}
         className="player-name-content"
@@ -496,6 +502,7 @@ function PlayerLink({ player }) {
         )}
         {medicalText ? <span className="medical-status-mark" aria-label={medicalText}>+</span> : null}
         {asianGamesText ? <span className="asian-games-status-mark" aria-label={asianGamesText}>✵</span> : null}
+        {pitcherMarks.map((mark) => <span className="pitcher-role-mark" key={mark.label} tabIndex={0} aria-label={mark.description}>{mark.label}</span>)}
       </span>
       {medicalTooltipVisible && medicalTooltipCoordinates && statusTooltipText ? createPortal(
         <div
@@ -504,6 +511,7 @@ function PlayerLink({ player }) {
           style={{ left: `${medicalTooltipCoordinates.left}px`, top: `${medicalTooltipCoordinates.top}px` }}
         >
           {asianGamesText ? <strong>{asianGamesText}</strong> : null}
+          {pitcherMarks.map((mark) => <span key={mark.label}>{mark.description}</span>)}
           {medicalText ? <strong>{MEDICAL_STATUS_LABELS[player.medicalStatus] ?? "부상·재활 명단"}</strong> : null}
           {player.medicalEventDate ? <span>기준일 {formatDate(player.medicalEventDate)}</span> : null}
           {player.medicalNote ? <span>{player.medicalNote}</span> : null}
@@ -1075,6 +1083,8 @@ function HomePage() {
               <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
               <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
               <span className="legend-item"><span className="asian-games-legend-mark" aria-hidden="true">✵</span><span>아시안 게임 출전</span></span>
+              <span className="legend-item"><span className="legend-name-sample is-foreign-player">빨강</span><span>외국인 선수 · 자유선발</span></span>
+              <span className="legend-item"><span className="legend-name-sample is-asia-quota">파랑</span><span>아시아쿼터 선수</span></span>
               <span className="legend-item"><span className="legend-name-sample">회색</span><span>출전수 적음</span></span>
             </div>
           ) : null}
@@ -1365,7 +1375,15 @@ function LineupTeam({ side, pools }) {
   return <div className="lineup-team">
     <div className="lineup-team-heading">
       <label htmlFor={`lineup-team-${side}`}>{side === 1 ? "왼쪽 팀" : "오른쪽 팀"}</label>
-      <select id={`lineup-team-${side}`} value={selection.team} onChange={(event) => { setSelection({ team: event.target.value, batters: [], pitcher: "" }); setSearch(""); }}>
+      <select id={`lineup-team-${side}`} value={selection.team} onChange={(event) => {
+        const nextPool = pools.find((entry) => entry.team === event.target.value);
+        const available = new Set((nextPool?.batters ?? []).map((player) => player.playerId));
+        const recentBatters = [...(nextPool?.latestLineup?.batters ?? [])]
+          .sort((a, b) => a.battingOrder - b.battingOrder)
+          .map((entry) => entry.playerId).filter((id) => available.has(id));
+        setSelection({ team: event.target.value, batters: [...new Set(recentBatters)].slice(0, 9), pitcher: "" });
+        setSearch("");
+      }}>
         <option value="">구단 선택</option>
         {pools.map((entry) => <option key={entry.team} value={entry.team}>{entry.team}</option>)}
       </select>
@@ -1415,14 +1433,14 @@ function LineupTeam({ side, pools }) {
         <span className={selectedPitcher ? ratingBand(selectedPitcher.rating) : ""}>{selectedPitcher ? formatRating(selectedPitcher.rating) : "—"}</span>
       </div>
     </div>
-    <p className="lineup-progress">타자 {selection.batters.length}/9명 · 선발투수 {selection.pitcher ? "선택됨" : "미선택"}</p>
+    <p className="lineup-progress">타자 {selection.batters.length}/9명 · 선발투수 {selection.pitcher ? "선택됨" : "미선택"}{pool?.latestLineup?.date ? ` · ${formatDateWithWeekday(pool.latestLineup.date)} 선발 타순` : ""}</p>
   </div>;
 }
 
 function LineupComparison({ pools, asOf }) {
   return <section className="sheet-card other-card" aria-labelledby="lineup-title">
     <div className="sheet-card-header"><div><p className="kicker">LINEUP COMPARISON</p><h2 id="lineup-title">라인업 폼 비교</h2></div></div>
-    <p className="lineup-description">각 팀의 타자 9명을 목록에서 선택하고 드래그로 타순을 정한 뒤 선발투수를 고르세요. 모두 선택하면 (타자 폼 합계 + 선발투수 폼 × 6) ÷ 15로 계산합니다.{asOf ? ` · ${asOf} 폼 기준` : ""}</p>
+    <p className="lineup-description">구단을 선택하면 가장 최근 1군 경기의 선발 타순을 불러옵니다. 타자와 타순을 조정한 뒤 선발투수를 고르세요. 모두 선택하면 (타자 폼 합계 + 선발투수 폼 × 6) ÷ 15로 계산합니다.{asOf ? ` · ${asOf} 폼 기준` : ""}</p>
     <div className="lineup-grid"><LineupTeam side={1} pools={pools} /><LineupTeam side={2} pools={pools} /></div>
   </section>;
 }

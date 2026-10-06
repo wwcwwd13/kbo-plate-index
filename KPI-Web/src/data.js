@@ -49,7 +49,9 @@ function attachApiAssetUrls(data, apiBase) {
 }
 
 async function fetchJson(path) {
-  const response = await fetch(path, { cache: "no-store" });
+  // Revalidate stored responses so unchanged JSON can use an empty 304 reply.
+  // The browser merges that reply with its cached body automatically.
+  const response = await fetch(path, { cache: "no-cache" });
   if (!response.ok) throw new Error("HTTP " + response.status);
   return response.json();
 }

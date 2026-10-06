@@ -70,3 +70,8 @@ python scripts/update-standings.py --run-manifest "../../KPI-Backend/database/da
 python scripts/update-model-explanations.py --run-manifest "../../KPI-Backend/database/daily-runs/<run-id>/manifest.json"
 npm.cmd run build
 ```
+
+메인 팀 표는 API의 `contractType`에 따라 자유선발 선수 이름을 빨강, 아시아쿼터를 파랑으로 표시합니다.
+`pitcherUsage`의 최근 1·2군 최대 50타석(`starterWindowPlateAppearances`) 중 1군 선발 타석 비율이 50% 이상이면 `선`을 표시합니다. `마`는 기존대로 최근 최대 30타석(`plateAppearances`) 중 1군 9회 타석 비율이 50% 이상인 기준입니다. 2군 선발·9회 타석은 분자에 포함하지 않습니다.
+기타 통계의 라인업 비교는 구단 선택 시 `latestLineup.batters`를 타순대로 채우고 투수는 미선택으로 둡니다.
+계약 정보 수집과 스냅샷 생성 절차는 백엔드 `ops/DAILY_UPDATE.md`의 팀 화면 항목을 참고하세요.

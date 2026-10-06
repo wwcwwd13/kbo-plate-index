@@ -75,7 +75,7 @@ export function buildLineupPools(data) {
   const sections = Array.isArray(data?.sections) ? data.sections : [];
   const major = sections.find((section) => section.league === "1군");
   const pools = new Map((major?.teams ?? []).map((team) => [teamKey(team.team), {
-    team: teamKey(team.team), batters: new Map(), pitchers: new Map()
+    team: teamKey(team.team), batters: new Map(), pitchers: new Map(), latestLineup: team.latestLineup ?? null
   }]));
 
   for (const section of sections) {
@@ -93,6 +93,7 @@ export function buildLineupPools(data) {
 
   return [...pools.values()].map((pool) => ({
     team: pool.team,
+    latestLineup: pool.latestLineup,
     batters: [...pool.batters.values()].sort((a, b) => (a.league === "1군" ? 0 : 1) - (b.league === "1군" ? 0 : 1) || a.name.localeCompare(b.name, "ko")),
     pitchers: [...pool.pitchers.values()].sort((a, b) => (a.league === "1군" ? 0 : 1) - (b.league === "1군" ? 0 : 1) || a.name.localeCompare(b.name, "ko"))
   }));
