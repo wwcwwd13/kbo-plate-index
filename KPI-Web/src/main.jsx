@@ -1528,13 +1528,22 @@ function officialKboRecordUrls(player) {
   if (!playerId) return null;
 
   const query = new URLSearchParams({ playerId }).toString();
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isPhone = /iphone|android/.test(userAgent) && userAgent.includes("mobile");
+  const isTablet = /ipad/.test(userAgent)
+    || (userAgent.includes("macintosh") && navigator.maxTouchPoints > 1);
+  if (isPhone && !isTablet) {
+    const rolePath = isPitcherPlayer(player) ? "Pitcher" : "Hitter";
+    return [`https://m.koreabaseball.com/Kbo/Player/${rolePath}.aspx?${query}`];
+  }
+
   const paths = isPitcherPlayer(player)
     ? [
         "/Record/Player/PitcherDetail/Basic.aspx",
         "/Futures/Player/PitcherDetail.aspx"
       ]
     : [
-        "/Record/Player/HitterDetail/Daily.aspx",
+        "/Record/Player/HitterDetail/Basic.aspx",
         "/Futures/Player/HitterDetail.aspx"
       ];
 
