@@ -1,7 +1,7 @@
 {
   "source": "https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx",
   "checkedAt": "2026-10-12",
-  "asOf": "2026-10-11",
+  "asOf": "2026-10-12",
   "season": 2026,
   "teams": [
     {
@@ -30,11 +30,11 @@
     },
     {
       "rank": 7,
-      "team": "NC"
+      "team": "롯데"
     },
     {
       "rank": 8,
-      "team": "롯데"
+      "team": "NC"
     },
     {
       "rank": 9,
