@@ -1,8 +1,8 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings, fetchRatingModels } from "./data";
-import { ratingModelHref, selectedRatingModel, switchRatingModel } from "./ratingModel";
+import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { ratingModelHref, selectedRatingModel } from "./ratingModel";
 import modelEffects from "./content/model-effects.json";
 import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
 import { ratingAxisScale, visibleLineRatings } from "./ratingChartAxis";
@@ -357,15 +357,6 @@ function Delta({ value, precision = 1 }) {
 }
 
 function PageHeader() {
-  const model = selectedRatingModel();
-  const [availableModels, setAvailableModels] = useState(null);
-  useEffect(() => {
-    let cancelled = false;
-    fetchRatingModels().then((catalog) => {
-      if (!cancelled) setAvailableModels(catalog.models.map((item) => item.family));
-    }).catch(() => { if (!cancelled) setAvailableModels([]); });
-    return () => { cancelled = true; };
-  }, []);
   const isDiffPage = isPagePath("diff");
   const isOtherPage = isPagePath("other");
   const isAboutPage = isPagePath("about");
@@ -385,17 +376,6 @@ function PageHeader() {
           <a className={isOtherPage ? "is-active" : ""} href={pageHref("other")}>기타</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
-        <div className="rating-model-switch" role="group" aria-label="Rating 모델 보기">
-          {["v3", "v4.2"].map((family) => <button key={family} type="button"
-            aria-pressed={model === family} disabled={availableModels !== null && !availableModels.includes(family)}
-            onClick={() => {
-              if (model !== family || (family === "v4.2" && new URLSearchParams(window.location.search).has("rating_model"))) {
-                switchRatingModel(family);
-              }
-            }}>
-            {family}
-          </button>)}
-        </div>
       </div>
     </header>
   );
@@ -1157,17 +1137,8 @@ function AboutEffects({ effects }) {
 function AboutPage() {
   const model = selectedRatingModel();
   const about = { ...(aboutContent && typeof aboutContent === "object" ? aboutContent : {}) };
-  about.paragraphs = [`폼은 다음 타석을 예측하기 위한 선수의 현재 능력 추정치입니다. 현재 선택한 ${model} 모델의 계산 방식을 설명합니다.`];
-  if (model === "v3") {
-    about.modelSections = [{ title: "점수를 구하는 방식", paragraphs: [
-      "타석을 시간순으로 읽으며 타자와 투수의 능력을 함께 갱신합니다. 초기 능력은 공통 기준에서 시작하고, 정상 볼넷은 1군의 주자·아웃 상황별 관측값을 사용합니다.",
-      "v3 비교에는 기존 계산·표시 환산을 유지합니다. v4.2의 구장·좌우 상성·등판 내 피로 보정 및 적응 Q는 적용하지 않습니다."
-    ] }];
-    about.limitations = { intro: "v3는 이전 계산 결과와 비교하기 위한 모델입니다.", items: [
-      { title: "경기 조건", detail: "구장·좌우 상성·등판 내 피로를 별도 보정하지 않습니다." },
-      { title: "관측 자료", detail: "타구 속도·발사각 및 포수별 영향을 별도로 추정하지 않습니다." }
-    ] };
-  } else if (modelEffects[model]) {
+  about.paragraphs = [`폼은 다음 타석을 예측하기 위한 선수의 현재 능력 추정치입니다. ${model} 모델의 계산 방식을 설명합니다.`];
+  if (modelEffects[model]) {
     const native = modelEffects[model];
     about.effects = {
       hand: { value: `${(2 * native.hand).toFixed(2)}점`, detail: `반대손 상대가 같은손 상대보다 타자에게 유리합니다. 손 중립 기준으로는 반대손 +${native.hand.toFixed(2)}점, 같은손 −${native.hand.toFixed(2)}점입니다.` },
