@@ -1,0 +1,16 @@
+{
+  "season": 2026,
+  "asOf": "2026-11-08",
+  "teams": [
+    { "rank": 1, "team": "삼성" },
+    { "rank": 2, "team": "KT" },
+    { "rank": 3, "team": "KIA" },
+    { "rank": 4, "team": "LG" },
+    { "rank": 5, "team": "두산" },
+    { "rank": 6, "team": "SSG" },
+    { "rank": 7, "team": "롯데" },
+    { "rank": 8, "team": "NC" },
+    { "rank": 9, "team": "한화" },
+    { "rank": 10, "team": "키움" }
+  ]
+}

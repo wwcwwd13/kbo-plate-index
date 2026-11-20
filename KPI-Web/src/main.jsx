@@ -1,10 +1,11 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
-import { ratingModelHref, selectedRatingModel } from "./ratingModel";
+import { fetch2026FinalStandings, fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { selectedRatingModel } from "./ratingModel";
+import { selectedSeason, seasonHref, seasonSwitchUrl } from "./season";
 import modelEffects from "./content/model-effects.json";
-import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric } from "./otherStats";
+import { buildLineupPools, buildOtherStats, lineupWeightedRating, moveLineupBatter, rankTeamsByMetric, ratingOrder } from "./otherStats";
 import { ratingAxisScale, visibleLineRatings } from "./ratingChartAxis";
 import { initialRatingLines } from "./initialRating";
 import aboutContent from "./content/about.json";
@@ -24,12 +25,12 @@ function siteRelativePrefix() {
 }
 
 function homeHref() {
-  return ratingModelHref(siteRelativePrefix());
+  return seasonHref(siteRelativePrefix());
 }
 
 function pageHref(pageName, query = "") {
   const suffix = query ? (query.startsWith("?") ? query : `?${query}`) : "";
-  return ratingModelHref(`${siteRelativePrefix()}${pageName}/${suffix}`);
+  return seasonHref(`${siteRelativePrefix()}${pageName}/${suffix}`);
 }
 
 function playerPageHref(player) {
@@ -72,6 +73,7 @@ function normalizePlateAppearanceResult(value) {
 }
 
 function sectionDisplayName(league) {
+  if (league === "선수단") return league;
   if (["말소", "소속 말소", "released"].includes(league)) return "소속 말소";
   if (league === "잔류군" || league === "residual") return "잔류군";
   return league === "1군" || league === "major" ? "KBO 리그" : "퓨쳐스리그";
@@ -376,6 +378,15 @@ function PageHeader() {
           <a className={isOtherPage ? "is-active" : ""} href={pageHref("other")}>기타</a>
           <a className={isAboutPage ? "is-active" : ""} href={pageHref("about")}>About</a>
         </nav>
+        <label className="season-picker">
+          <span>시즌</span>
+          <select value={selectedSeason()} onChange={(event) => {
+            window.location.assign(seasonSwitchUrl(window.location.href, event.target.value));
+          }}>
+            <option value="2026">2026년</option>
+            <option value="2027">2027년</option>
+          </select>
+        </label>
       </div>
     </header>
   );
@@ -414,11 +425,11 @@ function EmptyDataState({ title = "구단 데이터가 없습니다.", children 
   );
 }
 
-function PlayerLink({ player }) {
+function PlayerLink({ player, showMedicalStatus = true }) {
   const medicalTooltipRef = useRef(null);
   const [medicalTooltipVisible, setMedicalTooltipVisible] = useState(false);
   const [medicalTooltipCoordinates, setMedicalTooltipCoordinates] = useState(null);
-  const medicalText = medicalStatusText(player);
+  const medicalText = showMedicalStatus ? medicalStatusText(player) : null;
   const asianGamesText = isAsianGamesAssignment(player) ? "아시안 게임 출전" : null;
   const usage = player?.pitcherUsage;
   const pitcherMarks = [
@@ -585,6 +596,7 @@ function sortedRatingTeams(teams) {
 
 function ratingSectionThemeClass(league) {
   const label = sectionDisplayName(league);
+  if (label === "선수단") return "palette-brand-blue";
   if (label === "\u004b\u0042\u004f \ub9ac\uadf8") return "palette-brand-blue";
   if (label.includes("\ub9d0\uc18c") || label === "\uc794\ub958\uad70") return "palette-brand-gray";
   return "palette-brand-brown";
@@ -596,12 +608,43 @@ function recordLeagueCellClassName(league) {
 }
 
 function ratingSectionOrder(section) {
-  const order = ["KBO 리그", "퓨쳐스리그", "잔류군", "소속 말소"];
+  const order = ["선수단", "KBO 리그", "퓨쳐스리그", "잔류군", "소속 말소"];
   const index = order.indexOf(sectionDisplayName(section?.league));
   return index === -1 ? order.length : index;
 }
 
-function CombinedTeamRatingTable({ sections }) {
+function archiveRosterSections(sections) {
+  const clubs = new Map();
+  const released = [];
+  for (const section of sections) {
+    if (sectionDisplayName(section.league) === "소속 말소") {
+      released.push(section);
+      continue;
+    }
+    for (const team of section.teams ?? []) {
+      const key = ratingTeamKey(team.team);
+      if (!clubs.has(key)) {
+        clubs.set(key, { team: key, league: "선수단", batters: new Map(), pitchers: new Map() });
+      }
+      const club = clubs.get(key);
+      for (const role of ["batters", "pitchers"]) {
+        for (const player of team[role] ?? []) {
+          const id = player.playerId ?? player.name;
+          if (!club[role].has(id)) club[role].set(id, player);
+        }
+      }
+    }
+  }
+  const teams = [...clubs.values()].map((club) => ({
+    ...club,
+    batters: [...club.batters.values()].sort(ratingOrder),
+    pitchers: [...club.pitchers.values()].sort(ratingOrder)
+  }));
+  return [...(teams.length ? [{ league: "선수단", teams }] : []), ...released];
+}
+
+function CombinedTeamRatingTable({ sections, teamOrder, archived = false }) {
+  if (archived) sections = archiveRosterSections(sections ?? []);
   const orderedSections = [...(sections ?? [])].sort((a, b) => ratingSectionOrder(a) - ratingSectionOrder(b));
   const teamMap = new Map();
 
@@ -613,7 +656,8 @@ function CombinedTeamRatingTable({ sections }) {
   });
 
   const teams = [...teamMap.values()].sort((a, b) => {
-    const orderDifference = teamOrderIndex(a.key) - teamOrderIndex(b.key);
+    const rank = (key) => teamOrder ? (teamOrder.get(key) ?? Infinity) : teamOrderIndex(key);
+    const orderDifference = rank(a.key) - rank(b.key);
     return orderDifference || String(a.label ?? "").localeCompare(String(b.label ?? ""), "ko");
   });
   const columnCount = teams.length * 4;
@@ -695,9 +739,9 @@ function CombinedTeamRatingTable({ sections }) {
                       const pitcher = team.pitchers?.[rowIndex] ?? null;
                       return (
                         <Fragment key={`${section.league}-${team.team}-${rowIndex}`}>
-                          <PlayerLink player={batter} />
+                          <PlayerLink player={batter} showMedicalStatus={!archived} />
                           <PlayerRating player={batter} />
-                          <PlayerLink player={pitcher} />
+                          <PlayerLink player={pitcher} showMedicalStatus={!archived} />
                           <PlayerRating player={pitcher} />
                         </Fragment>
                       );
@@ -1034,18 +1078,36 @@ function DiffPage() {
 }
 
 function HomePage() {
+  const is2027 = selectedSeason() === "2027";
+  const hasSeasonApi = !is2027 || Boolean(import.meta.env.VITE_API_2027_BASE_URL?.trim());
+  const [standings, setStandings] = useState(null);
+  const [standingsError, setStandingsError] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetchTeamRatings()
-      .then((nextData) => { if (!cancelled) setData(nextData); })
-      .catch((nextError) => { if (!cancelled) setError(nextError); });
+    if (is2027) {
+      fetch2026FinalStandings()
+        .then((rows) => { if (!cancelled) setStandings(rows); })
+        .catch(() => { if (!cancelled) setStandingsError(true); });
+    }
+    if (hasSeasonApi) {
+      fetchTeamRatings()
+        .then((nextData) => { if (!cancelled) setData(nextData); })
+        .catch((nextError) => { if (!cancelled) setError(nextError); });
+    }
     return () => { cancelled = true; };
-  }, []);
+  }, [is2027, hasSeasonApi]);
 
+  const teamOrder = standings && new Map(standings.map(({ team, rank }) => [ratingTeamKey(team), rank]));
   const sections = data?.sections ?? [];
+  const showEmptySeasonTable = is2027 && standings && !sections.length && (!hasSeasonApi || data || error);
+  const visibleSections = showEmptySeasonTable
+    ? ["1군", "2군", "잔류군", "소속 말소"].map((league) => ({
+        league, teams: standings.map(({ team }) => ({ team, batters: [], pitchers: [] }))
+      }))
+    : sections;
   const isUnavailable = Boolean(error) || Boolean(data && !sections.length);
   return (
     <div className="page-shell">
@@ -1053,15 +1115,20 @@ function HomePage() {
       <main className="page-content">
         <section className="sheet-card" aria-label="구단별 폼">
           <div className="rating-sections">
-            {isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState> : data ? <CombinedTeamRatingTable sections={sections} /> : <LoadingState>전체 선수 데이터를 불러오는 중입니다.</LoadingState>}
+            {standingsError ? <LoadError>2026년 최종 순위를 불러오지 못했습니다.</LoadError>
+              : is2027 && !standings ? <LoadingState>2026년 최종 순위를 불러오는 중입니다.</LoadingState>
+              : showEmptySeasonTable ? <CombinedTeamRatingTable sections={visibleSections} teamOrder={teamOrder} />
+              : isUnavailable ? <EmptyDataState>백엔드 API가 연결되면 이 영역에 구단별 표가 표시됩니다.</EmptyDataState>
+              : data ? <CombinedTeamRatingTable sections={sections} teamOrder={teamOrder} archived={!is2027} />
+              : <LoadingState>전체 선수 데이터를 불러오는 중입니다.</LoadingState>}
           </div>
-          {!isUnavailable ? (
+          {visibleSections.length > 0 && !standingsError && (!is2027 || standings) ? (
             <div className="legend team-rating-legend" aria-label="폼 색상 기준">
               <span className="legend-item"><i className="legend-swatch band-high" />80 이상</span>
               <span className="legend-item"><i className="legend-swatch band-good" />65–79.9</span>
               <span className="legend-item"><i className="legend-swatch band-mid" />50–64.9</span>
               <span className="legend-item"><i className="legend-swatch band-low" />50 미만</span>
-              <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span>
+              {is2027 ? <span className="legend-item"><i className="legend-status-mark">+</i>부상·재활 명단</span> : null}
               <span className="legend-item"><span className="asian-games-legend-mark" aria-hidden="true">✵</span><span>아시안 게임 출전</span></span>
               <span className="legend-item"><span className="legend-name-sample is-foreign-player">빨강</span><span>외국인 선수 · 자유선발</span></span>
               <span className="legend-item"><span className="legend-name-sample is-asia-quota">파랑</span><span>아시아쿼터 선수</span></span>
@@ -1070,7 +1137,7 @@ function HomePage() {
           ) : null}
         </section>
       </main>
-      <SiteFooter status={data?.meta?.asOf ? `${data.meta.asOf} 기준` : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
+      <SiteFooter status={data?.meta?.asOf ? `${data.meta.asOf} 기준` : is2027 && (!hasSeasonApi || isUnavailable) ? "2027 시즌 준비 중" : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
     </div>
   );
 }
@@ -1257,7 +1324,7 @@ function relatedPlayerIdForRole(player, targetRole) {
 }
 
 const OTHER_TEAM_COLUMNS = [
-  ["team", "팀명"], ["leagueRank", "현재 리그 순위"], ["teamStrength", "팀 전력"],
+  ["leagueRank", "순위"], ["team", "팀명"], ["teamStrength", "팀 전력"],
   ["batterStrength", "타자 전력"], ["pitcherStrength", "투수 전력"]
 ];
 
@@ -1408,6 +1475,41 @@ function LineupTeam({ side, pools }) {
   </div>;
 }
 
+function InternationalPlayersTable({ title, players, showRole = false }) {
+  return (
+    <div className="other-table-scroll">
+      <table className="other-table international-player-table">
+        <caption>{title}</caption>
+        <thead><tr>
+          <th scope="col">순위</th><th scope="col">이름</th><th scope="col">소속팀</th>
+          {showRole ? <th scope="col">역할</th> : null}
+          <th scope="col">현재폼</th><th scope="col">최고폼</th>
+        </tr></thead>
+        <tbody>
+          {players.map((player, index) => (
+            <tr key={player.playerId}>
+              <td>{index + 1}</td>
+              <th scope="row"><span className="international-player-name">
+                <a className="player-link" href={playerPageHref(player)}>{player.name}</a>
+                {["소속 말소", "말소", "released"].includes(player.rosterSection) ? (
+                  <span className="release-status-mark"
+                    title={`계약해지: ${player.releaseDate ?? "날짜 미확인"}`}
+                    aria-label={`계약해지: ${player.releaseDate ?? "날짜 미확인"}`}>×</span>
+                ) : null}
+              </span></th>
+              <td>{ratingTeamKey(player.team)}</td>
+              {showRole ? <td>{player.role === "pitcher" ? "투수" : "타자"}</td> : null}
+              <td className={ratingBand(player.rating)}>{formatRating(player.rating)}</td>
+              <td className={ratingBand(player.peakRating)}>{formatRating(player.peakRating)}</td>
+            </tr>
+          ))}
+          {!players.length ? <tr><td colSpan={showRole ? 6 : 5}>표시할 선수가 없습니다.</td></tr> : null}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function LineupComparison({ pools, asOf }) {
   return <section className="sheet-card other-card" aria-labelledby="lineup-title">
     <div className="sheet-card-header"><div><p className="kicker">LINEUP COMPARISON</p><h2 id="lineup-title">라인업 폼 비교</h2></div></div>
@@ -1430,8 +1532,9 @@ function OtherPage() {
     return () => { cancelled = true; };
   }, []);
 
-  const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff) : null, [payload]);
-  const lineupPools = useMemo(() => payload ? buildLineupPools(payload.ratings) : [], [payload]);
+  const archived = selectedSeason() === "2026";
+  const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff, { archived }) : null, [payload, archived]);
+  const lineupPools = useMemo(() => payload && !archived ? buildLineupPools(payload.ratings) : [], [payload, archived]);
   const strengthRanks = useMemo(() => stats ? Object.fromEntries(
     ["teamStrength", "batterStrength", "pitcherStrength"].map((key) => [key, rankTeamsByMetric(stats.teams, key)])
   ) : {}, [stats]);
@@ -1445,7 +1548,7 @@ function OtherPage() {
   }), [stats, sort]);
   const changeSort = (key) => setSort((current) => ({
     key,
-    direction: current.key === key ? -current.direction : key === "team" || key === "leagueRank" ? 1 : -1
+    direction: current.key === key ? -current.direction : key === "leagueRank" ? 1 : -1
   }));
   const count = expanded ? 50 : 10;
 
@@ -1460,7 +1563,25 @@ function OtherPage() {
         {error ? <section className="sheet-card"><LoadError>통계 데이터를 불러오지 못했습니다. API와 순위 데이터를 확인해 주세요.</LoadError></section> : !stats ? <section className="sheet-card"><LoadingState>기타 통계를 불러오는 중입니다.</LoadingState></section> : <>
           <section className="sheet-card other-card" aria-labelledby="other-team-title">
             <div className="sheet-card-header"><div><p className="kicker">CLUB STRENGTH</p><h2 id="other-team-title">팀 통계</h2></div></div>
-            <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>{OTHER_TEAM_COLUMNS.map(([key, label]) => <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}><button type="button" onClick={() => changeSort(key)}>{label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span></button></th>)}</tr></thead><tbody>{teams.map((team) => <tr key={team.team}><th scope="row">{team.team}</th><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
+            <div className="other-table-scroll"><table className="other-table other-team-table"><thead><tr>
+              {OTHER_TEAM_COLUMNS.map(([key, label]) => key === "team" ? (
+                <th key={key} scope="col">{label}</th>
+              ) : (
+                <th key={key} scope="col" aria-sort={sort.key === key ? sort.direction === 1 ? "ascending" : "descending" : "none"}>
+                  <button type="button" onClick={() => changeSort(key)}>
+                    {label}<span className="sort-indicator" aria-hidden="true">{sort.key === key ? sort.direction === 1 ? "▲" : "▼" : "↕"}</span>
+                  </button>
+                </th>
+              ))}
+            </tr></thead><tbody>{teams.map((team) => <tr key={team.team}><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><th scope="row">{team.team}</th><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
+          </section>
+          <section className="sheet-card other-card" aria-labelledby="international-players-title">
+            <div className="sheet-card-header"><h2 id="international-players-title">외국인 선수 폼 순위</h2></div>
+            <div className="international-player-grid">
+              <InternationalPlayersTable title="외국인 투수" players={stats.foreignPitchers} />
+              <InternationalPlayersTable title="외국인 타자" players={stats.foreignBatters} />
+              <InternationalPlayersTable title="아시아쿼터" players={stats.asiaQuota} showRole />
+            </div>
           </section>
           <section className="sheet-card other-card" aria-labelledby="ranking-title">
             <div className="sheet-card-header"><div><p className="kicker">PLAYER RANKINGS</p><h2 id="ranking-title">전체 선수 폼 순위</h2></div></div>
@@ -1474,7 +1595,7 @@ function OtherPage() {
             </table></div>
             <div className="other-more-row"><button type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "접기 · 상위 10명" : "더보기 · 상위 50명"}</button></div>
           </section>
-          <LineupComparison pools={lineupPools} asOf={payload?.ratings?.meta?.asOf} />
+          {!archived && <LineupComparison pools={lineupPools} asOf={payload?.ratings?.meta?.asOf} />}
         </>}
       </main>
       <SiteFooter status={payload?.ratings?.meta?.asOf ? `${payload.ratings.meta.asOf} 폼 기준` : undefined} />
@@ -2947,7 +3068,7 @@ function PlayerPage() {
             <RatingHistory ratings={ratings} player={player} />
             <PlateAppearances player={player} />
           </>
-        ) : <LoadingState>선수 데이터를 불러오는 중입니다.</LoadingState>}
+        ) : data ? <EmptyDataState title="이 시즌의 선수 기록이 없습니다." /> : <LoadingState>선수 데이터를 불러오는 중입니다.</LoadingState>}
       </main>
       <SiteFooter />
     </div>

@@ -255,6 +255,30 @@ h2 {
 @media (max-width: 720px) { .lineup-grid { grid-template-columns: 1fr; } }
 @media (max-width: 420px) { .lineup-picker-options { grid-template-columns: 1fr; } }
 .other-table-scroll { overflow-x: auto; }
+.international-player-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 24px;
+}
+.international-player-grid > .other-table-scroll {
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+.other-table.international-player-table { width: 100%; min-width: 0; }
+.international-player-table tr > :is(th, td) { padding-inline: 12px; }
+.international-player-table tr > :first-child { text-align: center; }
+.international-player-table tr > :nth-child(2) { text-align: left; }
+.international-player-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  white-space: nowrap;
+}
+.international-player-table caption {
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 700;
+}
 .other-table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
 .other-table th, .other-table td { padding: 9px 13px; border-bottom: 1px solid #e4e6e8; text-align: right; white-space: nowrap; }
 .other-table thead th { background: #f4f5f6; color: #5b5b5b; font-size: 11px; font-weight: 700; }
@@ -267,6 +291,7 @@ h2 {
 .other-table td.rank-upper { background: var(--green); }
 .other-table td.rank-lower { background: var(--yellow); }
 .other-table td.rank-last { background: var(--red); }
+.other-table.other-team-table { width: auto; min-width: 0; }
 .other-team-table thead button { width: 100%; border: 0; padding: 0; color: inherit; background: transparent; font: inherit; text-align: inherit; cursor: pointer; }
 .other-team-table thead button:hover, .other-team-table thead button:focus-visible { color: var(--brown-dark); text-decoration: underline; }
 .sort-indicator { margin-left: 6px; color: #92775b; font-size: 9px; }
@@ -744,6 +769,7 @@ h2 {
 .pitcher-role-mark { flex: 0 0 auto; padding: 1px 3px; border: 1px solid #d9cdbd; border-radius: 3px; color: #6b5136; background: #fffaf0; font-size: 9px; font-weight: 700; line-height: 1.2; cursor: help; }
 .pitcher-role-mark:focus-visible { outline: 2px solid #987143; outline-offset: 1px; }
 
+.release-status-mark { color: #a53434; font-weight: 700; }
 .medical-status-mark,
 .legend-status-mark {
   flex: 0 0 auto;
@@ -2071,10 +2097,31 @@ h2 {
 
 /* The selection applies to every rating view and survives page navigation. */
 .header-main { width:100%; }
-.rating-model-switch { display:flex; gap:2px; margin-left:auto; padding:3px; border:1px solid #d4c8b8; border-radius:6px; background:#fffdf8; }
-.rating-model-switch button { padding:5px 10px; border:0; border-radius:3px; background:transparent; color:#695746; font:inherit; font-size:12px; cursor:pointer; white-space:nowrap; }
-.rating-model-switch button + button { border-left:1px solid #e7ded2; }
-.rating-model-switch button[aria-pressed="true"] { background:#65452b; color:#fffdf8; }
-.rating-model-switch button:disabled { opacity:.45; cursor:default; }
-.rating-model-switch button:focus-visible { outline:2px solid #987143; outline-offset:2px; }
-@media(max-width:540px) { .header-main { flex-wrap:wrap; gap:6px 12px; } .rating-model-switch { margin-left:0; } .rating-model-switch button { padding:5px 7px; font-size:11px; } }
+.season-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  color: #695746;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.season-picker select {
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid #c9b9a5;
+  border-radius: 6px;
+  background: #fffdf8;
+  color: #463321;
+  font: inherit;
+  cursor: pointer;
+}
+.season-picker select:focus-visible {
+  outline: 2px solid #987143;
+  outline-offset: 2px;
+}
+@media (max-width: 540px) {
+  .header-main { flex-wrap: wrap; gap: 6px 12px; }
+  .header-main .top-nav { order: 1; flex: 0 0 100%; }
+}

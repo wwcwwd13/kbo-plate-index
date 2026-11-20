@@ -2,6 +2,7 @@ const TEAM_ALIASES = {
   lg: "LG", hh: "한화", ss: "삼성", ssg: "SSG", nc: "NC",
   kt: "KT", ob: "두산", lt: "롯데", kia: "KIA", wo: "키움"
 };
+const KBO_CLUBS = new Set(Object.values(TEAM_ALIASES));
 
 export function teamKey(value) {
   const key = String(value ?? "").trim().toLowerCase();
@@ -20,11 +21,44 @@ export function rankTeamsByMetric(teams, key) {
     .map((team, index) => [team.team, index + 1]));
 }
 
-export function buildOtherStats(data, standings, latestDiff) {
+function archiveTeamStrength(sections, rankByTeam) {
+  const rosters = new Map([...rankByTeam.keys()].map((team) => [
+    team, { batters: new Map(), pitchers: new Map() }
+  ]));
+  for (const section of sections) {
+    if (String(section.league).replace(/\s/g, "") === "소속말소") continue;
+    for (const team of section.teams ?? []) {
+      const key = teamKey(team.team ?? team.teamName);
+      const roster = rosters.get(key === "고양" ? "키움" : key);
+      if (!roster) continue;
+      for (const role of ["batters", "pitchers"]) {
+        for (const player of team[role] ?? []) {
+          if (!player.playerId || player.rating == null || !Number.isFinite(Number(player.rating))) continue;
+          if (!roster[role].has(player.playerId)) roster[role].set(player.playerId, Number(player.rating));
+        }
+      }
+    }
+  }
+  const topNineMean = (ratings) => {
+    const top = [...ratings.values()].sort((a, b) => b - a).slice(0, 9);
+    return top.length ? top.reduce((sum, rating) => sum + rating, 0) / top.length : null;
+  };
+  return [...rosters].map(([team, roster]) => {
+    const batterStrength = topNineMean(roster.batters);
+    const pitcherStrength = topNineMean(roster.pitchers);
+    return {
+      team, leagueRank: rankByTeam.get(team), batterStrength, pitcherStrength,
+      teamStrength: batterStrength == null || pitcherStrength == null
+        ? null : (batterStrength + pitcherStrength) / 2
+    };
+  });
+}
+
+export function buildOtherStats(data, standings, latestDiff, { archived = false } = {}) {
   const sections = Array.isArray(data?.sections) ? data.sections : [];
   const major = sections.find((section) => section.league === "1군");
   const rankByTeam = new Map((standings?.teams ?? []).map((entry) => [teamKey(entry.team), entry.rank]));
-  const teams = (major?.teams ?? []).map((team) => ({
+  const teams = archived ? archiveTeamStrength(sections, rankByTeam) : (major?.teams ?? []).map((team) => ({
     team: teamKey(team.team),
     leagueRank: rankByTeam.get(teamKey(team.team)) ?? null,
     teamStrength: team.averages?.average18 ?? null,
@@ -54,6 +88,7 @@ export function buildOtherStats(data, standings, latestDiff) {
           players.set(player.playerId, {
             ...player,
             role,
+            rosterSection: section.league,
             team: teamKey(team.team ?? team.teamName),
             latestDateDelta: dailyPlayers.get(player.playerId)?.ratingDelta ?? null,
             latestDateDiff: dailyPlayers.get(player.playerId) ?? null
@@ -64,10 +99,17 @@ export function buildOtherStats(data, standings, latestDiff) {
   }
   const all = [...players.values()];
   const byRole = (role, filter = () => true) => all.filter((player) => player.role === role && filter(player)).sort(ratingOrder);
+  const international = all.filter((player) => {
+    const club = player.team === "고양" ? "키움" : player.team;
+    return KBO_CLUBS.has(club) && player.rating != null && Number.isFinite(Number(player.rating));
+  }).sort(ratingOrder);
   return {
     teams,
     batters: byRole("batter").slice(0, 50),
-    pitchers: byRole("pitcher").slice(0, 50)
+    pitchers: byRole("pitcher").slice(0, 50),
+    foreignPitchers: international.filter((player) => player.contractType === "자유선발" && player.role === "pitcher"),
+    foreignBatters: international.filter((player) => player.contractType === "자유선발" && player.role === "batter"),
+    asiaQuota: international.filter((player) => player.contractType === "아시아쿼터")
   };
 }
 

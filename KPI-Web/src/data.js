@@ -1,3 +1,4 @@
+import { selectedSeason } from "./season";
 import { selectedRatingModel } from "./ratingModel";
 
 function apiPath(route, params = {}) {
@@ -27,7 +28,14 @@ function isLocalHost() {
 }
 
 function configuredApiBase() {
-  return String(import.meta.env.VITE_API_BASE_URL ?? "").trim().replace(/\/$/, "");
+  const base = selectedSeason() === "2027"
+    ? import.meta.env.VITE_API_2027_BASE_URL
+    : (import.meta.env.VITE_API_2026_BASE_URL ?? import.meta.env.VITE_API_BASE_URL);
+  return String(base ?? "").trim().replace(/\/$/, "");
+}
+
+function isSeasonAwaitingApi() {
+  return selectedSeason() === "2027" && !configuredApiBase();
 }
 
 function resolveApiAssetUrl(value, apiBase) {
@@ -56,7 +64,16 @@ async function fetchJson(path) {
   return response.json();
 }
 
+export async function fetch2026FinalStandings() {
+  const data = await fetchJson(staticDataPath("standings-2026.json"));
+  if (data.season !== 2026 || !Array.isArray(data.teams) || data.teams.length !== 10) {
+    throw new Error("2026 final standings are unavailable");
+  }
+  return [...data.teams].sort((a, b) => a.rank - b.rank);
+}
+
 export async function fetchTeamRatings() {
+  if (isSeasonAwaitingApi()) return { sections: [] };
   const apiBase = configuredApiBase();
 
   if (!isLocalHost() && !apiBase) {
@@ -86,19 +103,21 @@ export async function fetchTeamRatings() {
 export async function fetchOtherStats() {
   const [ratings, standings, latestDiff] = await Promise.all([
     fetchTeamRatings(),
-    fetchJson(staticDataPath("standings.json")),
+    selectedSeason() === "2027" ? { teams: [] } : fetchJson(staticDataPath("final-standings-2026.json")),
     fetchRatingDiff()
   ]);
   return { ratings, standings, latestDiff };
 }
 
 export async function fetchRatingDiffDates() {
+  if (isSeasonAwaitingApi()) return { latest: null, dates: [] };
   const apiBase = configuredApiBase();
   if (!isLocalHost() && !apiBase) throw new Error("KPI API is not configured");
   return fetchJson(apiPath("/api/rating-diff-dates"));
 }
 
 export async function fetchRatingDiff(date) {
+  if (isSeasonAwaitingApi()) return { meta: { date: null, hasGames: false }, sections: [] };
   const apiBase = configuredApiBase();
   if (!isLocalHost() && !apiBase) throw new Error("KPI API is not configured");
   return fetchJson(apiPath("/api/rating-diffs", date ? { date } : {}));
@@ -164,6 +183,7 @@ function attachPlayerIds(data, linkMap) {
 }
 
 export async function fetchPlayerDetail(playerId) {
+  if (isSeasonAwaitingApi()) return { player: null };
   const apiBase = configuredApiBase();
   const canUseApi = isLocalHost() || apiBase;
   if (!canUseApi) return fetchJson(DATA_PATHS.playerDetail);
