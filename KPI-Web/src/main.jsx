@@ -1475,6 +1475,27 @@ function LineupTeam({ side, pools }) {
   </div>;
 }
 
+function ReleaseStatusMark({ date }) {
+  const [position, setPosition] = useState(null);
+  const label = `계약해지: ${date ?? "날짜 미확인"}`;
+
+  function showTooltip(event) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    setPosition({ left: Math.max(8, Math.min(bounds.left, window.innerWidth - 170)), top: bounds.top });
+  }
+
+  return <>
+    <span className="release-status-mark" tabIndex={0} aria-label={label}
+      onMouseEnter={showTooltip} onMouseLeave={() => setPosition(null)}
+      onFocus={showTooltip} onBlur={() => setPosition(null)}
+      onKeyDown={event => { if (event.key === "Escape") setPosition(null); }}>×</span>
+    {position && createPortal(
+      <span className="release-status-tooltip" style={position} aria-hidden="true">{label}</span>,
+      document.body,
+    )}
+  </>;
+}
+
 function InternationalPlayersTable({ title, players, showRole = false }) {
   return (
     <div className="other-table-scroll">
@@ -1492,9 +1513,7 @@ function InternationalPlayersTable({ title, players, showRole = false }) {
               <th scope="row"><span className="international-player-name">
                 <a className="player-link" href={playerPageHref(player)}>{player.name}</a>
                 {["소속 말소", "말소", "released"].includes(player.rosterSection) ? (
-                  <span className="release-status-mark"
-                    title={`계약해지: ${player.releaseDate ?? "날짜 미확인"}`}
-                    aria-label={`계약해지: ${player.releaseDate ?? "날짜 미확인"}`}>×</span>
+                  <ReleaseStatusMark date={player.releaseDate} />
                 ) : null}
               </span></th>
               <td>{ratingTeamKey(player.team)}</td>
