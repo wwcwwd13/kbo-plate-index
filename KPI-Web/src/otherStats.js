@@ -3,6 +3,11 @@ const TEAM_ALIASES = {
   kt: "KT", ob: "두산", lt: "롯데", kia: "KIA", wo: "키움"
 };
 const KBO_CLUBS = new Set(Object.values(TEAM_ALIASES));
+// KBO Trade.aspx lists this release as a free-agent announcement.
+// The archived API omits the date for that event type.
+const ARCHIVED_2026_RELEASE_DATES = new Map([
+  ["player:kbo:55322:pitcher", "2026-06-25"]
+]);
 
 export function teamKey(value) {
   const key = String(value ?? "").trim().toLowerCase();
@@ -89,6 +94,11 @@ export function buildOtherStats(data, standings, latestDiff, { archived = false 
             ...player,
             role,
             rosterSection: section.league,
+            releaseDate: player.releaseDate ?? (
+              archived && section.league === "소속 말소" && data?.meta?.asOf?.startsWith("2026-")
+                ? ARCHIVED_2026_RELEASE_DATES.get(player.playerId) ?? null
+                : null
+            ),
             team: teamKey(team.team ?? team.teamName),
             latestDateDelta: dailyPlayers.get(player.playerId)?.ratingDelta ?? null,
             latestDateDiff: dailyPlayers.get(player.playerId) ?? null
