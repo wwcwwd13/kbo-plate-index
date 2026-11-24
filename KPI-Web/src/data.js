@@ -11,7 +11,7 @@ export async function fetchRatingModels() {
 
 function isDirectoryPagePath() {
   const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
-  return /\/(?:player|diff|other)\/(?:index\.html)?$/.test(pathname);
+  return /\/(?:player|team|diff|other)\/(?:index\.html)?$/.test(pathname);
 }
 
 function staticDataPath(fileName) {
@@ -70,6 +70,14 @@ export async function fetch2026FinalStandings() {
     throw new Error("2026 final standings are unavailable");
   }
   return [...data.teams].sort((a, b) => a.rank - b.rank);
+}
+
+export async function fetchTeamArchive2026() {
+  const [standings, games] = await Promise.all([
+    fetchJson(staticDataPath("final-standings-2026.json")),
+    fetchJson(staticDataPath("team-games-2026.json"))
+  ]);
+  return { standings, ...games };
 }
 
 export async function fetchTeamRatings() {

@@ -5,10 +5,10 @@ const ratings = { meta: { asOf: "2026-09-25", modelVersion: "test-model" }, sect
   team: "kt",
   averages: { average18: 66, batter: 70, pitcher: 62 },
   batters: [
-    { playerId: "b1", name: "가", rating: 71, rosterStatusReason: "아시안 게임 출전" },
-    { playerId: "b2", name: "나", rating: 75, rosterStatusReason: "futures_appearance_recent" }
+    { playerId: "b1", name: "가", rating: 71, contractType: "자유선발" },
+    { playerId: "b2", name: "나", rating: 75, contractType: "아시아쿼터" }
   ],
-  pitchers: [{ playerId: "p1", name: "다", rating: 80, rosterStatusReason: "asian_games_assignment" }]
+  pitchers: [{ playerId: "p1", name: "다", rating: 80, contractType: "아시아쿼터" }]
 }] }] };
 const latestDiff = { meta: { date: "2026-09-25", modelVersion: "test-model" }, sections: [{
   teams: [{ batters: [{ playerId: "b1", ratingDelta: 2 }], pitchers: [{ playerId: "p1", ratingDelta: 0 }] }]
@@ -17,9 +17,9 @@ const result = buildOtherStats(ratings, { teams: [{ rank: 1, team: "KT" }] }, la
 assert.equal(result.teams[0].leagueRank, 1);
 assert.equal(result.teams[0].teamStrength, 66);
 assert.deepEqual(result.batters.map((player) => player.name), ["나", "가"]);
-assert.deepEqual(result.asianBatters.map((player) => player.name), ["가"]);
-assert.deepEqual(result.asianPitchers.map((player) => player.name), ["다"]);
-assert.equal(result.asianBatters[0].team, "KT");
+assert.deepEqual(result.foreignBatters.map((player) => player.name), ["가"]);
+assert.deepEqual(result.asiaQuota.map(({ name, role }) => [name, role]), [["다", "pitcher"], ["나", "batter"]]);
+assert.equal(result.asiaQuota[0].team, "KT");
 assert.equal(result.pitchers[0].team, "KT");
 assert.equal(result.pitchers[0].latestDateDelta, 0);
 assert.equal(result.batters.find((player) => player.playerId === "b1").latestDateDelta, 2);

@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetch2026FinalStandings, fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamRatings } from "./data";
+import { fetch2026FinalStandings, fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamArchive2026, fetchTeamRatings } from "./data";
 import { selectedRatingModel } from "./ratingModel";
 import { selectedSeason, seasonHref, seasonSwitchUrl } from "./season";
 import modelEffects from "./content/model-effects.json";
@@ -21,7 +21,7 @@ function isPagePath(pageName) {
 }
 
 function siteRelativePrefix() {
-  return /\/(?:player|diff|other|about)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
+  return /\/(?:player|team|diff|other|about)\/(?:index\.html)?$/.test(window.location.pathname) ? "../" : "./";
 }
 
 function homeHref() {
@@ -36,6 +36,10 @@ function pageHref(pageName, query = "") {
 function playerPageHref(player) {
   if (!player?.playerId) return null;
   return pageHref("player", `player_id=${encodeURIComponent(player.playerId)}`);
+}
+
+function teamPageHref(team) {
+  return pageHref("team", new URLSearchParams({ team: ratingTeamKey(team) }).toString());
 }
 
 function toNumber(value) {
@@ -206,6 +210,32 @@ const TEAM_FULL_NAMES = {
   KIA: "KIA 타이거즈",
   키움: "키움 히어로즈"
 };
+
+const TEAM_COLORS = {
+  LG: "#a50034", 한화: "#a84616", 삼성: "#174699", SSG: "#a31339",
+  NC: "#234b75", KT: "#262933", 두산: "#252952", 롯데: "#113864",
+  KIA: "#a51633", 키움: "#6f183e"
+};
+
+// Emblem codes from the KBO club directory, including SK for SSG and HT for KIA.
+const TEAM_EMBLEM_CODES = {
+  LG: "lg", 한화: "hh", 삼성: "ss", SSG: "sk", NC: "nc",
+  KT: "kt", 두산: "ob", 롯데: "lt", KIA: "ht", 키움: "wo"
+};
+
+function TeamEmblem({ team }) {
+  return <img className="team-emblem" src={`${siteRelativePrefix()}team-logos/${TEAM_EMBLEM_CODES[team]}.png`}
+    alt="" width="64" height="41" />;
+}
+
+function TeamLink({ team, showEmblem = false }) {
+  const key = ratingTeamKey(team);
+  return Object.hasOwn(TEAM_FULL_NAMES, key)
+    ? <a className="team-page-link" href={teamPageHref(key)} aria-label={`${fullTeamName(key)} 팀 페이지`}>
+        {showEmblem && <TeamEmblem team={key} />}{team}
+      </a>
+    : team;
+}
 
 function fullTeamName(value) {
   const canonical = canonicalTeamLabel(value);
@@ -703,7 +733,7 @@ function CombinedTeamRatingTable({ sections, teamOrder, archived = false }) {
                 </tr>
                 <tr className={`team-row ${paletteClass}`}>
                   {visibleTeams.map((team, teamIndex) => sectionTeamMap.has(team.key)
-                    ? <th key={`${section.league}-${team.key}-team`} className={teamIndex === lastActiveTeamIndex ? "active-group-boundary" : ""} colSpan="4" scope="colgroup">{team.label}</th>
+                    ? <th key={`${section.league}-${team.key}-team`} className={teamIndex === lastActiveTeamIndex ? "active-group-boundary" : ""} colSpan="4" scope="colgroup"><TeamLink team={team.label} /></th>
                     : <th key={`${section.league}-${team.key}-team-empty`} className="empty-group-header" colSpan="4" scope="colgroup" aria-hidden="true" />)}
                   {trailingEmptySpan > 0 ? <th className="empty-group-header trailing-empty-group" colSpan={trailingEmptySpan} scope="colgroup" aria-hidden="true" /> : null}
                 </tr>
@@ -1077,30 +1107,68 @@ function DiffPage() {
   );
 }
 
+const MOBILE_HOME_QUERY = "(max-width: 740px)";
+
+function HomeTeamPicker({ teams }) {
+  return <section className="home-team-picker" aria-labelledby="home-team-picker-title">
+    <h2 id="home-team-picker-title">구단 선택</h2>
+    <ul>{teams.map((team) => (
+      <li key={team}>
+        <a href={teamPageHref(team)}>
+          <TeamEmblem team={team} />
+          <span>{fullTeamName(team)}</span>
+        </a>
+      </li>
+    ))}</ul>
+  </section>;
+}
+
 function HomePage() {
   const is2027 = selectedSeason() === "2027";
   const hasSeasonApi = !is2027 || Boolean(import.meta.env.VITE_API_2027_BASE_URL?.trim());
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_HOME_QUERY).matches);
   const [standings, setStandings] = useState(null);
   const [standingsError, setStandingsError] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const viewport = window.matchMedia(MOBILE_HOME_QUERY);
+    const update = () => setIsMobile(viewport.matches);
+    viewport.addEventListener("change", update);
+    update();
+    return () => viewport.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!is2027) return;
     let cancelled = false;
-    if (is2027) {
-      fetch2026FinalStandings()
-        .then((rows) => { if (!cancelled) setStandings(rows); })
-        .catch(() => { if (!cancelled) setStandingsError(true); });
-    }
-    if (hasSeasonApi) {
-      fetchTeamRatings()
-        .then((nextData) => { if (!cancelled) setData(nextData); })
-        .catch((nextError) => { if (!cancelled) setError(nextError); });
-    }
+    fetch2026FinalStandings()
+      .then((rows) => { if (!cancelled) setStandings(rows); })
+      .catch(() => { if (!cancelled) setStandingsError(true); });
     return () => { cancelled = true; };
-  }, [is2027, hasSeasonApi]);
+  }, [is2027]);
+
+  useEffect(() => {
+    if (isMobile || !hasSeasonApi) return;
+    let cancelled = false;
+    setError(null);
+    fetchTeamRatings()
+      .then((nextData) => { if (!cancelled) setData(nextData); })
+      .catch((nextError) => { if (!cancelled) setError(nextError); });
+    return () => { cancelled = true; };
+  }, [isMobile, hasSeasonApi]);
 
   const teamOrder = standings && new Map(standings.map(({ team, rank }) => [ratingTeamKey(team), rank]));
+  const mobileTeams = standings ? standings.map(({ team }) => ratingTeamKey(team)) : TEAM_ORDER_2025;
+  if (isMobile) return (
+    <div className="page-shell">
+      <PageHeader />
+      <main className="page-content"><HomeTeamPicker teams={mobileTeams} /></main>
+      <SiteFooter status={!hasSeasonApi ? "2027 시즌 준비 중" : undefined} />
+    </div>
+  );
+
   const sections = data?.sections ?? [];
   const showEmptySeasonTable = is2027 && standings && !sections.length && (!hasSeasonApi || data || error);
   const visibleSections = showEmptySeasonTable
@@ -1140,6 +1208,163 @@ function HomePage() {
       <SiteFooter status={data?.meta?.asOf ? `${data.meta.asOf} 기준` : is2027 && (!hasSeasonApi || isUnavailable) ? "2027 시즌 준비 중" : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
     </div>
   );
+}
+
+function TeamRosterTable({ players, title, archived }) {
+  if (!players.length) return <p className="team-panel-note">{title} 기록이 없습니다.</p>;
+  return <table className="team-roster-table">
+    <caption>{title} <span>{players.length}명</span></caption>
+    <thead><tr><th scope="col">선수</th><th scope="col">폼</th></tr></thead>
+    <tbody>{[...players].sort(ratingOrder).map((player) => (
+      <tr key={player.playerId ?? player.name}>
+        <PlayerLink player={player} showMedicalStatus={!archived} />
+        <PlayerRating player={player} />
+      </tr>
+    ))}</tbody>
+  </table>;
+}
+
+function TeamGameMover({ player, label }) {
+  if (!player) return null;
+  const href = playerPageHref(player);
+  return <span className="team-game-mover">
+    <span>{label}</span>
+    {href ? <a href={href}>{player.name}</a> : player.name}
+    <Delta value={player.delta} />
+  </span>;
+}
+
+function TeamGames({ games, team }) {
+  const [limit, setLimit] = useState(6);
+  return <section className="sheet-card team-games" aria-labelledby="team-games-title">
+    <div className="team-panel-header">
+      <div><h3 id="team-games-title">경기별 폼 변동</h3><p>1군 경기에서 폼이 가장 많이 오른 선수와 떨어진 선수</p></div>
+    </div>
+    {!games.length ? <p className="team-panel-note">표시할 경기 기록이 없습니다.</p> :
+      <ul className="team-game-list">{games.slice(0, limit).map((game) => {
+        const isHome = game.home === team;
+        const opponent = isHome ? game.away : game.home;
+        const runs = isHome ? game.homeRuns : game.awayRuns;
+        const allowed = isHome ? game.awayRuns : game.homeRuns;
+        const result = runs == null || allowed == null ? null : runs === allowed ? "무" : runs > allowed ? "승" : "패";
+        const leaders = game.movements[isHome ? game.homeCode : game.awayCode];
+        return <li key={game.id}>
+          <div className="team-game-topline">
+            <time dateTime={game.date}>{formatDateWithWeekday(game.date)}</time>
+            {game.postseason && <span>{game.stage}</span>}
+            <a className="team-page-link" href={pageHref("diff", new URLSearchParams({ date: game.date }).toString())}>당일 기록</a>
+          </div>
+          <div className="team-game-match">
+            {result && <span className={`team-game-result ${result === "승" ? "is-win" : result === "패" ? "is-loss" : ""}`}>{result}</span>}
+            <strong>{opponent}전</strong>
+            <span className="team-game-location">{isHome ? "홈" : "원정"}</span>
+            {result ? <strong className="team-game-score" aria-label={`${team} ${runs}점, ${opponent} ${allowed}점`}>{runs} : {allowed}</strong> : <span className="team-game-location team-game-score">점수 미수록</span>}
+          </div>
+          <div className="team-game-movers">
+            <TeamGameMover player={leaders?.up} label="상승" />
+            <TeamGameMover player={leaders?.down} label="하락" />
+          </div>
+        </li>;
+      })}</ul>}
+    {limit < games.length && <button className="team-more-games" type="button" onClick={() => setLimit(limit + 12)}>
+      더 보기 <span>{limit}/{games.length}</span>
+    </button>}
+  </section>;
+}
+
+function TeamPage() {
+  const season = selectedSeason();
+  const archived = season === "2026";
+  const requestedTeam = ratingTeamKey(new URLSearchParams(window.location.search).get("team"));
+  const team = Object.hasOwn(TEAM_FULL_NAMES, requestedTeam) ? requestedTeam : "삼성";
+  const [ratings, setRatings] = useState(null);
+  const [archive, setArchive] = useState(null);
+  const [rosterError, setRosterError] = useState(false);
+  const [archiveError, setArchiveError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    document.title = `${fullTeamName(team)} | 오늘의 폼`;
+    fetchTeamRatings()
+      .then((data) => { if (!cancelled) setRatings(data); })
+      .catch(() => { if (!cancelled) setRosterError(true); });
+    if (archived) fetchTeamArchive2026()
+      .then((data) => { if (!cancelled) setArchive(data); })
+      .catch(() => { if (!cancelled) setArchiveError(true); });
+    return () => { cancelled = true; };
+  }, [archived, team]);
+
+  const standings = archive?.standings;
+  const rank = standings?.teams?.find((row) => ratingTeamKey(row.team) === team)?.rank;
+  const teamStats = useMemo(() => buildOtherStats(ratings, standings, null, { archived }).teams,
+    [ratings, standings, archived]);
+  const strength = teamStats.find((row) => row.team === team);
+  const sections = ratings?.sections ?? [];
+  const roster = (archived ? archiveRosterSections(sections) : [...sections]).sort((a, b) => ratingSectionOrder(a) - ratingSectionOrder(b))
+    .map((section) => ({
+      label: sectionDisplayName(section.league),
+      club: section.teams?.find((entry) => ratingTeamKey(entry.team) === team)
+    }))
+    .filter(({ club }) => club && (club.batters?.length || club.pitchers?.length));
+  const games = (archive?.games ?? []).map((game) => ({
+    ...game, homeCode: game.home, awayCode: game.away,
+    home: ratingTeamKey(game.home), away: ratingTeamKey(game.away),
+    postseason: /^(?:WC|준PO|PO|KS)\d/.test(game.stage)
+  })).filter((game) => game.home === team || game.away === team);
+  const metrics = [
+    [archived ? "시즌 최종 순위" : "시즌 순위", rank == null ? "—" : `${rank}위`],
+    ...[
+      ["팀 전력", "teamStrength"],
+      ["타자 전력", "batterStrength"],
+      ["투수 전력", "pitcherStrength"]
+    ].map(([label, key]) => [label, formatRating(strength?.[key]), rankTeamsByMetric(teamStats, key).get(team)])
+  ];
+
+  return <div className="page-shell">
+    <PageHeader />
+    <main className="page-content team-page-content" style={{ "--club-color": TEAM_COLORS[team] }}>
+      <div className="team-page-toolbar">
+        <a className="team-page-link" href={homeHref()}>← 오늘의 폼</a>
+        <label>구단
+          <select value={team} onChange={(event) => window.location.assign(teamPageHref(event.target.value))}>
+            {TEAM_ORDER_2025.map((key) => <option key={key} value={key}>{fullTeamName(key)}</option>)}
+          </select>
+        </label>
+      </div>
+      <section className="sheet-card team-overview" aria-labelledby="team-title">
+        <div className="team-overview-heading">
+          <TeamEmblem team={team} />
+          <div><p>{season} 시즌</p><h2 id="team-title">{fullTeamName(team)}</h2></div>
+        </div>
+        <dl className="team-metrics">{metrics.map(([label, value, strengthRank]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}{strengthRank != null && <span className="team-strength-rank"> ({strengthRank}위)</span>}</dd>
+          </div>
+        ))}</dl>
+        {archived && <p className="team-overview-note">시즌 종료 시점 소속 선수 중 타자·투수 각 상위 9명의 폼으로 전력을 집계합니다.</p>}
+      </section>
+      <div className="team-page-grid">
+        <section className="sheet-card team-roster" aria-labelledby="team-roster-title">
+          <div className="team-panel-header"><h3 id="team-roster-title">{archived ? "시즌 종료 선수단" : "선수단"}</h3></div>
+          {rosterError ? <LoadError>선수단을 불러오지 못했습니다.</LoadError> :
+            !ratings ? <LoadingState>선수단을 불러오는 중입니다.</LoadingState> :
+            !roster.length ? <p className="team-panel-note">{archived ? "표시할 선수단 기록이 없습니다." : "시즌 선수단 데이터가 준비 중입니다."}</p> :
+            roster.map(({ label, club }) => <details className="team-roster-group" key={label} open={label !== "소속 말소"}>
+              <summary>{label}<span>{(club.batters?.length ?? 0) + (club.pitchers?.length ?? 0)}명</span></summary>
+              <div className="team-roster-grid">
+                <TeamRosterTable players={club.batters ?? []} title="타자" archived={archived} />
+                <TeamRosterTable players={club.pitchers ?? []} title="투수" archived={archived} />
+              </div>
+            </details>)}
+        </section>
+        {archiveError ? <section className="sheet-card"><LoadError>경기 기록을 불러오지 못했습니다.</LoadError></section> :
+          archived && !archive ? <section className="sheet-card"><LoadingState>경기 기록을 불러오는 중입니다.</LoadingState></section> :
+          <TeamGames games={games} team={team} />}
+      </div>
+    </main>
+    <SiteFooter status={ratings?.meta?.asOf ? `${ratings.meta.asOf} 기준` : undefined} />
+  </div>;
 }
 
 function AboutEffects({ effects }) {
@@ -1592,7 +1817,15 @@ function OtherPage() {
                   </button>
                 </th>
               ))}
-            </tr></thead><tbody>{teams.map((team) => <tr key={team.team}><td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td><th scope="row">{team.team}</th><td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td><td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td></tr>)}</tbody></table></div>
+            </tr></thead><tbody>{teams.map((team) => (
+              <tr key={team.team}>
+                <td className={rankTone(team.leagueRank)}>{team.leagueRank == null ? "—" : `${team.leagueRank}위`}</td>
+                <th scope="row"><TeamLink team={team.team} showEmblem /></th>
+                <td className={rankTone(strengthRanks.teamStrength?.get(team.team))}>{formatStrengthWithRank(team.teamStrength, strengthRanks.teamStrength?.get(team.team))}</td>
+                <td className={rankTone(strengthRanks.batterStrength?.get(team.team))}>{formatStrengthWithRank(team.batterStrength, strengthRanks.batterStrength?.get(team.team))}</td>
+                <td className={rankTone(strengthRanks.pitcherStrength?.get(team.team))}>{formatStrengthWithRank(team.pitcherStrength, strengthRanks.pitcherStrength?.get(team.team))}</td>
+              </tr>
+            ))}</tbody></table></div>
           </section>
           <section className="sheet-card other-card" aria-labelledby="international-players-title">
             <div className="sheet-card-header"><h2 id="international-players-title">외국인 선수 폼 순위</h2></div>
@@ -3096,6 +3329,7 @@ function PlayerPage() {
 
 function App() {
   if (isPagePath("player")) return <PlayerPage />;
+  if (isPagePath("team")) return <TeamPage />;
   if (isPagePath("diff")) return <DiffPage />;
   if (isPagePath("other")) return <OtherPage />;
   if (isPagePath("about")) return <AboutPage />;

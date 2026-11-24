@@ -31,6 +31,7 @@ export default defineConfig({
       input: [
         resolve(process.cwd(), "index.html"),
         resolve(process.cwd(), "player/index.html"),
+        resolve(process.cwd(), "team/index.html"),
         resolve(process.cwd(), "diff/index.html"),
         resolve(process.cwd(), "other/index.html"),
         resolve(process.cwd(), "about/index.html"),

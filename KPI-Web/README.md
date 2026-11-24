@@ -46,7 +46,7 @@ Fly.io의 원격 API를 사용해 프론트를 확인하려면 Vite를 시작하
 
 ```powershell
 $env:VITE_API_BASE_URL = "https://kbo-plate-api-wwcwwd13.fly.dev"
-npm.cmd run dev -- --host 127.0.0.1 --port 4173
+npm.cmd run dev -- --host 127.0.0.1 --port 5173
 ```
 
 GitHub Pages 배포 workflow에도 같은 주소를 빌드 환경으로 넣어 두었습니다. API가 응답하면 메인 화면 상단에 `SQLite 자동 구성`이 표시되고, 연결되지 않으면 표 대신 API 연결 필요 상태가 표시됩니다.
