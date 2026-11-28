@@ -6,6 +6,15 @@ const apiProxy = {
   target: "http://127.0.0.1:5505",
   changeOrigin: true
 };
+const proxies = {
+  "/api": apiProxy,
+  "/images": apiProxy,
+  "/season-2027/": {
+    target: "http://127.0.0.1:5506",
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/season-2027/, "")
+  }
+};
 
 export default defineConfig({
   plugins: [react()],
@@ -15,16 +24,10 @@ export default defineConfig({
     watch: {
       ignored: ["**/database/**"]
     },
-    proxy: {
-      "/api": apiProxy,
-      "/images": apiProxy
-    }
+    proxy: proxies
   },
   preview: {
-    proxy: {
-      "/api": apiProxy,
-      "/images": apiProxy
-    }
+    proxy: proxies
   },
   build: {
     rollupOptions: {

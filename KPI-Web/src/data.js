@@ -1,8 +1,10 @@
 import { selectedSeason } from "./season";
 import { selectedRatingModel } from "./ratingModel";
 
-function apiPath(route, params = {}) {
-  return `${configuredApiBase()}${route}?${new URLSearchParams({ ...params, rating_model: selectedRatingModel() })}`;
+export const OPENING_PREVIEW_MODEL = "kpi-v4.2-2027-opening-preview";
+
+function apiPath(route, params = {}, season = selectedSeason()) {
+  return `${configuredApiBase(season)}${route}?${new URLSearchParams({ ...params, rating_model: selectedRatingModel() })}`;
 }
 
 export async function fetchRatingModels() {
@@ -27,14 +29,16 @@ function isLocalHost() {
   return ["localhost", "127.0.0.1"].includes(window.location.hostname);
 }
 
-function configuredApiBase() {
-  const base = selectedSeason() === "2027"
-    ? import.meta.env.VITE_API_2027_BASE_URL
-    : (import.meta.env.VITE_API_2026_BASE_URL ?? import.meta.env.VITE_API_BASE_URL);
+function configuredApiBase(season = selectedSeason()) {
+  const archiveBase = import.meta.env.VITE_API_2026_BASE_URL ?? import.meta.env.VITE_API_BASE_URL;
+  const base = season === "2027"
+    ? (import.meta.env.VITE_API_2027_BASE_URL || (isLocalHost() ? "/season-2027"
+      : archiveBase?.trim() ? `${archiveBase.trim().replace(/\/$/, "")}/season-2027` : ""))
+    : archiveBase;
   return String(base ?? "").trim().replace(/\/$/, "");
 }
 
-function isSeasonAwaitingApi() {
+export function isSeasonAwaitingApi() {
   return selectedSeason() === "2027" && !configuredApiBase();
 }
 
@@ -65,7 +69,7 @@ async function fetchJson(path) {
 }
 
 export async function fetch2026FinalStandings() {
-  const data = await fetchJson(staticDataPath("standings-2026.json"));
+  const data = await fetchJson(staticDataPath("final-standings-2026.json"));
   if (data.season !== 2026 || !Array.isArray(data.teams) || data.teams.length !== 10) {
     throw new Error("2026 final standings are unavailable");
   }
@@ -80,9 +84,9 @@ export async function fetchTeamArchive2026() {
   return { standings, ...games };
 }
 
-export async function fetchTeamRatings() {
-  if (isSeasonAwaitingApi()) return { sections: [] };
-  const apiBase = configuredApiBase();
+export async function fetchTeamRatings(season = selectedSeason()) {
+  const apiBase = configuredApiBase(season);
+  if (season === "2027" && !apiBase) return { sections: [] };
 
   if (!isLocalHost() && !apiBase) {
     throw new Error("KPI API is not configured");
@@ -90,7 +94,7 @@ export async function fetchTeamRatings() {
 
   if (isLocalHost() || apiBase) {
     try {
-      return await fetchJson(apiPath("/api/team-ratings"));
+      return await fetchJson(apiPath("/api/team-ratings", {}, season));
     } catch (error) {
       // Local development can continue with the reference table while the API starts.
       if (!isLocalHost() || selectedRatingModel() !== "v4") throw error;
@@ -114,7 +118,11 @@ export async function fetchOtherStats() {
     selectedSeason() === "2027" ? { teams: [] } : fetchJson(staticDataPath("final-standings-2026.json")),
     fetchRatingDiff()
   ]);
-  return { ratings, standings, latestDiff };
+  // The preview inherits the last roster state without copying its event history.
+  const archiveRatings = ratings.meta?.modelVersion === OPENING_PREVIEW_MODEL
+    ? await fetchTeamRatings("2026").catch(() => null)
+    : null;
+  return { ratings, standings, latestDiff, archiveRatings };
 }
 
 export async function fetchRatingDiffDates() {

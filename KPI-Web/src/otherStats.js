@@ -54,8 +54,16 @@ function archiveTeamStrength(sections, rankByTeam) {
   });
 }
 
-export function buildOtherStats(data, standings, latestDiff, { archived = false } = {}) {
+export function buildOtherStats(data, standings, latestDiff, { archived = false, archiveRatings = null } = {}) {
   const sections = Array.isArray(data?.sections) ? data.sections : [];
+  const releaseDates = new Map();
+  for (const section of archiveRatings?.sections ?? []) {
+    for (const team of section.teams ?? []) {
+      for (const player of [...(team.batters ?? []), ...(team.pitchers ?? [])]) {
+        if (player.releaseDate) releaseDates.set(player.playerId, player.releaseDate);
+      }
+    }
+  }
   const major = sections.find((section) => section.league === "1군");
   const rankByTeam = new Map((standings?.teams ?? []).map((entry) => [teamKey(entry.team), entry.rank]));
   const teams = archived ? archiveTeamStrength(sections, rankByTeam) : (major?.teams ?? []).map((team) => ({
@@ -87,6 +95,7 @@ export function buildOtherStats(data, standings, latestDiff, { archived = false 
           if (!player.playerId || players.has(player.playerId)) continue;
           players.set(player.playerId, {
             ...player,
+            releaseDate: player.releaseDate ?? releaseDates.get(player.playerId),
             role,
             rosterSection: section.league,
             team: teamKey(team.team ?? team.teamName),

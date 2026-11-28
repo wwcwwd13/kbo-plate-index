@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { fetch2026FinalStandings, fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamArchive2026, fetchTeamRatings } from "./data";
+import { fetch2026FinalStandings, fetchOtherStats, fetchPlayerDetail, fetchRatingDiff, fetchRatingDiffDates, fetchTeamArchive2026, fetchTeamRatings, isSeasonAwaitingApi, OPENING_PREVIEW_MODEL } from "./data";
 import { selectedRatingModel } from "./ratingModel";
 import { selectedSeason, seasonHref, seasonSwitchUrl } from "./season";
 import modelEffects from "./content/model-effects.json";
@@ -283,7 +283,7 @@ function currentAffiliationLabel(player) {
   if (["1군", "major", "kbo", "kbo 리그"].includes(normalized)) return "1군";
   if (["2군", "minor", "futures", "퓨처스리그", "퓨쳐스리그"].includes(normalized)) return "2군";
   if (["잔류군", "residual", "reserve"].includes(normalized)) return "잔류군";
-  if (["말소", "released", "release"].includes(normalized)) return "말소";
+  if (["말소", "소속 말소", "released", "release"].includes(normalized)) return "소속 말소";
   return String(value ?? "").trim() || "—";
 }
 
@@ -414,7 +414,7 @@ function PageHeader() {
             window.location.assign(seasonSwitchUrl(window.location.href, event.target.value));
           }}>
             <option value="2026">2026년</option>
-            <option value="2027">2027년</option>
+            <option value="2027">2027년 (현재)</option>
           </select>
         </label>
       </div>
@@ -1028,6 +1028,7 @@ function DiffMovementRankings({ sections }) {
 
 function DiffPage() {
   const [dates, setDates] = useState([]);
+  const [datesLoaded, setDatesLoaded] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -1040,6 +1041,7 @@ function DiffPage() {
         const nextDates = (Array.isArray(result?.dates) ? result.dates : [])
           .filter((option) => Number(option.gameCount) > 0);
         setDates(nextDates);
+        setDatesLoaded(true);
         const latest = nextDates.some((option) => option.date === result?.latest)
           ? result.latest
           : nextDates[nextDates.length - 1]?.date ?? "";
@@ -1077,7 +1079,7 @@ function DiffPage() {
                 window.history.replaceState(null, "", url);
                 setSelectedDate(event.target.value);
               }} disabled={!dates.length}>
-                {!dates.length ? <option value="">날짜를 불러오는 중</option> : dates.map((option) => (
+                {!dates.length ? <option value="">{datesLoaded ? "경기일 없음" : "날짜를 불러오는 중"}</option> : dates.map((option) => (
                   <option key={option.date} value={option.date}>
                     {formatDateWithWeekday(option.date)} · {option.gameCount}경기
                   </option>
@@ -1085,8 +1087,11 @@ function DiffPage() {
               </select>
             </label>
           </div>
-          <div className="rating-sections" aria-busy={!data && !error}>
-            {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError> : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState title="해당 날짜 출전 기록이 없습니다." /> : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
+          <div className="rating-sections" aria-busy={!data && !error && (!datesLoaded || dates.length > 0)}>
+            {error ? <LoadError>변동표 API와 데이터베이스 연결을 확인해 주세요.</LoadError>
+              : datesLoaded && !dates.length ? <EmptyDataState title="이 시즌의 경기 기록이 없습니다." />
+              : data ? sections.length ? <CombinedDiffRatingTable sections={sections} /> : <EmptyDataState title="해당 날짜 출전 기록이 없습니다." />
+              : <LoadingState>경기일별 KPI 변동을 불러오는 중입니다.</LoadingState>}
           </div>
           {!error && sections.length > 0 ? (
             <div className="legend team-rating-legend diff-legend" aria-label="변동표 안내">
@@ -1102,7 +1107,7 @@ function DiffPage() {
         </section>
         {!error && data && sections.length > 0 ? <DiffMovementRankings sections={sections} /> : null}
       </main>
-      <SiteFooter status={meta?.date ? `${meta.date} 기준` : "기준일 확인 중"} />
+      <SiteFooter status={meta?.date ? `${meta.date} 기준` : datesLoaded && !dates.length ? undefined : "기준일 확인 중"} />
     </div>
   );
 }
@@ -1125,7 +1130,7 @@ function HomeTeamPicker({ teams }) {
 
 function HomePage() {
   const is2027 = selectedSeason() === "2027";
-  const hasSeasonApi = !is2027 || Boolean(import.meta.env.VITE_API_2027_BASE_URL?.trim());
+  const hasSeasonApi = !isSeasonAwaitingApi();
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_HOME_QUERY).matches);
   const [standings, setStandings] = useState(null);
   const [standingsError, setStandingsError] = useState(false);
@@ -1205,7 +1210,8 @@ function HomePage() {
           ) : null}
         </section>
       </main>
-      <SiteFooter status={data?.meta?.asOf ? `${data.meta.asOf} 기준` : is2027 && (!hasSeasonApi || isUnavailable) ? "2027 시즌 준비 중" : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
+      <SiteFooter status={data?.meta?.modelVersion === OPENING_PREVIEW_MODEL ? "2026 시즌 종료 상태를 이어받은 임시 데이터"
+        : data?.meta?.asOf ? `${data.meta.asOf} 기준` : is2027 && (!hasSeasonApi || isUnavailable) ? "2027 시즌 준비 중" : isUnavailable ? "API 연결 필요" : "기준일 확인 중"} />
     </div>
   );
 }
@@ -1279,6 +1285,7 @@ function TeamPage() {
   const team = Object.hasOwn(TEAM_FULL_NAMES, requestedTeam) ? requestedTeam : "삼성";
   const [ratings, setRatings] = useState(null);
   const [archive, setArchive] = useState(null);
+  const [previousStandings, setPreviousStandings] = useState(null);
   const [rosterError, setRosterError] = useState(false);
   const [archiveError, setArchiveError] = useState(false);
 
@@ -1291,10 +1298,14 @@ function TeamPage() {
     if (archived) fetchTeamArchive2026()
       .then((data) => { if (!cancelled) setArchive(data); })
       .catch(() => { if (!cancelled) setArchiveError(true); });
+    else fetch2026FinalStandings()
+      .then((rows) => { if (!cancelled) setPreviousStandings(rows); })
+      .catch(() => { /* Keep the club selector usable if standings cannot load. */ });
     return () => { cancelled = true; };
   }, [archived, team]);
 
   const standings = archive?.standings;
+  const clubOrder = (standings?.teams ?? previousStandings)?.map(({ team }) => ratingTeamKey(team)) ?? TEAM_ORDER_2025;
   const rank = standings?.teams?.find((row) => ratingTeamKey(row.team) === team)?.rank;
   const teamStats = useMemo(() => buildOtherStats(ratings, standings, null, { archived }).teams,
     [ratings, standings, archived]);
@@ -1327,7 +1338,7 @@ function TeamPage() {
         <a className="team-page-link" href={homeHref()}>← 오늘의 폼</a>
         <label>구단
           <select value={team} onChange={(event) => window.location.assign(teamPageHref(event.target.value))}>
-            {TEAM_ORDER_2025.map((key) => <option key={key} value={key}>{fullTeamName(key)}</option>)}
+            {clubOrder.map((key) => <option key={key} value={key}>{fullTeamName(key)}</option>)}
           </select>
         </label>
       </div>
@@ -1343,6 +1354,7 @@ function TeamPage() {
           </div>
         ))}</dl>
         {archived && <p className="team-overview-note">시즌 종료 시점 소속 선수 중 타자·투수 각 상위 9명의 폼으로 전력을 집계합니다.</p>}
+        {ratings?.meta?.modelVersion === OPENING_PREVIEW_MODEL && <p className="team-overview-note">2026 시즌 종료 시점의 소속과 폼을 이어받은 임시 데이터입니다.</p>}
       </section>
       <div className="team-page-grid">
         <section className="sheet-card team-roster" aria-labelledby="team-roster-title">
@@ -1700,25 +1712,28 @@ function LineupTeam({ side, pools }) {
   </div>;
 }
 
-function ReleaseStatusMark({ date }) {
+function InternationalPlayerName({ player }) {
   const [position, setPosition] = useState(null);
-  const label = `계약해지: ${date ?? "날짜 미확인"}`;
+  const released = ["소속 말소", "말소", "released"].includes(player.rosterSection);
+  const label = released ? `계약해지: ${player.releaseDate ?? "날짜 미확인"}` : undefined;
 
   function showTooltip(event) {
+    if (!released) return;
     const bounds = event.currentTarget.getBoundingClientRect();
     setPosition({ left: Math.max(8, Math.min(bounds.left, window.innerWidth - 170)), top: bounds.top });
   }
 
-  return <>
-    <span className="release-status-mark" tabIndex={0} aria-label={label}
+  return <span className={`international-player-name${released ? " is-released" : ""}`}
       onMouseEnter={showTooltip} onMouseLeave={() => setPosition(null)}
       onFocus={showTooltip} onBlur={() => setPosition(null)}
-      onKeyDown={event => { if (event.key === "Escape") setPosition(null); }}>×</span>
+      onKeyDown={event => { if (event.key === "Escape") setPosition(null); }}>
+    <a className="player-link" href={playerPageHref(player)} aria-description={label}>{player.name}</a>
+    {released && <span className="release-status-mark" aria-hidden="true">×</span>}
     {position && createPortal(
       <span className="release-status-tooltip" style={position} aria-hidden="true">{label}</span>,
       document.body,
     )}
-  </>;
+  </span>;
 }
 
 function InternationalPlayersTable({ title, players, showRole = false }) {
@@ -1735,12 +1750,7 @@ function InternationalPlayersTable({ title, players, showRole = false }) {
           {players.map((player, index) => (
             <tr key={player.playerId}>
               <td>{index + 1}</td>
-              <th scope="row"><span className="international-player-name">
-                <a className="player-link" href={playerPageHref(player)}>{player.name}</a>
-                {["소속 말소", "말소", "released"].includes(player.rosterSection) ? (
-                  <ReleaseStatusMark date={player.releaseDate} />
-                ) : null}
-              </span></th>
+              <th scope="row"><InternationalPlayerName player={player} /></th>
               <td>{ratingTeamKey(player.team)}</td>
               {showRole ? <td>{player.role === "pitcher" ? "투수" : "타자"}</td> : null}
               <td className={ratingBand(player.rating)}>{formatRating(player.rating)}</td>
@@ -1777,7 +1787,9 @@ function OtherPage() {
   }, []);
 
   const archived = selectedSeason() === "2026";
-  const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff, { archived }) : null, [payload, archived]);
+  const stats = useMemo(() => payload ? buildOtherStats(payload.ratings, payload.standings, payload.latestDiff, {
+    archived, archiveRatings: payload.archiveRatings
+  }) : null, [payload, archived]);
   const lineupPools = useMemo(() => payload && !archived ? buildLineupPools(payload.ratings) : [], [payload, archived]);
   const strengthRanks = useMemo(() => stats ? Object.fromEntries(
     ["teamStrength", "batterStrength", "pitcherStrength"].map((key) => [key, rankTeamsByMetric(stats.teams, key)])
@@ -1957,6 +1969,8 @@ function OfficialKboRecordLinks({ player }) {
 function PlayerProfile({ player, ratings }) {
   const profile = player.profile ?? {};
   const latest = ratings[ratings.length - 1] ?? null;
+  const affiliation = currentAffiliationLabel(player);
+  const showAffiliation = selectedSeason() === "2027" || affiliation === "소속 말소";
   const physicalInfo = [
     profileHandednessLabel(profile),
     profileMeasurement(profile.heightCm, "cm"),
@@ -1964,7 +1978,7 @@ function PlayerProfile({ player, ratings }) {
   ].filter(Boolean).join(" · ");
   const items = [
     ["역할·포지션", rolePositionLabel(player)],
-    ["소속 구단", `${fullTeamName(profile.team)} · ${currentAffiliationLabel(player)}`],
+    ["소속 구단", showAffiliation ? `${fullTeamName(profile.team)} · ${affiliation}` : fullTeamName(profile.team)],
     ["생년월일", profile.birthDate],
     ["투타·신체", physicalInfo]
   ];
@@ -1998,7 +2012,7 @@ function PlayerProfile({ player, ratings }) {
             </div>
           </div>
           <div className={`current-rating ${ratingBand(latest?.rating)}`}>
-            <span className="current-rating-label">오늘의 폼</span>
+            <span className="current-rating-label">{latest?.modelVersion === OPENING_PREVIEW_MODEL ? "시즌 시작 폼" : "오늘의 폼"}</span>
             <strong className="current-rating-value">{formatRating(latest?.rating)}</strong>
           </div>
         </div>
@@ -3033,13 +3047,13 @@ function RatingHistory({ ratings, player }) {
   const gameEntries = useMemo(() => buildGameEntries(ratings, sortAppearances(player), player), [ratings, player]);
   const rows = gameEntries.length
     ? gameEntries.slice().reverse()
-    : ratings.map((snapshot, index) => ({
+    : ratings.filter((snapshot) => snapshot.modelVersion !== OPENING_PREVIEW_MODEL).map((snapshot, index, snapshots) => ({
       key: `snapshot-${snapshot.date}-${index}`,
       date: snapshot.date,
       league: snapshot.league || null,
       gameId: null,
       rating: snapshot.rating,
-      ratingDelta: toNumber(snapshot.ratingDelta) ?? (index > 0 ? snapshot.rating - ratings[index - 1].rating : null),
+      ratingDelta: toNumber(snapshot.ratingDelta) ?? (index > 0 ? snapshot.rating - snapshots[index - 1].rating : null),
       summary: "경기별 원자료 없음",
       modelVersion: snapshot.modelVersion,
       performance: null
